@@ -1,0 +1,250 @@
+﻿@model eConnectV2.ViewModels.AdminViewModel
+@{
+    ViewData["Title"] = "NVTI-Code Definition";
+    ViewData["PageHeading"] = "Code Definition";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "Admin";
+    ViewBag.Category1 = "Code";
+    ViewBag.Category2 = "Code Definition";
+}
+<div class="panel">
+    <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+        <div class="col-sm-2 panel-toolbar">
+            <a id="btn_backtoList" style="color:#fff" href="@Url.Action("CodeType","Admin")" title="Back">
+                <i class="fa fa-angle-double-left"></i> Back
+            </a>
+        </div>
+        <div class="col-sm-8" style="text-align:center">
+            <span class="fw-300 font-weight-bold">Manage </span> Code Definition
+        </div>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content">
+            @using (Html.BeginForm("CodeDef", "Admin", FormMethod.Post, new { id = "myform", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+            {
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold" for="Code">Code<span class="text-danger ml-1">*</span> : </label>
+                            <div class="col-sm-6">
+                                <input asp-for="Code" class="form-control" readonly required />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold" for="CodeDefKeyId">Key Id<span class="text-danger ml-1">*</span> : </label>
+                            <div class="col-sm-6">
+                                <input asp-for="CodeDefKeyId" class="form-control" placeholder="Please enter key id" required pattern=".*\S+.*" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold" for="CodeDefDesc">Description<span class="text-danger ml-1">*</span> : </label>
+                            <div class="col-sm-6">
+                                <input asp-for="CodeDefDesc" class="form-control" placeholder="Please enter description" required pattern=".*\S+.*" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold" for="CodeDesc">Code Desc<span class="text-danger ml-1">*</span> : </label>
+                            <div class="col-sm-6">
+                                <input asp-for="CodeDesc" class="form-control" readonly required />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold" for="CodeDefValue">Value<span class="text-danger ml-1">*</span> : </label>
+                            <div class="col-sm-6">
+                                <input asp-for="CodeDefValue" class="form-control" placeholder="Please enter Value" required pattern=".*\S+.*" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold" for="Status">Status<span class="text-danger ml-1">*</span> :</label>
+                            <div class="col-sm-6 mt-2">
+                                <div class="frame-wrap">
+                                    <div class="d-inline">
+                                        <input type="radio" id="r11" asp-for="Status" checked value="1">
+                                        <label for="r11">Active</label>
+                                    </div>
+                                    <div class="d-inline ml-2">
+                                        <input type="radio" id="r12" asp-for="Status" value="0">
+                                        <label for="r12">Inactive</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center pt-2">
+                    <button id="btn_save" class="btn btn-sm btn-primary" type="submit">Save</button>
+                    <button id="btn_update" class="btn btn-sm btn-primary hide" onclick="UpdateRecord()" type="button">Update</button>&nbsp;&nbsp;
+                    <button id="btn_cancel" class="btn btn-sm btn-secondary hide" onclick="UpdateCancel()" type="button">Cancel</button>
+                    <input asp-for="Code" type="hidden" value="@Model.Code" />
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div id="CodeDefList">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <div class="table-responsive">
+                            <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover nowrap">
+                                <thead class="bg-primary-800">
+                                    <tr>
+                                        <th class='notexport'>Action</th>
+                                        <th>Code</th>
+                                        <th>Code Desc</th>
+                                        <th>Key Id</th>
+                                        <th>Description</th>
+                                        <th>Value</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white">
+                                    @foreach (var item in Model.CodeDefList)
+                                    {
+                                        <tr>
+                                            <td class="bg-primary-gradient">
+                                                <a title="Edit" href="javascript:void(0);" onclick="RowEdit(@item.Code, @item.CodeDefKeyId)"><i class="fas fa-edit ml-3"></i></a>
+                                                <a title="Delete" class="text-danger ml-2 mr-3" href="javascript:void(0);" onclick="RowDelete(@item.Code, @item.CodeDefKeyId,'Admin/DeleteCodeDef')"><i class="fas fa-trash-alt"></i></a>
+                                            </td>
+                                            <td>
+                                                @item.Code
+                                            </td>
+                                            <td>
+                                                @item.CodeDesc
+                                            </td>
+                                            <td>
+                                                @item.CodeDefKeyId
+                                            </td>
+                                            <td>
+                                                @item.CodeDefDesc
+                                            </td>
+                                            <td>
+                                                @item.CodeDefValue
+                                            </td>
+                                            <td>
+                                                @if (item.Status == 1)
+                                                {
+                                                    <span class="badge badge-primary badge-pill">Active</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-secondary badge-pill">Inactive</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section ScriptsBlock {
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/datagrid/datatables/dths_excel.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script>
+        function RowEdit(code, keyId) {
+            //----set valid/invalid event class in controls
+            $('#CodeDefKeyId,#CodeDefDesc,#CodeDefValue').val('');
+            $('#btn_save').click();
+            $.ajax({
+                url: "/Admin/BindCodeDefDetail",
+                type: "POST",
+                data: { code: code, keyId: keyId },
+                success: function (response) {
+                    if (response.result === null) {
+                        Swal.fire("Oops...", "Something went wrong!", "error");
+                    } else {
+                        $('#Code').val(response.result[0].code);
+                        $('#CodeDesc').val(response.result[0].codeDesc);
+                        $('#CodeDefKeyId').val(response.result[0].codeDefKeyId).prop('readonly', true);
+                        $('#CodeDefDesc').val(response.result[0].codeDefDesc);
+                        $('#CodeDefValue').val(response.result[0].codeDefValue);
+                        if (response.result[0].status == '1') { $('#r11').prop('checked', true); } else { $('#r12').prop('checked', true); }
+                        $('#btn_save,#CodeDefList').hide();
+                        $('#btn_update,#btn_cancel').show();
+                    }
+                },
+                error: function () {
+                    Swal.fire("Oops...", "Something went wrong!", "error");
+                }
+            });
+        }
+        function UpdateCancel() {
+            $('#CodeDefKeyId,#CodeDefDesc,#CodeDefValue').val('');
+            $('#CodeDefKeyId').prop('readonly', false).val(0);
+            $('#r11').prop('checked', true);
+            $('#btn_save,#CodeDefList').show();
+            $('#btn_update,#btn_cancel').hide();
+        }
+        function UpdateRecord() {
+            var code = $('#Code').val();
+            var keyId = $('#CodeDefKeyId').val();
+            var descr = $('#CodeDefDesc').val();
+            var value = $('#CodeDefValue').val();
+            var status = $("input[name='Status']:checked").val();
+            if (code == '' || keyId == '' || descr == '' || value == '' || status == '') {
+
+            } else {
+                $.ajax({
+                    url: "/Admin/CodeDefUpdate",
+                    type: "POST",
+                    data: { code: code, keyId: keyId, descr: descr, value: value, status: status },
+                    success: function (response) {
+                        if (response.result === _errorStatus) {
+                            Swal.fire("Oops...", response.msg, "error");
+                            $('#btn_save,#CodeDefList').hide();
+                            $('#btn_update,#btn_cancel').show();
+                        } else {
+                            Swal.fire("Updated!", response.msg, "success").then(function () {
+                                window.location.reload();
+                            })
+                        }
+                    },
+                    error: function () {
+                        Swal.fire("Oops...", "Something went wrong!", "error");
+                    }
+                });
+            }
+        }
+        function RowDelete(code, keyId, url) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (result) {
+                if (result.value) {
+                    $.ajax({
+                        url: url,
+                        type: "POST",
+                        data: { code: code, keyId: keyId },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire("Deleted!", response.responseMsg, "success").then(function () {
+                                    window.location.reload();
+                                })
+                            } else {
+                                Swal.fire("Oops...", "Something went wrong!", "error");
+                            }
+                        },
+                        error: function () {
+                            Swal.fire("Oops...", "Something went wrong!", "error");
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}

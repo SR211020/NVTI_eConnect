@@ -1,0 +1,526 @@
+﻿@model eConnectV2.ViewModels.EHSViewModel
+@{
+    ViewData["PageHeading"] = "Patient Form";
+    ViewData["Title"] = "Add";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var Mode = ViewBag.TagAttribute;
+}
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+}
+
+<div class="panel">
+    <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+        <a title="Back" href="@Url.Action("OHCView", "EHS")" style="color:#fff">
+            <i class="fa fa-angle-double-left"></i> Back
+        </a>
+        <h2 class="justify-content-center">
+            <span class="fw-300 pr-1">Add Patient </span>
+        </h2>
+    </div>
+    <div class="panel-container show">
+        @using (Html.BeginForm("OHCAdd", "EHS", FormMethod.Post, new { id = "form", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+        {
+            <div class="panel-content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Reg. No</label>
+                                    <span class="col-sm-8 col-form-label text-info">@Model.RequestNo</span>
+                                    <input asp-for="RequestNo" value="@Model.RequestNo" hidden />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Reporting Date</label>
+                                    <div class="col-sm-8">
+                                        <input asp-for="Date1" class="form-control" type="text" autocomplete="off" placeholder="dd-mmm-yyyy" data-date-format="dd-M-yyyy" readonly />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Illness Type<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <select asp-for="InjuryType" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.CategoryList, "Value", "Text"))" onchange="ShowOthers();" required>
+                                            <option value="">-- Select --</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4"> </div>
+                            <div id="div_inj_oth" class="col-md-4" style="display:none">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Injury Type</label>
+                                    <div class="col-sm-8">
+                                        <input asp-for="InjuryTypeOther" value="@Model.InjuryTypeOther" class="form-control-alternate" type="text" autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-2">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Emp Code<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input asp-for="EmpCode" value="@Model.EmpCode" class="form-control" type="text" autocomplete="off" onchange="GetEmpDetails()" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">In Time<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input asp-for="Time1" class="form-control" type="time" autocomplete="off" placeholder="00:00" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Patient Condition<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <div class="form-check form-check-inline row">
+                                            <input id="P1" asp-for="Condition" class="form-check-input rdbutton" type="radio" value="Mild">
+                                            <label for="P1" class="form-check-label text-success font-weight-bold mr-2">Mild</label>
+                                            <input id="P2" asp-for="Condition" class="form-check-input rdbutton" type="radio" value="Moderate">
+                                            <label for="P2" class="form-check-label text-warning font-weight-bold mr-2">Moderate</label>
+                                            <input id="P3" asp-for="Condition" class="form-check-input rdbutton" type="radio" value="Severe">
+                                            <label for="P3" class="form-check-label text-danger font-weight-bold mr-2">Severe</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Emp Name<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input asp-for="EmpName" value="@Model.EmpName" class="form-control-alternate" type="text" autocomplete="off"  />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Out Time<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input asp-for="Time2" class="form-control" type="time" autocomplete="off" placeholder="00:00" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Injury/Illness<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <div class="form-check form-check-inline row">
+                                            <input id="rb1" asp-for="Injury" value="WR" class="form-check-input rdInjury" type="radio" />
+                                            <label for="rb1" class="form-check-label text-primary font-weight-bold mr-2">WR</label>
+                                            <input id="rb2" asp-for="Injury" value="NWR" class="form-check-input rdInjury" type="radio">
+                                            <label for="rb2" class="form-check-label text-secondary font-weight-bold mr-2">NWR</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-2">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Department<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input asp-for="DeptName" value="@Model.DeptName" class="form-control-alternate" type="text" autocomplete="off"  />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Nurshing Staff<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input asp-for="NurshingStaff" value="@Model.NurshingStaff" class="form-control" type="text" autocomplete="off" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Rest Given<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <div class="form-check form-check-inline row">
+                                            <input id="rb3" asp-for="RestGiven" value="Y" class="form-check-input rdRest" type="radio" />
+                                            <label for="rb3" class="form-check-label font-weight-bold mr-2" style="color:maroon">Yes</label>
+                                            <input id="rb4" asp-for="RestGiven" value="N" class="form-check-input rdRest" type="radio">
+                                            <label for="rb4" class="form-check-label  font-weight-bold mr-2" style="color:olive">No</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-2">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Aadhar Card No</label>
+                                    <div class="col-sm-8">
+                                        <input asp-for="AadharNo" value="@Model.AadharNo" class="form-control-alternate" type="text" autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Medicine Quantity<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input asp-for="Quantity" value="@Model.Quantity" class="form-control" type="text" autocomplete="off" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Refer<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <div class="form-check form-check-inline row">
+                                            <input id="rb5" asp-for="Refer" value="Y" class="form-check-input rdRefer" type="radio" />
+                                            <label for="rb5" class="form-check-label  font-weight-bold mr-2" style="color:hotpink">Yes</label>
+                                            <input id="rb6" asp-for="Refer" value="N" class="form-check-input rdRefer" type="radio">
+                                            <label for="rb6" class="form-check-label font-weight-bold mr-2" style="color:darkorchid">No</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-2">
+                            <div id="Div_Remarks" class="col-md-8">
+                                <div class="row">
+                                    <label class="col-sm-2 col-form-label font-weight-bold">Treatment Given<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-10">
+                                        <textarea asp-for="Treatment" class="form-control" rows="3" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="div_Remarks" class="row pt-2">
+                            <div class="col-md-8">
+                                <div class="form-group row">
+                                    <div class="col-sm-2">
+                                        <b>Remarks</b>
+                                        <br />(if any)
+                                    </div>
+                                    <div class="col-sm-10">
+                                        <textarea asp-for="Remarks" class="form-control" type="text" rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-2">
+                            <div class="col-md-8">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label font-weight-bold"></label>
+                                    <div class="col-sm-10">
+                                        <button id="btnSubmit" type="submit" class="btn btn-primary btn-sm">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@if (Model.HistoryList != null && Model.HistoryList.Count > 0)
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <h3 class="text-info font-weight-bold text-center">Patient History</h3>
+                <br />
+                <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                    <thead class="bg-primary-800">
+                        <tr>
+                            <th width="10%" class="text-center">Reg. No</th>
+                            <th width="10%">EmpCode</th>
+                            <th>Name</th>
+                            <th>AadharNo</th>
+                            <th>Nurshing Staff</th>
+                            <th>Treatment</th>
+                            <th width="10%">UserId</th>
+                            <th width="20%">TDate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.HistoryList)
+                        {
+                            <tr>
+                                <td class="text-center">@item.RequestNo</td>
+                                <td>@item.EmpCode</td>
+                                <td>@item.EmpName</td>
+                                <td>@item.AadharNo</td>
+                                <td>@item.NurshingStaff</td>
+                                <td>@item.Treatment</td>
+                                <td>@item.UserID</td>
+                                <td>@item.TDate</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+@if (Model.RequestNo == 0)
+{
+    <div class="row" id="fillHistory" style="display:none">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <h3 class="text-info font-weight-bold text-center">Patient History</h3>
+                <br />
+                <table id="dt-hs1" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                    <thead class="bg-primary-800">
+                        <tr>
+                            <th width="10%" class="text-center">Reg. No</th>
+                            <th width="10%">EmpCode</th>
+                            <th>Name</th>
+                            <th>AadharNo</th>
+                            <th>Nurshing Staff</th>
+                            <th>Treatment</th>
+                            <th width="10%">UserId</th>
+                            <th width="20%" class="text-center">TDate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+}
+
+@section ScriptsBlock {
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script>
+        var regexp = /^[2-9]{1}[0-9]{11}$/;
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!CheckValidValue()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+
+        $(document).ready(function () {
+            $('.select2').select2();
+            FillForm();
+        });
+
+        var controls = {
+            leftArrow: '<i class="fal fa-angle-left" style="font-size: 1.25rem"></i>',
+            rightArrow: '<i class="fal fa-angle-right" style="font-size: 1.25rem"></i>'
+        }
+
+        function ShowOthers() {
+            var injuryType = $("#InjuryType option:selected").val();
+            $('#div_inj_oth').hide();
+            if (injuryType == "Others") {
+                $('#div_inj_oth').show();
+            }
+            else {
+                $('#div_inj_oth').hide();
+            }
+        }
+
+        function CheckValidValue() {
+            debugger;
+            var injuryType = $("#InjuryType option:selected").val();
+            if (injuryType == "Others") {
+                if ($('#InjuryTypeOther').val() == '') {
+                    Swal.fire("Info!", "Enter Injury type Details", "error");
+                    return false;
+                }
+            }
+            var condition = document.getElementsByName("Condition");
+            var count = 0;
+            for (var i = 0; i < condition.length; i++) {
+                if (condition[i].checked) {
+                    count = 1;
+                }
+            }
+            if (count == 0) {
+                Swal.fire("Info!", "Select Patient Condition", "error");
+                return false;
+            }
+            var injury = document.getElementsByName("Injury");
+            var count = 0;
+            for (var i = 0; i < injury.length; i++) {
+                if (injury[i].checked) {
+                    count = 1;
+                }
+            }
+            if (count == 0) {
+                Swal.fire("Info!", "Select Injury", "error");
+                return false;
+            }
+            var rest = document.getElementsByName("RestGiven");
+            var count = 0;
+            for (var i = 0; i < rest.length; i++) {
+                if (rest[i].checked) {
+                    count = 1;
+                }
+            }
+            if (count == 0) {
+                Swal.fire("Info!", "Select Rest Given", "error");
+                return false;
+            }
+            var refer = document.getElementsByName("Refer");
+            var count = 0;
+            for (var i = 0; i < refer.length; i++) {
+                if (refer[i].checked) {
+                    count = 1;
+                }
+            }
+            if (count == 0) {
+                Swal.fire("Info!", "Select Refer", "error");
+                return false;
+            }
+
+            var empName = $('#EmpName').is('[readonly]');
+            var deptName = $('#DeptName').is('[readonly]');
+            //var aadhar = $('#AadharNo').is('[readonly]');
+
+            if (empName == false) {
+                if ($('#EmpName').val() == '') {
+                    Swal.fire("Info!", "Enter Emp Name", "error");
+                    return false;
+                }
+            }
+            if (deptName == false) {
+                if ($('#DeptName').val() == '') {
+                    Swal.fire("Info!", "Enter Department", "error");
+                    return false;
+                }
+            }
+
+            //if (aadhar == false) {
+            //    var x = document.getElementById("AadharNo").value;
+            //    if (regexp.aadhar(x)) {
+
+            //    }
+            //    else {
+            //        Swal.fire("Info!", "Enter Valid Aadhar Card No", "error");
+            //        return false;
+            //    }
+            //}
+
+            //if (aadhar == false) {
+            //    if ($('#AadharNo').val() == '') {
+            //        Swal.fire("Info!", "Aadhar Card No", "error");
+            //        return false;
+            //    }
+            //}
+
+            return true;
+        }
+
+
+        function GetEmpDetails() {
+            var requestUrl = 'EHS/GetEmpDetails';
+            $.post(requestUrl,
+                {
+                    strEmpCode: $("#EmpCode").val(),
+                },
+                function (model) {
+                    $("#EmpName").val(model.empName);
+                    $("#DeptName").val(model.deptName);
+                    $("#AadharNo").val(model.aadharNo);
+                    if ($('#EmpName').val() == '') {
+                        $("#DeptName").val('');
+                        $("#AadharNo").val('');
+                        $("#EmpName").prop("readonly", false);
+                        $("#DeptName").prop("readonly", false);
+                        $("#AadharNo").prop("readonly", false);
+                        
+                    }
+                    else {
+                        $("#EmpName").prop("readonly", true);
+                        $("#DeptName").prop("readonly", true);
+                        $("#AadharNo").prop("readonly", true);
+                    }
+                   
+                    FillHistory(model.historyList);
+                    if (model.historyList != "") {
+                        $('#fillHistory').show();
+                    }
+                    else {
+                        $('#fillHistory').hide();
+                    }
+                });
+        }
+
+        function FillHistory(data) {
+            var data1 = '';
+                    $("#dt-hs1 tbody").empty();
+            $.each(data, function (index, item) {
+                        data1 += '<tr>';
+                data1 += '<td  class="text-center">' + item.requestNo + '</td>';
+                        data1 += '<td>' + item.empCode + '</td>';
+                        data1 += '<td>' + item.empName + '</td>';
+                        data1 += '<td>' + item.aadharNo + '</td>';
+                        data1 += '<td>' + item.nurshingStaff + '</td>';
+                        data1 += '<td>' + item.treatment + '</td>';
+                        data1 += '<td>' + item.userID + '</td>';
+                        data1 += '<td>' + item.tDate + '</td>';
+                        data1 += '</tr >';
+                    });
+                    $("#dt-hs1 tbody").html(data1);
+        }
+
+        function FillForm() {
+            if ("@Mode" == "E") {
+                $("#btnSubmit").show();
+                $('#div_Remarks').show();
+            }
+            if ("@Mode" == "V") {
+                $(".view").hide();
+                $("#EmpCode").prop("disabled", true);
+                $("#EmpName").prop("disabled", true) & $("#EmpName").css("background-color", "#f3f3f3");
+                $("#DeptName").prop("disabled", true) & $("#DeptName").css("background-color", "#f3f3f3");
+                $("#AadharNo").prop("disabled", true) & $("#AadharNo").css("background-color", "#f3f3f3");
+                $(".rdbutton").prop("disabled", true);
+                $(".rdInjury").prop("disabled", true);
+                $(".rdRest").prop("disabled", true);
+                $(".rdRefer").prop("disabled", true);
+                $("#Date1").prop("disabled", true);
+                $("#Time1").prop("disabled", true);
+                $("#Time2").prop("disabled", true);
+                $("#NurshingStaff").prop("disabled", true);
+                $("#Quantity").prop("disabled", true);
+                $("#InjuryType").prop("disabled", true);
+                if ($("#InjuryType").val() == "Others") {
+                    $('#div_inj_oth').show();
+                    $("#InjuryTypeOther").prop("disabled", true);
+                }
+                $("#Treatment").prop("disabled", true);
+                $('#div_Remarks').show();
+                $("#Remarks").prop("disabled", true);
+                $("#btnSubmit").hide();
+            }
+        };
+    </script>
+}

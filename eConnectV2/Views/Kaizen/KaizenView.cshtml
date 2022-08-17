@@ -1,0 +1,256 @@
+﻿@model eConnectV2.ViewModels.KaizenViewModel
+@{
+    ViewData["Title"] = "Kaizen View";
+    ViewData["PageHeading"] = "Kaizen List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section HeadBlock {
+    <link href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css" rel="stylesheet" />
+}
+
+<div id="panel-1" class="panel p-2">
+    <div class="panel-container show">
+        <div class="row">
+            <div class="col-md-12 row">
+                <div class="col-md-2 align-self-center">
+                    <a class="btn btn-warning pt-1" onclick="window.location='@Url.Action("KaizenAdd","Kaizen")'" style="height:25px;" title="Add Kaizen">
+                        <i class="fas fa-plus mr-1"></i>Add
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold">From :</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input asp-for="Date1" autocomplete="off" onchange="FilterView()" class="form-control" type="text" placeholder="dd-mmm-yyyy" required data-date-format="dd-M-yyyy" />
+                                <div class="input-group-append">
+                                    <span class="input-group-text fs-xl">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold">To :</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input asp-for="Date2" autocomplete="off" onchange="FilterView()" class="form-control" type="text" placeholder="dd-mmm-yyyy" required data-date-format="dd-M-yyyy" />
+                                <div class="input-group-append">
+                                    <span class="input-group-text fs-xl">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold">Status</label>
+                        <div class="col-sm-9">
+                            <select asp-for="Status" onchange="FilterView()" asp-items="@(new SelectList(Model.StatusList, "Value", "Text"))" class="select2 custom-select form-control w-100">
+                                <option value="0">-- Select --</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel-content">
+                    <div class="table-responsive">
+                        <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                            <thead class="bg-primary-800">
+                                <tr>
+                                    <th class="notexport text-center" width="5%">Action</th>
+                                    <th class="text-center">Kaizen No</th>
+                                    <th>Status</th>
+                                    <th>Reg No</th>
+                                    <th>Kaizen Name</th>
+                                    <th>Kaizen Type</th>
+                                    <th>Emp Code</th>
+                                    <th>Emp Name</th>
+                                    <th>Department</th>
+                                    <th hidden>Circle No</th>
+                                    <th hidden>Plant</th>
+                                    <th>Impact</th>
+                                    <th hidden>Fin Year</th>
+                                    <th hidden>Year</th>
+                                    <th hidden>Month</th>
+                                    <th>Machine/Area</th>
+                                    <th hidden>HD Done</th>
+                                    <th hidden>Respective Pillar</th>
+                                    <th hidden>MP Worthy</th>
+                                    <th hidden>Cost Saving</th>
+                                    <th>TDate</th>
+                                    <th>User Id</th>
+                                    <th hidden>Approver Name</th>
+                                    <th hidden>Approval Date</th>
+</thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    @*<script src="~/js/datagrid/datatables/dths_excel.js"></script>*@
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/rowdelete.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2();
+            runDatePicker();
+            FilterView();
+        });
+
+        var controls = {
+            leftArrow: '<i class="fal fa-angle-left" style="font-size: 1.25rem"></i>',
+            rightArrow: '<i class="fal fa-angle-right" style="font-size: 1.25rem"></i>'
+        }
+        var runDatePicker = function () {
+            $('#Date1, #Date2').datepicker({
+                todayHighlight: true,
+                orientation: "bottom left",
+                templates: controls,
+                autoclose: true
+            });
+        }
+
+        function FilterView() {
+            var date1 = $("#Date1").val();
+            var date2 = $("#Date2").val();
+            var status = $("#Status").val();
+            var data1 = '';
+            $.ajax({
+                url: '/Kaizen/FilterKaizenView',
+                type: "POST",
+                data: { date1: date1, date2: date2, status: status },
+                success: function (data, status) {
+                    $("#dt-hs tbody").empty();
+                    $("#dt-hs").DataTable().destroy();
+                    $.each(data, function (index, item) {
+                        if (item.status == 2) {
+                            data1 += '<tr style="background-color:#98AFC7">';
+                        }
+                        else {
+                            data1 += '<tr>';
+                        }
+                        data1 += '<td class="text-center bg-primary-gradient">';
+                        if (item.userType == "REQUESTOR") {
+                            data1 += '<a title="View" href="Kaizen/KaizenAdd?Dno=' + item.param1 + '">';
+                            data1 += '<i class="fa fa-eye text-info mr-1" ></i ></a>';
+                            if (item.status == 1) {
+                                data1 += '<a title="Cancel" href="javascript:void(0);" onclick="KaizenCancel(' + item.docNo + ')"><i class="fa fa-ban text-danger"></i></a>';
+                            }
+                        }
+                        else {
+                            data1 += '<a title="View" href="Kaizen/KaizenApprAdd?Dno=' + item.param1 + '&Uid=' + item.param2 + '&Utp=' + item.param3 + '&RUrl=KaizenView">';
+                            data1 += '<i class="fa fa-eye text-info mr-1" ></i ></a>';
+                        }
+                        data1 += '</td>';
+                        data1 += '<td class="text-center">' + item.docNo + '</td>';
+                        data1 += '<td>' + item.statusDescr + '</td>';
+                        data1 += '<td>' + item.regNo + '</td>';
+                        data1 += '<td>' + item.kaizenName + '</td>';
+                        data1 += '<td>' + item.kaizenType + '</td>';
+                        data1 += '<td>' + item.empCode + '</td>';
+                        data1 += '<td>' + item.empName + '</td>';
+                        data1 += '<td>' + item.deptName + '</td>';
+                        data1 += '<td hidden>' + item.circleNo + '</td>';
+                        data1 += '<td hidden>' + item.plant + '</td>';
+                        data1 += '<td>' + item.impact + '</td>';
+                        data1 += '<td hidden>' + item.finYearCode + '</td>';
+                        data1 += '<td hidden>' + item.year + '</td>';
+                        data1 += '<td hidden>' + item.month + '</td>';
+                        data1 += '<td>' + item.macArea + '</td>';
+                        data1 += '<td hidden>' + item.hdDone + '</td>';
+                        data1 += '<td hidden>' + item.respPillar + '</td>';
+                        data1 += '<td hidden>' + item.mpWorthy + '</td>';
+                        data1 += '<td hidden>' + item.costSaving + '</td>';
+                        data1 += '<td>' + item.tDate + '</td>';
+                        data1 += '<td>' + item.userId + " - " + item.userName + '</td>';
+                        data1 += '<td hidden>' + item.apprId + " - " + item.apprName + '</td>';
+                        data1 += '<td hidden>' + item.date1 + '</td>';
+                        data1 += '</tr >';
+                    });
+                    $("#dt-hs tbody").html(data1);
+                    $('#dt-hs').dataTable({
+                        responsive: false,
+                        order: [[1, 'desc']],
+                        "columnDefs": [
+                            { "orderable": false, "targets": [0] },
+                        ],
+                        lengthChange: false,
+                        "pageLength": 20,
+                        dom:
+                            "<'row'<'col-sm-12 col-md-3 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-3 d-flex align-items-center justify-content-center'i><'col-sm-12 col-md-3 d-flex align-items-center justify-content-end'lB><'col-sm-12 col-md-3 d-flex align-items-center justify-content-end'p>>" +
+                            "<'row'<'col-sm-12'tr>>" +
+                            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                        //dom:
+                        //    //"<'row'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'lB>>" +
+                        //    //"<'row'<'col-sm-12'tr>>" +
+                        //    //"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                        buttons: [
+                            {
+                                extend: 'excelHtml5',
+                                text: 'Download',
+                                title: null,
+                                titleAttr: 'Download',
+                                className: 'btn-outline-dark btn-xs mr-1',
+                                exportOptions: {
+                                    columns: ':not(.notexport)'
+                                }
+                            },
+                        ]
+                    });
+                },
+                error: function () {
+                },
+            });
+        }
+
+        function KaizenCancel(docNo) {
+            Swal.fire({
+                title: "Are you sure to cancel this Kaizen ?",
+                text: "You won't be able to revert this!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, cancel Kaizen!"
+            }).then(function (result) {
+                if (result.value) {
+                    var requestUrl = '/Kaizen/KaizenCancel';
+                    $.ajax({
+                        url: requestUrl,
+                        type: "POST",
+                        data: { docNo: docNo },
+                        success: function (response) {
+                            if (response.flag == _errorStatus) {
+                                Swal.fire("Info!", response.msg, "error");
+                            } else {
+                                Swal.fire("Cancelled!", response.msg, "success").then(function () {
+                                    window.location.reload();
+                                })
+                            }
+                        },
+                        error: function () {
+                            Swal.fire("Oops...", "Something went wrong!", "error");
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}

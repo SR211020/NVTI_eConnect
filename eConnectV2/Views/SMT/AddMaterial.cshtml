@@ -1,0 +1,160 @@
+﻿@model eConnectV2.ViewModels.SMTViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "SMT -Store Add Material";
+    ViewData["PageHeading"] = "Store Add Material";
+    ViewBag.Module = "SMT";
+    ViewBag.Category1 = "Store Add Material";
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+                <h2>
+                    Add Material
+                </h2>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content">
+                    @using (Html.BeginForm("Addmaterial", "SMT", FormMethod.Post, new { id = "form", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+                    {
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Material Category</label>
+                                    <div class="col-sm-6">
+                                        <select class="select2 custom-select form-control w-100" asp-for="MaterialCategory" required asp-items="@(new SelectList(Model.MaterialCategoryList, "Value", "Text"))">
+                                            <option value="">Select</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Vendor</label>
+                                    <div class="col-sm-6">
+                                        <select class="select2 custom-select form-control w-100" asp-for="VendorName" required asp-items="@(new SelectList(Model.SMTVendorList, "Value", "Text"))">
+                                            <option value="">Select</option>
+                                        </select>
+                                        <input asp-for="VendorNameHdn" type="hidden" value="@Model.VendorNameHdn" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Part No.</label>
+                                    <div class="col-sm-6">
+                                        <input asp-for="PartNo" type="text" class="form-control" readonly required placeholder="Part number">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Manufacturing Date</label>
+                                    <div class="col-sm-6">
+                                        <div class="input-group">
+                                            <input asp-for="MfgDate" autocomplete="off" class="form-control" type="text" placeholder="dd-mmm-yyyy" required data-date-format="d-M-yyyy" />
+                                            <div class="input-group-append">
+                                                <span class="input-group-text fs-xl">
+                                                    <i class="fas fa-calendar-alt"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Expiry Date</label>
+                                    <div class="col-sm-6">
+                                        <div class="input-group">
+                                            <input asp-for="Expdate" autocomplete="off" class="form-control" type="text" placeholder="dd-mmm-yyyy" required data-date-format="d-M-yyyy" />
+                                            <div class="input-group-append">
+                                                <span class="input-group-text fs-xl">
+                                                    <i class="fas fa-calendar-alt"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Material Id</label>
+                                    <div class="col-sm-6">
+                                        <input asp-for="MaterialNo" autocomplete="off" type="text" class="form-control" required placeholder="Please scan MES Material Id">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group row">
+                                    <div class="offset-sm-2 col-sm-10 mt-3">
+                                        <button type="submit" name="submit" class="btn btn-primary btn-sm">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12"><hr></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                @if (TempData["QRCodeImage"] != null)
+                                {
+                                    <h4 class="text-info"><strong>QR Code: </strong><span class="text-muted font-weight-bold">@TempData["QRCode"]</span></h4>
+                                    <br />
+                                    <div id="qrcodeprint">
+                                        <table width="100%" height="100%">
+                                            <tr>
+                                                <td align="center" valign="middle">
+                                                    <div>
+                                                        <img src="@TempData["QRCodeImage"]" alt="QRCode" />
+                                                        <br />
+                                                        <span class="font-weight-bold">@TempData["QRCode"]</span>
+                                                        <br />
+                                                        <strong><span>Week No. @TempData["WeekNo"]</span></strong>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <br />
+                                    <br />
+                                    <button type="button" class="btn btn-sm btn-success waves-effect waves-themed" onclick='PrintQrCodeDiv();'>
+                                        <span class="fas fa-print mr-1"></span>
+                                        Print
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section ScriptsBlock {
+    <script src="~/js/select.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/smt_materialvendor.js"></script>
+    <script src="~/js/smt_printqrcodediv.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(function () {
+                runDatePicker();
+            });
+            var controls = {
+                leftArrow: '<i class="fas fa-angle-left" style="font-size: 1.25rem"></i>',
+                rightArrow: '<i class="fas fa-angle-right" style="font-size: 1.25rem"></i>'
+            }
+            var runDatePicker = function () {
+                $('#MfgDate,#Expdate').datepicker({
+                    todayHighlight: true,
+                    orientation: "bottom left",
+                    templates: controls,
+                    autoclose: true
+                });
+            }
+        });
+    </script>
+}

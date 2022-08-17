@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" class="root-text-sm">
+<head>
+    <partial name="_Head" />
+    @RenderSection("HeadBlock", required: false)
+</head>
+<body class="mod-bg-1 mod-nav-link mod-nav-link">
+    <partial name="_ScriptsLoadingSaving" />
+    <div class="page-wrapper">
+        <div class="page-inner">
+            <partial name="_LeftPanel" />
+            <div class="page-content-wrapper">
+                <partial name="_PageHeader" />
+                <main id="js-page-content" role="main" class="page-content">
+                    @if (ViewBag.PreemptiveClass?.Length > 0)
+                    {
+                    }
+                    else
+                    {
+                        @RenderSection("Subheaderblock", required: false)
+                    }
+                    @RenderBody()
+                </main>
+                <div class="page-content-overlay" data-action="toggle" data-class="mobile-nav-on"></div>
+                <footer class="page-footer" role="contentinfo">
+                    <div class="d-flex align-items-center flex-1 text-muted">
+                        <span class="hidden-md-down fw-700">Copyright <span>&#169;</span> 2021 <a href="http://www.nvtpower.com/" class="text-primary fw-500" title="nvtpower.com" target="_blank">Navitasys India Private Limited</a> All Rights Reserved.</span>
+                    </div>
+                </footer>
+                <partial name="_ColorProfileReference" />
+            </div>
+        </div>
+    </div>
+    <partial name="_ScriptsBasePlugins" />
+    <script type="text/javascript">
+        var dtorderby = "asc"; //default
+        var dtorderbycol = 0; //defalut
+        var dtPageSize = 20; //default
+        var _successStatus = '1';
+        var _errorStatus = '2';
+        var _result = '@TempData["Result"]';
+        var _msg = '@TempData["Message"]';
+        $(function () {
+            if (_result == _successStatus) {
+                toastr["success"](_msg, "Success")
+            }
+            if (_result == _errorStatus) {
+                Swal.fire("Info!", _msg, "error");
+            }
+        });
+        //set left panel link automatically
+        $(function () {
+            var cUrl = this.location.pathname;
+            var fUrl = this.location.href;
+            $('#js-nav-menu li').each(function (i, item) {
+                var menuUrl = item.children[0].pathname;
+                if (menuUrl.toLowerCase() == cUrl.toLowerCase()) {
+                    $(this).addClass('active');
+                }
+                if (menuUrl == '/') {
+                    for (var i = 0; i < item.children.length; i++) {
+                        if (i == 1) {
+                            for (var j = 0; j < item.children[i].getElementsByTagName('a').length; j++) {
+                                var submenuUrl = item.children[i].getElementsByTagName('a')[j].href;
+                                if (fUrl.toLowerCase() == submenuUrl.toLowerCase()) {
+                                    const myArr = submenuUrl.split("/");
+                                    if (('/' + myArr[3] + '/' + myArr[4]).toLowerCase() == cUrl.toLowerCase()) {
+                                        $(this).addClass('active');
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        })
+
+        $(document).ready(function () {
+            ProfilePic();
+        });
+
+        function ProfilePic() {
+            $.ajax({
+                url: '/Admin/GetProfileImage',
+                type: "POST",
+                success: function (data) {
+                    $('#profileImage').empty();
+                    $('#profileFavicon').empty();
+                    var data1 = '';
+                    var data2 = '';
+                    $.each(data, function (index, item) {
+                        if (item.imageName == '') {
+                            data1 += '<img src="/img/avatar-m.png" class="profile-image rounded-circle">';
+                            data2 += '<img src="/img/avatar-m.png" class="profile-image rounded-circle">';
+                        }
+                        else
+                        {
+                            data1 += '<img src="' + item.imageName + '" class="profile-image rounded-circle">';
+                            data2 += '<img src="' + item.imageName + '" class="profile-image rounded-circle" style="width: 35px; height:35px">';
+                        }
+                    });
+                    $("#profileImage").html(data1);
+                    $("#profileFavicon").html(data2);
+                },
+                error: function () {
+                }
+            });
+        }
+    </script>
+    @RenderSection("ScriptsBlock", required: false)
+</body>
+</html>

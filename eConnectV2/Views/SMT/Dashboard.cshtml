@@ -1,0 +1,219 @@
+﻿@model eConnectV2.ViewModels.SMTViewModel
+@{
+    ViewData["Title"] = "SMT Dashboard";
+    ViewData["PageHeading"] = "SMT";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "SMT";
+    ViewBag.Category1 = "Dashboard";
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/statistics/chartjs/chartjs.css">
+}
+
+<div class="row">
+    <div class="col-sm-3">
+        <div class="p-3 bg-primary-300 rounded overflow-hidden position-relative text-white mb-g">
+            <div class="">
+                <h3 class="display-4 d-block l-h-n m-0 fw-500">
+                    @Model.TotalStoreMaterial
+                    <small class="m-0 l-h-n">Total Store Material</small>
+                </h3>
+            </div>
+            <i class="fas fa-boxes-alt position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="p-3 bg-warning-400 rounded overflow-hidden position-relative text-white mb-g">
+            <div class="">
+                <h3 class="display-4 d-block l-h-n m-0 fw-500">
+                    @Model.TotalDispatchMaterial
+                    <small class="m-0 l-h-n">Dispatch Material</small>
+                </h3>
+            </div>
+            <i class="fas fa-inbox-out position-absolute pos-right pos-bottom opacity-15  mb-n1 mr-n4" style="font-size: 6rem;"></i>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="p-3 bg-success-200 rounded overflow-hidden position-relative text-white mb-g">
+            <div class="">
+                <h3 class="display-4 d-block l-h-n m-0 fw-500">
+                    @Model.TotalSmtReceived
+                    <small class="m-0 l-h-n">SMT Received</small>
+                </h3>
+            </div>
+            <i class="fas fa-inbox-in position-absolute pos-right pos-bottom opacity-15 mb-n5 mr-n6" style="font-size: 8rem;"></i>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="p-3 bg-info-200 rounded overflow-hidden position-relative text-white mb-g">
+            <div class="">
+                <h3 class="display-4 d-block l-h-n m-0 fw-500">
+                    @Model.TotalSmtConsumed
+                    <small class="m-0 l-h-n">SMT Consumption</small>
+                </h3>
+            </div>
+            <i class="fas fa-conveyor-belt position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n4" style="font-size: 6rem;"></i>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-12">
+                <div id="panel-8" class="panel">
+                    <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+                        <h2>
+                            SMT Material Consumption<span class="fw-300"><i>Monthly Wise</i></span>
+                        </h2>
+                        <span class="mr-2 font-weight-bold">Last</span>
+                        <a href="javascript:void(0)" onclick="ForYear('-11')" title="1 Year" class="mr-2 btn btn-xs btn-outline-light waves-effect waves-themed">1 Year</a>
+                        <a href="javascript:void(0)" onclick="ForYear('-23')" title="2 Year" class="mr-2 btn btn-xs btn-outline-light waves-effect waves-themed">2 Year</a>
+                        <a href="javascript:void(0)" onclick="ForYear('-35')" title="3 Year" class="mr-2 btn btn-xs btn-outline-light waves-effect waves-themed">3 Year</a>
+                        <a href="javascript:void(0)" onclick="ForYear('-47')" title="4 Year" class="mr-2 btn btn-xs btn-outline-light waves-effect waves-themed">4 Year</a>
+                        <a href="javascript:void(0)" onclick="ForYear('-59')" title="5 Year" class="mr-2 btn btn-xs btn-outline-light waves-effect waves-themed">5 Year</a>
+                    </div>
+                    <div class="panel-container show">
+                        <div class="panel-content">
+                            <div id="barChartdiv">
+                                <canvas style="width:100%; height:300px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/statistics/chartjs/chartjs.bundle.js"></script>
+    <script>
+        let subtractMonth = -11;
+        $(document).ready(function () {
+            ForYear(subtractMonth);
+        });
+        function ForYear(sMonth) {
+            ClearGraph();
+            subtractMonth = sMonth;
+            GetDashboardData();
+        }
+        function ClearGraph() {
+            document.getElementById("barChartdiv").innerHTML = '&nbsp;';
+            document.getElementById("barChartdiv").innerHTML = '<canvas style="width:100%; height:300px;"></canvas>';
+        }
+        function GetDashboardData() {
+            var requestUrl = 'SMT/DashboardData';
+            $.ajax({
+                url: requestUrl,
+                data: { subtractMonth: subtractMonth},
+                type: "POST",
+                success: function (response) {
+                    barChart(response);
+                },
+                error: function () {
+
+                }
+            });
+        }
+        var barChart = function (data) {
+            var monthList = [];
+            var recList = [];
+            var conList = [];
+            if (data != null) {
+                for (i = 0; i < data.length; i++) {
+                    monthList.push(data[i].mon);
+                    recList.push(data[i].rec);
+                    conList.push(data[i].con);
+                }
+            }
+            var barChartData = {
+                labels: monthList,
+                datasets: [{
+                    label: "SMT Received",
+                    backgroundColor: color.success._300,
+                    borderColor: color.success._500,
+                    borderWidth: 1,
+                    data: recList
+                }, {
+                    label: "SMT Consumption",
+                    backgroundColor: color.primary._300,
+                    borderColor: color.primary._500,
+                    borderWidth: 1,
+                    data: conList
+                }]
+            };
+            var config = {
+                type: 'bar',
+                data: barChartData,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: false,
+                        text: 'Bar Chart'
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 11
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 11
+                            }
+                        }]
+                    },
+                    "hover": {
+                        "animationDuration": 0
+                    },
+                    "animation": {
+                        "duration": 1,
+                        "onComplete": function () {
+                            var chartInstance = this.chart, ctx = chartInstance.ctx;
+                            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'bottom';
+                            this.data.datasets.forEach(function (dataset, i) {
+                                var meta = chartInstance.controller.getDatasetMeta(i);
+                                meta.data.forEach(function (bar, index) {
+                                    var data = dataset.data[index];
+                                    if (data == '0') {
+
+                                    }
+                                    else {
+                                        ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                                    }
+                                });
+                            });
+                        }
+                    }
+                }
+            }
+            new Chart($("#barChartdiv > canvas").get(0).getContext("2d"), config);
+        }
+    </script>
+}

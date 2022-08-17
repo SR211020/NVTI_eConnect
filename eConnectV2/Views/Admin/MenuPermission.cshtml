@@ -1,0 +1,178 @@
+﻿@model eConnectV2.ViewModels.AdminViewModel
+@{
+    ViewData["Title"] = "NVTI-Menu Permission";
+    ViewData["PageHeading"] = "Menu Permission";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "Admin";
+    ViewBag.Category1 = "Menu Permission";
+}
+
+<div class="panel">
+    <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+        <table width="100%">
+            <tr>
+                <td>
+                    <h2>
+                        <span class="fw-300 pr-1 pl-3">Manage </span> Menu Permission
+                    </h2>
+                </td>
+                <td align="right">
+                    <a href="@Url.Action("MenuPermission","Admin")" class="text-white mr-3">Refresh</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content">
+            <div class="form-group row">
+                <label class="col-md-1 col-form-label font-weight-bold" for="EmpAdId">Employee : </label>
+                <div class="col-md-4">
+                    <select class="select2 custom-select form-control" asp-for="EmpAdId" required asp-items="@(new SelectList(Model.DDLEmpList,"Value", "Text"))">
+                        <option value="">Select</option>
+                        <option value="*">All Employee</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button id="btnupdate" class="btn btn-sm btn-primary" type="button">Update</button>
+                </div>
+            </div>
+            <div class="form-group row pt-4">
+                <label class="col-md-1 col-form-label font-weight-bold" for="Role"></label>
+                <div class="col-md-4">
+                    <button type="button" class="btn btn-xs btn-outline-primary waves-effect waves-themed">Collapse</button>
+                    <button type="button" class="btn btn-xs btn-outline-primary waves-effect waves-themed">Expand</button>
+                    <button type="button" class="btn btn-xs btn-outline-primary waves-effect waves-themed">Check</button>
+                    <button type="button" class="btn btn-xs btn-outline-primary waves-effect waves-themed">Uncheck</button>
+                </div>
+            </div>
+            <div class="form-group row pt-2">
+                <label class="col-md-1 col-form-label font-weight-bold" for="Role"></label>
+                <div class="col-md-6 pl-0">
+                    <ul class="tree">
+                        @foreach (var item in Model.MenuList)
+                        {
+                            <li class="has">
+                                <input type="checkbox" class="chkbx" name="menus" data-container="@item.MenuId" value="@item.MenuId">
+                                <label class="text-primary font-weight-bold"><i class="@item.MenuIcon ml-2"></i> @item.MenuName</label>
+                                <ul id="@item.MenuName">
+                                    @foreach (var submenu in item.SubMenuList)
+                                    {
+                                        <li class="text-secondary">
+                                            <input type="checkbox" class="chkbx" name="@item.MenuId" data-id="@submenu.SubMenuId" value="@submenu.SubMenuId">
+                                            <label>@submenu.SubMenuName </label>
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/select.js"></script>
+    <script>
+        $(document).on('click', '.tree label', function (e) {
+            $(this).next('ul').fadeToggle();
+            e.stopPropagation();
+        });
+        $(document).on('change', '.tree input[type=checkbox]', function (e) {
+            $(this).siblings('ul').find("input[type='checkbox']").prop('checked', this.checked);
+            if (this.checked) {
+                $(this).parentsUntil('.tree').children("input[type='checkbox']").prop('checked', this.checked);
+            }
+            e.stopPropagation();
+        });
+        $(document).on('click', 'button', function (e) {
+            switch ($(this).text()) {
+                case 'Collapse':
+                    $('.tree ul').fadeOut();
+                    break;
+                case 'Expand':
+                    $('.tree ul').fadeIn();
+                    break;
+                case 'Check':
+                    $(".tree input[type='checkbox']").prop('checked', true);
+                    break;
+                case 'Uncheck':
+                    $(".tree input[type='checkbox']").prop('checked', false);
+                    break;
+            }
+        });
+    </script>
+    <script>
+        $("#EmpAdId").on('change', function () {
+            var empAdId = $(this).val();
+            $.ajax({
+                url: '/Admin/GetMenuMapping',
+                type: "POST",
+                data: { empAdId: empAdId },
+                success: function (response) {
+                    UncheckAll();
+                    for (i = 0; i < response.menuList.length; i++) {
+                        $("input[data-container=" + response.menuList[i].menuId + "]").prop('checked', true);
+                        $("input[data-id=" + response.menuList[i].subMenuId + "]").prop('checked', true);
+                    }
+                }
+            });
+        });
+        $("#btnupdate").click(function () {
+            var empadid = $("#EmpAdId").val();
+            if (empadid == '') {
+                Swal.fire("Please select an option");
+            } else {
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes, Update it!"
+                }).then(function (result) {
+                    if (result.value) {
+                        var menu = [];
+                        var AllMenus = [];
+                        var Submenus = [];
+                        $("input[name='menus']").each(function () {
+                            if (this.checked) {
+                                menu.push(this.value);
+                            }
+                        });
+                        for (i = 0; i < menu.length; i++) {
+                            $("input[name=" + menu[i] + "]").each(function () {
+                                if (this.checked) {
+                                    AllMenus.push(menu[i]);
+                                    Submenus.push(this.value);
+                                }
+                            });
+                        }
+                        $.ajax({
+                            url: '/Admin/UpdateMenuMapping',
+                            type: 'POST',
+                            data: { Submenu: Submenus, Allmenu: AllMenus, MenuIDs: menu, EmpAdId: empadid },
+                            success: function (response) {
+                                if (response == 'Success') {
+                                    Swal.fire("Updated!", "Update Successfully", "success").then(function () {
+                                        UncheckAll();
+                                        $("#EmpAdId").val('').change();
+                                    })
+                                }
+                            },
+                            error: function () {
+                                Swal.fire("Oops...", "Something went wrong!", "error");
+                            }
+                        });
+                    }
+                });
+            }
+            return false;
+        });
+        function UncheckAll() {
+            $("input[type='checkbox']").each(function () {
+                $(this).prop('checked', false);
+            });
+        }
+    </script>
+}

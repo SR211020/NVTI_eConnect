@@ -1,0 +1,536 @@
+﻿@model eConnectV2.ViewModels.ITViewModel
+@{
+    ViewData["Title"] = "Help Desk Report";
+    ViewData["PageHeading"] = "Help Desk";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/statistics/chartjs/chartjs.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/statistics/c3/c3.css">
+}
+
+<div class="panel p-2">
+    <div class="panel-content-show">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+                <div class="form-group row">
+                    <div class="col-sm-12">
+                        <div class="form-check form-check-inline row">
+                            <input id="catg1" asp-for="Activity" class="form-check-input rdbutton" type="radio" value="EXCEL" onchange="ShowData(this)" checked>
+                            <label for="catg1" class="form-check-label text-success font-weight-bold mr-4" style="font-size: 12px">Helpdesk Report Tabular</label>
+                            <input id="catg2" asp-for="Activity" class="form-check-input rdbutton" type="radio" value="GRAPH" onchange="ShowData(this)">
+                            <label for="catg2" class="form-check-label text-secondary font-weight-bold mr-4" style="font-size: 12px">Helpdesk Report Graphical</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="div_ExcelRpt" class="panel p-2">
+    <div class="panel-content-show">
+        <div class="row">
+            <div class="col-md-12 row">
+                <div class="col-md-2">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label font-weight-bold">From</label>
+                        <div class="col-sm-8">
+                            <input asp-for="Date1" onchange="FillData();" autocomplete="off" class="form-control datepickertext" type="text" required data-date-format="dd-M-yyyy" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label font-weight-bold">To</label>
+                        <div class="col-sm-8">
+                            <input asp-for="Date2" onchange="FillData();" autocomplete="off" class="form-control datepickertext" type="text" required data-date-format="dd-M-yyyy" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label font-weight-bold">Status</label>
+                        <div class="col-sm-10">
+                            <select asp-for="Status" onchange="FillData();" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.StatusList, "Value", "Text"))" required>
+                                <option value="20">-- Select --</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label font-weight-bold">Request Type</label>
+                        <div class="col-sm-8">
+                            <select asp-for="Type" onchange="FillData();" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.TypeList, "Value", "Text"))" required>
+                                <option value="0">-- Select --</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                        <thead class="bg-primary-800">
+                            <tr>
+                                <th class="notexport" style="text-align:center">Action</th>
+                                <th>Req No</th>
+                                <th>Status</th>
+                                <th>Pending With</th>
+                                <th>Req Date</th>
+                                <th hidden>Plant</th>
+                                <th>Requestor</th>
+                                <th>Department</th>
+                                <th hidden>Contact No</th>
+                                <th hidden>Email Id</th>
+                                <th hidden>Priority</th>
+                                <th>Req Type</th>
+                                <th>Prob Catg</th>
+                                <th>Sub Catg</th>
+                                <th>Subject</th>
+                                <th hidden>Problem Description</th>
+                                <th hidden>Solution</th>
+                                <th hidden>Start Date</th>
+                                <th hidden>End Date</th>
+                                <th hidden>Total Time<span style="font-size:smaller; font-weight:100">(in min)</span></th>
+                                <th hidden>Dept HOD</th>
+                                <th hidden>IT HOD</th>
+                                <th hidden>IT Engineer</th>
+                                <th hidden>IT Engineer Area</th>
+                                <th hidden>Created By</th>
+</thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="div_GraphRpt" class="panel p-2" style="display:none">
+    <div class="row">
+        <div class="col-md-6">
+            <div id="panel-1-1" class="panel">
+                <div class="panel-hdr bg-gray-100">
+                    <div class="col-md-4">
+                        <h2 class="pl-3">
+                            Closed Request
+                        </h2>
+                    </div>
+                    <div class="col-md-4">
+                        <input asp-for="Date1" onchange="GetClosedRequestData()" class="form-control datepickertext" type="text" placeholder="dd-mmm-yyyy" required data-date-format="dd-M-yyyy" autocomplete="off" />
+                    </div>
+                    <div class="col-md-4">
+                        <input asp-for="Date2" onchange="GetClosedRequestData()" class="form-control datepickertext" type="text" placeholder="dd-mmm-yyyy" required data-date-format="dd-M-yyyy" autocomplete="off" />
+                    </div>
+                </div>
+                <div class="panel-container show">
+                    <div class="panel-content bg-gray p-2">
+                        <div id="ClosedRequestChart">
+                            <canvas style="width:100%; height:300px;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div id="panel-1-1" class="panel">
+                <div class="panel-hdr bg-gray-100">
+                    <div class="col-md-4">
+                        <h2 class="pl-3">
+                            Pending Request
+                        </h2>
+                    </div>
+                    <div class="col-md-4">
+                        <input asp-for="Date3" onchange="GetPendingRequestData()" class="form-control datepickertext" type="text" placeholder="dd-mmm-yyyy" required data-date-format="dd-M-yyyy" autocomplete="off" />
+                    </div>
+                    <div class="col-md-4">
+                        <input asp-for="Date4" onchange="GetPendingRequestData()" class="form-control datepickertext" type="text" placeholder="dd-mmm-yyyy" required data-date-format="dd-M-yyyy" autocomplete="off" />
+                    </div>
+                </div>
+                <div class="panel-container show">
+                    <div class="panel-content bg-gray p-2">
+                        <div id="PendingRequestChart">
+                            <canvas style="width:100%; height:300px;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-hdr bg-gray-100">
+                    <div class="col-md-8">
+                        <h2 class="pl-3">
+                            IT Engineers
+                        </h2>
+                    </div>
+                    <div class="col-md-2">
+                        <input asp-for="Date5" onchange="GetITEngineerData()" class="form-control datepickertext" type="text" placeholder="dd-mmm-yyyy" required data-date-format="dd-M-yyyy" autocomplete="off" />
+                    </div>
+                    <div class="col-md-2">
+                        <input asp-for="Date6" onchange="GetITEngineerData()" class="form-control datepickertext" type="text" placeholder="dd-mmm-yyyy" required data-date-format="dd-M-yyyy" autocomplete="off" />
+                    </div>
+                </div>
+                <div class="panel-container show">
+                    <div class="panel-content bg-gray p-2">
+                        <div id="ITEngineerChart">
+                            <canvas style="width:100%; height:300px;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    @*<script src="~/js/datagrid/datatables/dths_excel.js"></script>*@
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/rowdelete.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/js/statistics/chartjs/chartjs.bundle.js"></script>
+    <script src="~/js/statistics/d3/d3.js"></script>
+    <script src="~/js/statistics/c3/c3.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2();
+            runDatePicker();
+            FillData();
+        });
+
+        var controls = {
+            leftArrow: '<i class="fal fa-angle-left" style="font-size: 1.25rem"></i>',
+            rightArrow: '<i class="fal fa-angle-right" style="font-size: 1.25rem"></i>'
+        }
+        var runDatePicker = function () {
+            $('#Date1,#Date2,#Date3,#Date4,#Date5,#Date6').datepicker({
+                todayHighlight: true,
+                orientation: "bottom left",
+                templates: controls,
+                autoclose: true
+            });
+        }
+
+        var colors = [color.success._500, color.danger._500, color.info._500, color.primary._500, color.warning._500];
+        var colors1 = [color.primary._500, color.warning._500, color.success._500, color.danger._500, color.info._500];
+
+        function ShowData(radio) {
+            if (radio.value == "EXCEL") {
+                $('#div_ExcelRpt').show();
+                $('#div_GraphRpt').hide();
+                FillData();
+            }
+            else {
+                $('#div_ExcelRpt').hide();
+                $('#div_GraphRpt').show();
+                GetClosedRequestData();
+                GetPendingRequestData();
+                GetITEngineerData();
+            }
+        }
+
+        function FillData() {
+            var fromDate = $('#Date1').val();
+            var toDate = $('#Date2').val();
+            var status = $('#Status').val();
+            var reqType = $('#Type').val();
+            var data1 = '';
+            $.ajax({
+                url: '/IT/HelpDeskExcelReport',
+                type: "POST",
+                data: { fromDate: fromDate, toDate: toDate, status: status, reqType: reqType },
+                success: function (data, status) {
+                    $("#dt-hs tbody").empty();
+                    $("#dt-hs").DataTable().destroy();
+                    $.each(data, function (index, item) {
+                        data1 += '<tr>';
+                        data1 += '<td class="text-center bg-primary-gradient" align="center">';
+                        data1 += '<a title="View" href="IT/HDApprAdd?Dno=' + item.param1 + '&RUrl=HDReport1">';
+                        data1 += '<i class="fa fa-eye text-info mr-1" ></i ></a>';
+                        data1 += '</td>';
+                        data1 += '<td>' + item.requestNo + '</td>';
+                        data1 += '<td>' + item.statusDescr + '</td>';
+                        data1 += '<td>' + item.apprName + '</td>';
+                        data1 += '<td>' + item.tDate + '</td>';
+                        data1 += '<td hidden>' + item.plant + '</td>';
+                        data1 += '<td>' + item.empCode + ' - ' + item.empName + '</td>';
+                        data1 += '<td>' + item.deptName + '</td>';
+                        data1 += '<td hidden>' + item.contactNo + '</td>';
+                        data1 += '<td hidden>' + item.email + '</td>';
+                        data1 += '<td hidden>' + item.priority + '</td>';
+                        data1 += '<td>' + item.type + '</td>';
+                        data1 += '<td>' + item.probCatg + '</td>';
+                        data1 += '<td>' + item.subCatg + '</td>';
+                        data1 += '<td>' + item.subject + '</td>';
+                        data1 += '<td hidden>' + item.descr1 + '</td>';
+                        data1 += '<td hidden>' + item.solution + '</td>';
+                        data1 += '<td hidden>' + item.date1 + '</td>';
+                        data1 += '<td hidden>' + item.date2 + '</td>';
+                        data1 += '<td hidden>' + item.totalTime + '</td>';
+                        data1 += '<td hidden>' + item.deptHOD + '</td>';
+                        data1 += '<td hidden>' + item.ithod + '</td>';
+                        data1 += '<td hidden>' + item.itEngineer + '</td>';
+                        data1 += '<td hidden>' + item.area + '</td>';
+                        data1 += '<td hidden>' + item.userID + '</td>';
+                        data1 += '</tr >';
+                    });
+                    $("#dt-hs tbody").html(data1);
+                    $('#dt-hs').dataTable({
+                        responsive: false,
+                        order: [[1, 'desc']],
+                        "columnDefs": [
+                            { "orderable": false, "targets": [0] },
+                        ],
+                        lengthChange: false,
+                        "pageLength": 20,
+                        dom:
+                            "<'row'<'col-sm-12 col-md-3 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-3 d-flex align-items-center justify-content-center'i><'col-sm-12 col-md-3 d-flex align-items-center justify-content-end'lB><'col-sm-12 col-md-3 d-flex align-items-center justify-content-end'p>>" +
+                            "<'row'<'col-sm-12'tr>>" +
+                            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                        //dom:
+                        //    //"<'row'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'lB>>" +
+                        //    //"<'row'<'col-sm-12'tr>>" +
+                        //    //"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                        buttons: [
+                            {
+                                extend: 'excelHtml5',
+                                text: 'Download',
+                                title: null,
+                                titleAttr: 'Download',
+                                className: 'btn-outline-dark btn-xs mr-1',
+                                exportOptions: {
+                                    columns: ':not(.notexport)'
+                                }
+                            },
+                        ]
+                    });
+                },
+                error: function () {
+                    Swal.fire("Info!", "Something went wrong", "error");
+                },
+            });
+        };
+
+        function GetClosedRequestData() {
+            var requestUrl = 'IT/HelpdeskGraphClosedRequests';
+            var fromDate = $('#Date1').val();
+            var toDate = $('#Date2').val();
+            $.ajax({
+                url: requestUrl,
+                data: { fromDate: fromDate, toDate: toDate },
+                type: "POST",
+                success: function (data) {
+                    var applicationClo = 0, applicationClo1 = 0;
+                    var networkClo = 0, networkClo1 = 0;
+                    var infraClo = 0, infraClo1 = 0;
+                    var operationClo = 0, operationClo1 = 0;
+
+                    for (i = 0; i < data.length; i++) {
+                        if (data[i].groupName.toLowerCase() == 'application') { applicationClo1 = applicationClo = data[i].closed; }
+                        if (data[i].groupName.toLowerCase() == 'network') { networkClo1 = networkClo = data[i].closed; }
+                        if (data[i].groupName.toLowerCase() == 'infra') { infraClo1 = infraClo = data[i].closed; }
+                        if (data[i].groupName.toLowerCase() == 'hardware') { operationClo1 = operationClo = data[i].closed; }
+                    }
+                    totalClo = parseInt(applicationClo) + parseInt(networkClo) + parseInt(infraClo) + parseInt(operationClo);
+                    totalClo = parseInt(totalClo);
+
+                    var donutChart = c3.generate({
+                        bindto: "#ClosedRequestChart",
+                        data: {
+                            columns: [
+                                ["Operations : " + operationClo1, operationClo],
+                                ['Application : ' + applicationClo1, applicationClo],
+                                ['Network : ' + networkClo1, networkClo],
+                                ["Infra : " + infraClo1, infraClo]
+                            ],
+                            type: 'donut'
+                        },
+                        donut: {
+                            title: "Total : " + totalClo
+                        },
+                        color: {
+                            pattern: colors1
+                        }
+                    });
+                },
+                error: function () {
+
+                }
+            });
+        }
+
+        function GetPendingRequestData() {
+            var requestUrl = 'IT/HelpdeskGraphPendingRequests';
+            var fromDate = $('#Date3').val();
+            var toDate = $('#Date4').val();
+            $.ajax({
+                url: requestUrl,
+                data: { fromDate: fromDate, toDate: toDate },
+                type: "POST",
+                success: function (data) {
+                    var applicationPen = 0, applicationPen1 = 0;
+                    var networkPen = 0, networkPen1 = 0;
+                    var infraPen = 0, infraPen1 = 0;
+                    var operationPen = 0, operationPen1 = 0;
+
+                    for (i = 0; i < data.length; i++) {
+                        if (data[i].groupName.toLowerCase() == 'application') { applicationPen1 = applicationPen = data[i].pending; }
+                        if (data[i].groupName.toLowerCase() == 'network') { networkPen1 = networkPen = data[i].pending; }
+                        if (data[i].groupName.toLowerCase() == 'infra') { infraPen1 = infraPen = data[i].pending; }
+                        if (data[i].groupName.toLowerCase() == 'hardware') { operationPen1 = operationPen = data[i].pending; }
+                    }
+                    totalPen = parseInt(applicationPen) + parseInt(networkPen) + parseInt(infraPen) + parseInt(operationPen);
+                    totalPen = parseInt(totalPen);
+
+                    var donutChart = c3.generate({
+                        bindto: "#PendingRequestChart",
+                        data: {
+                            columns: [
+                                ["Operations : " + operationPen1, operationPen],
+                                ['Application : ' + applicationPen1, applicationPen],
+                                ['Network : ' + networkPen1, networkPen],
+                                ["Infra : " + infraPen1, infraPen]
+                            ],
+                            type: 'donut'
+                        },
+                        donut: {
+                            title: "Total : " + totalPen
+                        },
+                        color: {
+                            pattern: colors
+                        }
+                    });
+                },
+                error: function () {
+
+                }
+            });
+        }
+
+        function GetITEngineerData() {
+            var fromDate = $('#Date5').val();
+            var toDate = $('#Date6').val();
+            var requestUrl = 'IT/HelpdeskGraphITEngineers';
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                data: { fromDate: fromDate, toDate: toDate },
+                success: function (ITEngineerData) {
+                    ITEngineer(ITEngineerData);
+                },
+                error: function () {
+
+                }
+            });
+        }
+
+        var ITEngineer = function (data) {
+            var y_list = [];
+            var x1_list = [];
+            var x2_list = [];
+            var date_list = [];
+            if (data != null) {
+                for (i = 0; i < data.length; i++) {
+                    x1_list.push(data[i].closed);
+                    x2_list.push(data[i].pending);
+                    y_list.push(data[i].total);
+                    date_list.push(data[i].itEngineer);
+                }
+            }
+            var barlineCombineData = {
+                labels: date_list,
+                datasets: [
+                    {
+                        type: 'bar',
+                        label: 'Pending',
+                        borderColor: color.danger._300,
+                        backgroundColor: color.danger._900,
+                        pointBorderColor: color.danger._500,
+                        pointBorderWidth: 1,
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 5,
+                        fill: false,
+                        data: x2_list
+                    },
+                    {
+                        type: 'bar',
+                        label: 'Closed',
+                        borderColor: color.success._300,
+                        backgroundColor: color.success._300,
+                        pointBorderColor: color.success._300,
+                        pointBorderWidth: 1,
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 5,
+                        fill: false,
+                        data: x1_list
+                    }]
+            };
+            var config = {
+                type: 'bar',
+                data: barlineCombineData,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: ''
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 11
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 11
+                            }
+                        }]
+                    }
+                }
+            }
+            new Chart($("#ITEngineerChart > canvas").get(0).getContext("2d"), config);
+        }
+
+    </script>
+}

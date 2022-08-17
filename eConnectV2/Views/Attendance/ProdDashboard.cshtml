@@ -1,0 +1,72 @@
+﻿@model eConnectV2.ViewModels.AttendanceViewModel
+@{
+    ViewData["Title"] = "Production Dashboard";
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewData["URL"] = Url.Action("Dashboard", "Home");
+    ViewData["HeaderTitle"] = "Production Dashboard";
+}
+
+@section HeadBlock {
+    <meta http-equiv="refresh" content="1800"> @*1800 Seconds*@
+    <style>
+        h2 {
+            text-align: center;
+            color: #0000FF;
+            font-weight: bold;
+            font-family: Verdana;
+        }
+
+        p {
+            font-size: 12px;
+            text-align: center;
+            font-weight: bold;
+            margin: 0;
+            color: #000;
+            width: 100px;
+        }
+
+        .emp_img {
+            width: 105px;
+            height: 90px;
+        }
+
+        .column {
+            float: left;
+            width: 10%;
+        }
+    </style>
+}
+
+<div class="row">
+    <div class="col-md-12">
+        @if (Model.EmployeeList != null && Model.EmployeeList.Count > 0)
+        {
+            <div class="card well">
+                <div class="card-body p-1">
+                    <div class="row pl-3">
+                        @foreach (var item in Model.EmployeeList)
+                        {
+                            <div class="column border-dark p-2">
+                                @if (item.ImageName == "")
+                                {
+                                    <img class="shadow img-thumbnail emp_img" src="~/img/DefaultProfile.jpg" />
+                                }
+                                else
+                                {
+                                    <img class="shadow img-thumbnail emp_img" src="@item.ImageName" />
+                                }
+                                <p>@item.EmpName</p>
+                                <p>@item.ContactNo</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+
+
+

@@ -1,0 +1,288 @@
+﻿@model eConnectV2.ViewModels.SMTViewModel
+@{
+    ViewData["Title"] = "SMT Admin";
+    ViewData["PageHeading"] = "SMT";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "SMT";
+    ViewBag.Category1 = "Store All Material";
+}
+
+@section HeadBlock {
+    <style>
+        .swal2-container {
+            z-index: 300000 !important;
+        }
+    </style>
+}
+<div class="row">
+    <div class="col-md-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+                <h2>
+                    SMT Admin - All Material
+                </h2>
+                <div class="panel-toolbar">
+                    @using (Html.BeginForm("SmtAdmin", "SMT", FormMethod.Post, new { id = "myform", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+                    {
+                        <select asp-for="TimeFrame" asp-items="@(new SelectList(Model.YearList, "Value", "Text"))" style="padding: 2px; width: 115px; border: ridge; border-color: lightgray;">
+                            <option value="0" selected>Last 30 days</option>
+                            <option value="1">Last 3 month</option>
+                            <option value="2">Last 6 month</option>
+                        </select>
+                        <input type="text" asp-for="QRCode" class="form-control-sm" placeholder="Enter QRcode" style="padding: 2px; width: 200px; border-color: lightgray; border: ridge; margin-left: 2px; height: 28px;" />
+                        <input type="text" asp-for="MaterialCategory" class="form-control-sm" placeholder="Enter material" style="padding: 2px; width: 105px; border-color: lightgray; border: ridge; margin-left: 2px; height: 28px;" />
+                        <input type="text" asp-for="VendorName" class="form-control-sm" placeholder="Enter vendor" style="padding: 2px; width: 105px; border-color: lightgray; border: ridge; margin-left: 2px; height: 28px;" />
+                        <button type="submit" class="btn btn-sm btn-outline-light waves-effect waves-themed ml-2">Search</button>
+                    }
+                </div>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content">
+                    <div class="table-responsive">
+                        <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap ">
+                            <thead class="bg-info-700">
+                                <tr class='notexport text-nowrap'>
+                                    <th class="notexport">Print | Block</th>
+                                    <th>Material</th>
+                                    <th>Vendor</th>
+                                    <th>QRcode</th>
+                                    <th>Store Status</th>
+                                    <th>SMT Receive </th>
+                                    <th>SMT Consume </th>
+                                    <th>SMT Blocked</th>
+                                    <th>Mfg. Date - Expiry Date</th>
+                                    <th>Material Id</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.SMTMaterialList)
+                                {
+                                    <tr>
+                                        <td class="text-center">
+                                            <span style="display:none;">@DateTime.Now.ToString("hh.mm.ss.ffffff")</span>
+                                            @if (item.SmtConsume == "Y" || item.IsBlocked == "Y" || string.IsNullOrEmpty(item.SmtRecdDate))
+                                            {
+
+                                            }
+                                            else
+                                            {
+                                                if (item.PartNo == "315130000024")
+                                                {
+                                                    <a title='Split QR Code' href='javascript:void(0)' onclick='GetSplitMaterial("@item.QRCode")' data-toggle="modal" data-target="#default-example-modal-lg"><i class="fas fa-print mr-3"></i></a>
+                                                }
+                                                else
+                                                {
+                                                    <a title='Print QR Code' href='javascript:void(0)' onclick='PrintQRcode("@item.QRCode", "@item.WeekNo")'><i class="fas fa-print mr-3"></i></a>
+                                                }
+                                                <span>|</span>
+                                            }
+
+                                            @if (item.SmtConsume == "Y" || item.IsBlocked == "Y" || string.IsNullOrEmpty(item.SmtRecdDate))
+                                            {
+
+                                            }
+                                            else
+                                            {
+                                                <a title='Block' href='javascript:void(0)' class="text-danger" onclick='BlockMaterial("@item.QRCode", "@item.PartNo", "@item.MaterialCategory")'><i class="fas fa-ban ml-3"></i></a>
+                                            }
+                                        </td>
+                                        <td>@item.MaterialCategory</td>
+                                        <td>@item.VendorName</td>
+                                        @if (item.IsBlocked == "Y")
+                                        {
+                                            <td>
+                                                <span class="badge border border-info text-secondary"> <del>@item.QRCode</del></span>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td class="font-weight-bold">
+                                                <span class="badge border border-info text-info">@item.QRCode</span>
+                                            </td>
+                                        }
+                                        @if (item.StoreDispatch == "Y")
+                                        {
+                                            <td class="text-center"><span class="text-success">Dispatched <span class="text-secondary">at</span> @item.StoreDispatchDate</span></td>
+                                        }
+                                        else
+                                        {
+                                            <td class="text-center"></td>
+                                        }
+                                        @if (!string.IsNullOrEmpty(item.SmtRecdDate))
+                                        {
+                                            <td class="text-center"><span class="text-success">Received <span class="text-secondary">at</span> @item.SmtRecdDate</span></td>
+                                        }
+                                        else
+                                        {
+                                            <td class="text-center"></td>
+                                        }
+                                        @if (item.SmtConsume == "Y")
+                                        {
+                                            <td class="text-center"><span class="text-success">Consumed <span class="text-secondary">at</span> @item.SmtConsumeDate</span></td>
+                                        }
+                                        else
+                                        {
+                                            <td class="text-center"></td>
+                                        }
+                                        @if (item.IsBlocked == "Y")
+                                        {
+                                            <td class="text-center"><span class="text-danger">Blocked <span class="text-secondary">at</span> @item.BlockDate</span></td>
+                                        }
+                                        else
+                                        {
+                                            <td class="text-center"></td>
+                                        }
+                                        <td><u>@item.MfgDate</u> - <u>@item.Expdate</u></td>
+                                        <td>
+                                            @item.MaterialNo
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="default-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary"><strong>GLUE - LOCTITE 3808</strong></h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+            </div>
+            <div class="modal-body pt-0">
+                <h5 class="modal-title text-secondary"><strong>Master QRcode - <span id="modal-master-qrcode" class="badge border border-info text-info"></span></strong></h5>
+                <table id="tbl-split-material" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                    <thead class="bg-info-700">
+                        <tr>
+                            <th>Action</th>
+                            <th>Sub QRcode</th>
+                            <th>Week No.</th>
+                            <th>Consume</th>
+                            <th>Consume Date</th>
+                            <th>Blocked</th>
+                            <th>Block Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/datagrid/datatables/dths.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/smt_generateqrcode.js"></script>
+    <script src="~/js/smt_materialblock.js"></script>
+    <script>
+        function BlockSubMaterial(subqrcode) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, block it!"
+            }).then(function (result) {
+                if (result.value) {
+                    var qrcode = $('#modal-master-qrcode').text();
+                    var requestUrl = 'SMT/BlockSubMaterial';
+                    $.ajax({
+                        url: requestUrl,
+                        type: "POST",
+                        data: { qrcode: qrcode, subqrcode: subqrcode },
+                        success: function (response) {
+                            if (response[0].flag == _errorStatus) {
+                                Swal.fire("Info!", response[0].msg, "error");
+                            } else {
+                                Swal.fire("Blocked!", response[0].msg, "success").then(function () {
+                                    GetSplitMaterial($('#modal-master-qrcode').text());
+                                })
+                            }
+                        },
+                        error: function () {
+                            Swal.fire("Oops...", "Something went wrong!", "error");
+                        }
+                    });
+                }
+            });
+        }
+        function GetSplitMaterial(qrcode) {
+            $('#modal-master-qrcode').text(qrcode);
+            var requestUrl = 'SMT/GetSplitMaterial';
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                data: { qrcode: qrcode },
+                success: function (response) {
+                    $('#tbl-split-material tbody').empty();
+                    $('#tbl-split-material').DataTable().destroy();
+                    var row = "";
+                    var isAllBlocked = true;
+                    $.each(response, function (index, item) {
+                        row += "<tr>";
+                        //action
+                        if (item.isBlocked == 'Y' || item.smtConsume == 'Y') {
+                            row += '<td></td>';
+                        }
+                        else {
+                            row += '<td><a title="Print QR Code" href="javascript:void(0)" onclick="PrintQRcode(\'' + item.subQRCode + '\',' + item.weekNo + ')"><i class="fas fa-print ml-3 mr-3"></i></a>|';
+                            row += '<a title="Block" href="javascript:void(0)" class="text-danger" onclick="BlockSubMaterial(\'' + item.subQRCode + '\')"><i class="fas fa-ban ml-3"></i></a></td>';
+                            isAllBlocked = false;
+                        }
+                        //subqrcode
+                        if (item.isBlocked == 'Y') {
+                            row += "<td><span class='badge border border-info text-secondary'><del>" + item.subQRCode + "</del></span></td>";
+                        }
+                        else {
+                            row += "<td><span class='badge border border-info text-secondary'>" + item.subQRCode + "</span></td>";
+                        }
+                        //week no
+                        row += "<td>" + item.weekNo + "</td>";
+                        //consume status
+                        if (item.smtConsume == 'Y') {
+                            row += "<td class='text-center'><span class='badge badge-success badge-pill'>Consumed</span></td>";
+                        }
+                        else {
+                            row += "<td></td>";
+                        }
+                        //consume date
+                        row += "<td>" + item.smtConsumeDate + "</td>";
+                        //block status
+                        if (item.isBlocked == 'Y') {
+                            row += "<td class='text-center'><span class='badge badge-danger badge-pill'>Blocked</span></td>";
+                        }
+                        else {
+                            row += "<td></td>";
+                        }
+                        row += "<td>" + item.blockDate + "</td>";
+                        row += "</tr>";
+                    });
+                    if (isAllBlocked) {
+                        window.location.reload();
+                    }
+                    $('#tbl-split-material tbody').html(row);
+                    $('#tbl-split-material').dataTable({
+                        paging: false,
+                        searching: false
+                    });
+                },
+                error: function () {
+                    $('#default-example-modal-lg').hide();
+                    Swal.fire("Oops...", "Something went wrong!", "error");
+                }
+            });
+        }
+    </script>
+}

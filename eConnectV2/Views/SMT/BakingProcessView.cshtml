@@ -1,0 +1,226 @@
+﻿@model eConnectV2.ViewModels.SMTViewModel
+@{
+    ViewData["Title"] = "Baked List";
+    ViewData["PageHeading"] = "Baked List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "SMT";
+    ViewBag.Category1 = "BakingProcessView";
+}
+@section HeadBlock {
+    <link href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css" rel="stylesheet" />
+}
+
+
+<div class="panel p-2">
+    <div class="panel-content-show">
+        @using (Html.BeginForm("BakingProcessView", "SMT", FormMethod.Post, new { id = "form1", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate", onsubmit = "return validateDates()" }))
+        {
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="row">
+                        <div class="col-md-1 align-self-center pb-1">
+                            <a class="btn btn-warning btn-sm" onclick="window.location='@Url.Action("BakingProcessAdd","SMT")'" title="Add Item">
+                                <i class="fas fa-plus-square mr-1"></i> Add
+                            </a>
+                        </div>
+                        <div class="col-md-2 pb-1">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label font-weight-bold">From</label>
+                                <div class="col-sm-9 align-self-center">
+                                    <div class="input-group">
+                                        <input asp-for="Date1" autocomplete="off" class="form-control" type="text" placeholder="dd-mmm-yyyy" required data-date-format="d-M-yyyy" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2 pb-1">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label font-weight-bold">To </label>
+                                <div class="col-sm-9 align-self-center">
+                                    <div class="input-group">
+                                        <input asp-for="Date2" autocomplete="off" class="form-control" type="text" placeholder="dd-mmm-yyyy" required data-date-format="d-M-yyyy" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 pb-1">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold" for="LotNo">Lot No</label>
+                                <div class="col-sm-8 align-self-center">
+                                    <input class="form-control" required asp-for="LotNo" placeholder="Please enter Lot No." />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 pb-1">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label font-weight-bold" for="PartNo">Part No</label>
+                                <div class="col-sm-9 align-self-center">
+                                    <select class="select2 custom-select form-control" asp-for="PartNo" required asp-items="@(new SelectList(Model.DDLPartList,"Value", "Text"))">
+                                        <option value="">--Select--</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-1 align-self-center pb-1">
+                            <button type="submit" name="submit" class="btn btn-primary btn-sm">Search</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        }
+
+        <br />
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover nowrap">
+                        <thead class="bg-primary-800">
+                            <tr>
+                                <th class="notexport" style="display:none">#</th>
+                                <th>Bar Code</th>
+                                <th>Lot No.</th>
+                                <th>Part No.</th>
+                                <th>Model Name</th>
+                                <th>Quantity</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Baking Time</th>
+                                <th>Actual Out Time</th>
+                                <th>Actual Baking Time</th>
+                                <th>Remarks</th>
+                                <th>In Operator</th>
+                                <th>Out Operator</th>
+                                <th>User Id</th>
+                                <th>TDate</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white">
+                            @foreach (var item in Model.BakingList)
+                            {
+                            <tr>
+                                <td style="display:none">
+                                    <span style="display:none">@DateTime.Now.ToString("hh.mm.ss.ffffff")</span>
+                                </td>
+                                <td>
+                                    @item.MatCode
+                                </td>
+                                <td>
+                                    @item.LotNo
+                                </td>
+                                <td>
+                                    @item.PartNo
+                                </td>
+                                <td>
+                                    @item.ModelName
+                                </td>
+                                <td>
+                                    @item.Quantity
+                                </td>
+                                <td>
+                                    @item.StartTime
+                                </td>
+                                <td>
+                                    @item.Param1
+                                </td>
+                                <td>
+                                    120 min
+                                </td>
+                                <td>
+                                    @item.EndTime
+                                </td>
+                                <td>
+                                    @item.Param3
+                                </td>
+                                <td>
+                                    @item.Remarks
+                                </td>
+                                <td>
+                                    @item.InOperator
+                                </td>
+                                <td>
+                                    @item.OutOperator
+                                </td>
+                                <td>
+                                    @item.UserId
+                                </td>
+                                <td>
+                                    @item.Date1
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/datagrid/datatables/dths_excel.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script type="text/javascript">
+        dtorderby = "desc";
+        dtorderbycol = 7;
+        $(document).ready(function () {
+            $(function () {
+                $('.select2').select2();
+                runDatePicker();
+            });
+            var controls = {
+                leftArrow: '<i class="fas fa-angle-left" style="font-size: 1.25rem"></i>',
+                rightArrow: '<i class="fas fa-angle-right" style="font-size: 1.25rem"></i>'
+            }
+            var runDatePicker = function () {
+                $('#Date1,#Date2').datepicker({
+                    todayHighlight: true,
+                    orientation: "bottom left",
+                    templates: controls,
+                    autoclose: true
+                });
+            }
+        });
+        function validateDates() {
+            var date1 = $('#Date1').val();
+            var date2 = $('#Date2').val();
+
+            if (date1 == '' && date2 == '') {
+                $('#Date1').focus();
+                Swal.fire("Oops...", "Please select a date range", "Error");
+                return false;
+            }
+
+            if (date1 == '' && date2 != '') {
+                $('#Date1').focus();
+                Swal.fire("Oops...", "Please Enter From Date", "Error");
+                return false;
+            }
+            if (date1 != '' && date2 == '') {
+                $('#Date2').focus();
+                Swal.fire("Oops...", "Please Enter To Date", "Error");
+                return false;
+            }
+            if (date1 != '' && date2 != '') {
+
+                var d1 = process(date1)
+                var d2 = process(date2)
+                if (d1 > d2) {
+                    Swal.fire("Oops...", "To date should be greater than From date", "Error");
+                    return false;
+                }
+            }
+            return true;
+        }
+        function process(date) {
+            var parts = date.split("-");
+            var month = getMonth(parts[1]);
+            return new Date(parts[2], month - 1, parts[0]);
+        }
+        function getMonth(monthStr) {
+            return new Date(monthStr + '-1-01').getMonth() + 1
+        }
+    </script>
+}

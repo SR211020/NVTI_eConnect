@@ -1,0 +1,178 @@
+﻿@model eConnectV2.ViewModels.DTViewModel
+@{
+    ViewData["Title"] = "NVTI-Digital Training";
+    ViewData["PageHeading"] = "OJT Document";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "Digital Training";
+    ViewBag.Category1 = "OJT Document";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div id="panel-1" class="panel mb-1">
+            <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+                <h2 id="headingSection">
+                    Add OJT Document
+                </h2>
+            </div>
+            @using (Html.BeginForm("OJTMaterial", "DigitalTraining", FormMethod.Post, new { id = "form", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+            {
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Station<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-sm-8">
+                                        <select class="select2 custom-select form-control w-100" asp-for="Station" required asp-items="@(new SelectList(Model.StationList, "Value", "Text"))">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Grade<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-sm-8">
+                                        <select class="select2 custom-select form-control w-100" asp-for="Grade" required asp-items="@(new SelectList(Model.EmpGradeList, "Value", "Text"))">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold" for="RespDeptCode">Attach file<span class="text-danger ml-1">*</span> : </label>
+                                    <div class="col-sm-8">
+                                        <div class="custom-file">
+                                            <input id="customFile" asp-for="AttachDocument" type="file" class="custom-file-input" onchange="GetFileSize()" required>
+                                            <label class="custom-file-label" for="customFile">Choose file...</label>
+                                            <small> <span class="text-danger mt-2" id="fp">Only PDF, PNG, JPG, JPEG and GIF files are allowed.</span></small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row pt-3">
+                                    <label class="col-sm-4 col-form-label font-weight-bold"></label>
+                                    <div class="col-sm-8">
+                                        <button type="submit" id="btnAdd" class="btn btn-sm btn-primary">Submit</button>
+                                        <button type="button" id="btnCancel" class="btn btn-sm btn-default ml-3">Cancel</button>
+                                        <span id="msg1" class="text-danger font-weight-bold ml-3"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row pt-3">
+                                    <div class="col-sm-8">
+                                        <span id="msg1" class="text-danger font-weight-bold ml-3"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div id="dataList">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <div class="table-responsive">
+                            <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover nowrap">
+                                <thead class="bg-primary-800">
+                                    <tr>
+                                        <th class='notexport'>Action</th>
+                                        <th>Station</th>
+                                        <th>Grade</th>
+                                        <th>Document</th>
+                                        <th>Trn Date</th>
+                                        <th>Created By</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white">
+                                    @foreach (var item in Model.OJTDocumentList)
+                                    {
+                                        <tr>
+                                            <td class="bg-primary-gradient">
+                                                <a title="Delete" href="javascript:void(0);" onclick="RowDelete('@item.Id')"><i class="fas fa-trash-alt ml-3 text-danger"></i></a>
+                                            </td>
+                                            <td>@item.Station</td>
+                                            <td><span class="badge badge-primary pl-3 pr-3">@item.Grade</span></td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(item.DocUId))
+                                                {
+                                                    <a title="Download" href="@Url.Action("Download", "DigitalTraining", new { filename = item.DocUId })"><i class="fas fa-file-alt ml-2 text-primary"></i></a>
+                                                }
+                                            </td>
+                                            <td>@item.Action</td>
+                                            <td>@item.EmpName</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/select.js"></script>
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/datagrid/datatables/dths_excel.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#btnCancel").click(function (e) {
+                location.replace(location.href)
+            });
+        });
+        function GetFileSize() {
+            var ext = $('#customFile').val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['pdf', 'png', 'jpg', 'jpeg', 'gif']) == -1) {
+                document.getElementById('fp').innerHTML = 'Invalid extension! Only PDF, PNG, JPG, JPEG and GIF files are allowed.';
+                $('#customFile').val('');
+            }
+            else {
+                document.getElementById('fp').innerHTML = "";
+            }
+        }
+        function RowDelete(id) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (result) {
+                if (result.value) {
+                    var requestUrl = 'DigitalTraining/DeleteOJTDoc';
+                    $.ajax({
+                        url: requestUrl,
+                        type: "POST",
+                        data: { id: id },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire("Deleted!", response.responseMsg, "success").then(function () {
+                                    window.location.reload();
+                                })
+                            } else {
+                                Swal.fire("Oops...", "Something went wrong!", "error");
+                            }
+                        },
+                        error: function () {
+                            Swal.fire("Oops...", "Something went wrong!", "error");
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}

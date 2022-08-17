@@ -1,0 +1,35 @@
+﻿@model eConnectV2.ViewModels.KPIViewModel
+@{
+    ViewData["Title"] = "KPI - Add KPI";
+    ViewData["PageHeading"] = "KPI";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "KPI";
+    ViewBag.Category1 = "Add KPI";
+}
+
+<div class="panel">
+    @using (Html.BeginForm("Add", "KPI", FormMethod.Post, new { id = "myform", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+    {
+        <input asp-for="KpiType" type="hidden" value="@Model.KpiType" />
+        <input asp-for="KpiStatusCode" type="hidden" value="@Model.KpiStatusCode" />
+        <input asp-for="KpiNo" type="hidden" value="@Model.KpiNo" />
+        <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+            <h2>
+                <span class="fw-300 pr-1">Add </span> KPI
+            </h2>
+            <span class="font-weight-bold pr-2">Financial Year : </span>
+            <select class="mr-2" asp-for="FinYearCode" asp-items="@(new SelectList(Model.FinYearList, "Value", "Text"))" style="width: 80px; border: ridge; border-color: lightgray;">
+            </select>
+        </div>
+        <div class="panel-container show">
+            <div class="panel-content">
+                @await Html.PartialAsync("_createKpi", Model)
+                @await Html.PartialAsync("_draftKpiList", Model)
+            </div>
+        </div>
+    }
+</div>
+@section ScriptsBlock {
+    <script src="~/js/inputFilter.js"></script>
+    <script src="~/js/addKpi.js"></script>
+}

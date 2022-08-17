@@ -1,0 +1,439 @@
+﻿@model eConnectV2.ViewModels.DTViewModel
+@{
+    ViewData["Title"] = "NVTI-OJT Attendance";
+    ViewData["PageHeading"] = "OJT Attendance";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "Digital Training";
+    ViewBag.Category1 = "OJT Attendance";
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+}
+
+<div id="dataTraining" class="row hide">
+    <div class="col-md-12">
+        <div id="panel-1" class="panel mb-4">
+            <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+                <h2 id="headingSection">
+                    Search Training Details of an Employee
+                </h2>
+                <button type="button" onclick="ShowMainPage()" class="btn btn-sm btn-outline-light waves-effect waves-themed mr-2">Back to MainPage</button>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content">
+                    <div class="col-md-8">
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label font-weight-bold">Employee<span class="text-danger ml-1">*</span> :</label>
+                            <div class="col-md-8">
+                                <select class="select2 custom-select form-control w-100" asp-for="EmpCode" required asp-items="@(new SelectList(Model.EmpList, "Value", "Text"))">
+                                    <option value="">Select</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="table-responsive">
+                        <table id="dt-hs11" class="table w-100 table-bordered table-sm table-hover nowrap">
+                            <thead class="bg-primary-800">
+                                <tr>
+                                    <th>Employee</th>
+                                    <th>Station</th>
+                                    <th>Grade</th>
+                                    <th>Training Date</th>
+                                    <th>Trainer</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="dataAdd" class="row hide">
+    <div class="col-md-12">
+        <div id="panel-1" class="panel mb-4">
+            <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+                <h2 id="headingSection">
+                    Add OJT Attendance
+                </h2>
+            </div>
+            @using (Html.BeginForm("OJTAttendance", "DigitalTraining", FormMethod.Post, new { id = "form", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+            {
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-md-4 col-form-label font-weight-bold">Training Date<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-md-8">
+                                        <div class="input-group">
+                                            <input asp-for="TrainingDate" autocomplete="off" class="form-control" type="text" placeholder="dd-mmm-yyyy" required data-date-format="d-M-yyyy" />
+                                            <div class="input-group-append">
+                                                <span class="input-group-text fs-xl">
+                                                    <i class="fas fa-calendar-alt"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-md-4 col-form-label font-weight-bold">Trainer<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-md-8">
+                                        <select class="select2 custom-select form-control w-100" asp-for="Trainer" required asp-items="@(new SelectList(Model.TrainerList, "Value", "Text"))">
+                                            <option value="">Select</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-md-4 col-form-label font-weight-bold">Grade<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-md-8">
+                                        <select class="select2 custom-select form-control w-100" asp-for="Grade" required asp-items="@(new SelectList(Model.EmpGradeList, "Value", "Text"))">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-form-label font-weight-bold">Training for<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-md-10">
+                                        <input type="text" asp-for="TrainingFor" class="form-control" required autocomplete="off">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-md-4 col-form-label font-weight-bold">Station<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-md-8">
+                                        <select class="select2 custom-select form-control w-100" asp-for="Station" required asp-items="@(new SelectList(Model.StationList, "Value", "Text"))">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-form-label font-weight-bold">Add Emp<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-md-10">
+                                        <select class="select2 form-control" multiple="multiple" name="impact" required asp-for="Impact" asp-items="@(new MultiSelectList(Model.ManPowerDDLList, "Value", "Text"))">
+                                        </select>
+                                        <input asp-for="SelectedImpact" type="hidden" value="" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-md-4 col-form-label font-weight-bold" for="RespDeptCode">Attach file<span class="text-danger ml-1">*</span> : </label>
+                                    <div class="col-md-8">
+                                        <div class="custom-file">
+                                            <input id="customFile" asp-for="AttachDocument" type="file" class="custom-file-input" onchange="GetFileSize()" required>
+                                            <label class="custom-file-label" for="customFile">Choose file...</label>
+                                            <small> <span class="text-danger mt-2" id="fp">Only PDF, PNG, JPG, JPEG and GIF files are allowed.</span></small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-form-label font-weight-bold"></label>
+                                    <div class="col-md-9">
+                                        <button type="submit" id="btnAdd" class="btn btn-sm btn-primary">Submit</button>
+                                        <button type="button" id="btnCancel" class="btn btn-sm btn-default ml-3">Cancel</button>
+                                        <span id="msg1" class="text-danger font-weight-bold ml-3"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div id="dataList">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+                    <h2>
+                        All OJT Attendance Sheet
+                    </h2>
+                    <button type="button" onclick="ShowEmpDetails()" class="btn btn-sm btn-outline-light waves-effect waves-themed mr-2">Search Training Details of an Employee</button>
+                    <button type="button" onclick="ShowAdd()" class="btn btn-sm btn-outline-light waves-effect waves-themed mr-2">Add Attendance Sheet</button>
+                </div>
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <div class="table-responsive">
+                            <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover nowrap">
+                                <thead class="bg-primary-800">
+                                    <tr>
+                                        <th class='notexport'>Action</th>
+                                        <th>Station</th>
+                                        <th>Grade</th>
+                                        <th>Training Date</th>
+                                        <th>Training For</th>
+                                        <th>Trainer</th>
+                                        <th>Employee</th>
+                                        <th>Document</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white">
+                                    @foreach (var item in Model.OJTAttendanceList)
+                                    {
+                                        <tr>
+                                            <td class="bg-primary-gradient">
+                                                <a title="Delete" href="javascript:void(0);" onclick="RowDelete('@item.Id')"><i class="fas fa-trash-alt ml-3 text-danger"></i></a>
+                                            </td>
+                                            <td>@item.Station</td>
+                                            <td><span class="badge badge-primary pl-3 pr-3">@item.Grade</span></td>
+                                            <td>@item.TrainingDate</td>
+                                            <td>@item.TrainingFor</td>
+                                            <td>@item.Trainer</td>
+                                            <td><a title="View List" href="javascript:void(0);" onclick="ShowList('@item.Id')" class="text-warning fw-700" ><i class="fas fa-th-list ml-3"></i> Attendance List</a></td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(item.DocUId))
+                                                {
+                                                    <a title="Download" href="@Url.Action("Download", "DigitalTraining", new { filename = item.DocUId })"><i class="fas fa-file-alt ml-2 text-primary"></i></a>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="default-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header pb-2">
+                <span class="h3 text-primary">View Training Details</span>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+            </div>
+            <div class="modal-body pb-1 pt-1">
+                <table width="100%" cellpadding="3" cellspacing="3">
+                    <tr>
+                        <td><span class="fw-300">Training Date : </span><span class="fw-700 font-italic" id="vTd"></span></td>
+                        <td><span class="fw-300">Training By : </span><span class="fw-700 font-italic" id="vTby"></span></td>
+                        <td><span class="fw-300">Station : </span><span class="fw-700 font-italic" id="vS"></span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><span class="fw-300">Training for : </span><span class="fw-700 font-italic" id="vTF"></span></td>
+                        <td><span class="fw-300">Grade : </span><span class="fw-700 font-italic" id="vG"></span></td>
+                    </tr>
+                </table>
+                <table id="vtblemp" width="100%" class="table table-sm m-0 mt-3 mb-3">
+                    <thead class="bg-primary-500">
+                        <tr>
+                            <th width="50%" class='text-center'>Employee</th>
+                            <th width="20%" class='text-center'>Employee Code</th>
+                            <th width="30%" class='text-center'>Aadhar number</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-faded">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/select.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/datagrid/datatables/dths_excel.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script>
+        var selectedImpact = '@Model.SelectedImpact';
+        $(document).ready(function () {
+            $(function () {
+                runDatePicker();
+                var array = selectedImpact.split(',');
+                $('#Impact').val(array).trigger('change');
+                $('#Impact').on('select2:select', function (e) {
+                    selectedImpact = $("#Impact").val();
+                });
+
+                var $hidden = $('input[name=SelectedImpact]');
+                var $impact = $('[name=impact]');
+
+                $impact.bind('keyup change', function (e) {
+                    $hidden.val($.trim($impact.val()));
+                });
+            });
+            var controls = {
+                leftArrow: '<i class="fas fa-angle-left" style="font-size: 1.25rem"></i>',
+                rightArrow: '<i class="fas fa-angle-right" style="font-size: 1.25rem"></i>'
+            }
+            var runDatePicker = function () {
+                $('#TrainingDate').datepicker({
+                    todayHighlight: true,
+                    orientation: "bottom left",
+                    templates: controls,
+                    autoclose: true,
+                    endDate: '+0d'
+                });
+            }
+            $("#btnCancel").click(function (e) {
+                location.replace(location.href)
+            });
+            $("#btnAdd").click(function (e) {
+                var aEmp = $('#Impact').val()
+                if (aEmp == '') {
+                    $('#msg1').text('All (*) marked fields are mandatory');
+                }
+                else {
+                    $('#msg1').text('');
+                }
+            });
+            $('#EmpCode').change(function () {
+                var selectedVal = $("#EmpCode option:selected").val();
+                if (selectedVal == '') {
+                    
+                }
+                else {
+                    var requestUrl = 'DigitalTraining/GetEmpOJTAttendance';
+                    $.ajax({
+                        url: requestUrl,
+                        type: "POST",
+                        data: { empcode: selectedVal },
+                        success: function (response) {
+                            if (response) {
+                                $('#dt-hs11 tbody').empty();
+                                var row = "";
+                                $.each(response, function (index, item) {
+                                    row += "<tr>";
+                                    row += "<td>" + item.empName + "</td>";
+                                    row += "<td>" + item.station + "</td>";
+                                    row += "<td>" + item.grade + "</td>";
+                                    row += "<td>" + item.trainingDate + "</td>";                                    
+                                    row += "<td>" + item.trainer + "</td>";
+                                    row += "</tr>";
+                                });
+                                $("#dt-hs11 tbody").html(row);
+                            } else {
+                                Swal.fire("Oops...", "Something went wrong!", "error");
+                            }
+                        },
+                        error: function () {
+                            Swal.fire("Oops...", "Something went wrong!", "error");
+                        }
+                    });
+                }
+            });
+        });
+        function GetFileSize() {
+            var ext = $('#customFile').val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['pdf', 'png', 'jpg', 'jpeg', 'gif']) == -1) {
+                document.getElementById('fp').innerHTML = 'Invalid extension! Only PDF, PNG, JPG, JPEG and GIF files are allowed.';
+                $('#customFile').val('');
+            }
+            else {
+                document.getElementById('fp').innerHTML = "";
+            }
+        }
+        function RowDelete(id) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (result) {
+                if (result.value) {
+                    var requestUrl = 'DigitalTraining/DeleteOJTAttendance';
+                    $.ajax({
+                        url: requestUrl,
+                        type: "POST",
+                        data: { id: id },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire("Deleted!", response.responseMsg, "success").then(function () {
+                                    window.location.reload();
+                                })
+                            } else {
+                                Swal.fire("Oops...", "Something went wrong!", "error");
+                            }
+                        },
+                        error: function () {
+                            Swal.fire("Oops...", "Something went wrong!", "error");
+                        }
+                    });
+                }
+            });
+        }
+        function ShowAdd() {
+            $('#dataList').hide();
+            $('#dataAdd').show();
+        }
+        function ShowList(id) {
+            var requestUrl = 'DigitalTraining/GetOJTAttendEmp';
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                data: { id: id },
+                success: function (response) {
+                    if (response.success) {
+                        $('#default-example-modal-lg').modal('show');
+                        $('#vTd').text(response.result["trainingDate"]);
+                        $('#vTby').text(response.result["trainer"]);
+                        $('#vS').text(response.result["station"]);
+                        $('#vTF').text(response.result["trainingFor"]);
+                        $('#vG').text(response.result["grade"]);
+                        var manpowerList = response.result["manPowerList"];
+                        $('#vtblemp tbody').empty();
+                        var row = "";
+                        $.each(manpowerList, function (index, item) {
+                            row += "<tr>";
+                            row += "<td class='text-center'>" + item.empName + "</td>";
+                            row += "<td class='text-center'>" + item.empCode + "</td>";
+                            row += "<td class='text-center'>" + item.aadharNo + "</td>";
+                            row += "</tr>";
+                        });
+                        $("#vtblemp tbody").html(row);
+                    } else {
+                        Swal.fire("Oops...", "Something went wrong!", "error");
+                    }
+                },
+                error: function () {
+                    Swal.fire("Oops...", "Something went wrong!", "error");
+                }
+            });
+        }
+        function ShowEmpDetails() {
+            $('#dataList').hide();
+            $('#dataAdd').hide();
+            $('#dataTraining').show();            
+        }
+        function ShowMainPage() {
+            $('#dataList').show();
+            $('#dataAdd').show();
+            $('#dataTraining').hide();
+        }        
+    </script>
+}
+

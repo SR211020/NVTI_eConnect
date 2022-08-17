@@ -1,0 +1,290 @@
+﻿@model eConnectV2.ViewModels.DTViewModel
+@{
+    ViewData["Title"] = "NVTI-Digital Training";
+    ViewData["PageHeading"] = "Manage Approver";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "Digital Training";
+    ViewBag.Category1 = "Approver";
+}
+<div class="row pb-4">
+    <div class="col-md-12">
+        <div id="panel-1" class="panel mb-0">
+            <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+                <h2 id="headingSection">
+                    Add Customer & Approver
+                </h2>
+            </div>
+            @using (Html.BeginForm("Approver", "DigitalTraining", FormMethod.Post, new { id = "form", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+            {
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Customer<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-sm-8">
+                                        <input asp-for="CustomerName" class="form-control" required autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Primary Approver<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-sm-8">
+                                        <select class="select2 custom-select form-control w-100" asp-for="PrimaryApprover" required asp-items="@(new SelectList(Model.EmpList, "Value", "Text"))">
+                                            <option value="">Select</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-1">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Approver 1<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-sm-8">
+                                        <select class="select2 custom-select form-control w-100" asp-for="Approver1" required asp-items="@(new SelectList(Model.EmpList, "Value", "Text"))">
+                                            <option value="">Select</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Approver 2<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-sm-8">
+                                        <select class="select2 custom-select form-control w-100" asp-for="Approver2" required asp-items="@(new SelectList(Model.EmpList, "Value", "Text"))">
+                                            <option value="">Select</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Approver 3 :</label>
+                                    <div class="col-sm-8">
+                                        <select class="select2 custom-select form-control w-100" asp-for="Approver3" asp-items="@(new SelectList(Model.EmpList, "Value", "Text"))">
+                                            <option value="">Select</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Approver 4 :</label>
+                                    <div class="col-sm-8">
+                                        <select class="select2 custom-select form-control w-100" asp-for="Approver4" asp-items="@(new SelectList(Model.EmpList, "Value", "Text"))">
+                                            <option value="">Select</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Approver 5 :</label>
+                                    <div class="col-sm-8">
+                                        <select class="select2 custom-select form-control w-100" asp-for="Approver5" asp-items="@(new SelectList(Model.EmpList, "Value", "Text"))">
+                                            <option value="">Select</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Approver 6 :</label>
+                                    <div class="col-sm-8">
+                                        <select class="select2 custom-select form-control w-100" asp-for="Approver6" asp-items="@(new SelectList(Model.EmpList, "Value", "Text"))">
+                                            <option value="">Select</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-content border-faded border-left-0 border-right-0 border-bottom-0">
+                        <div class="row">
+                            <label class="col-sm-1 col-form-label font-weight-bold"></label>
+                            <div class="col-sm-11">
+                                <input type="hidden" id="eApprId" value="0">
+                                <button type="submit" id="btnAdd" class="btn btn-sm btn-primary">Save</button>
+                                <button type="button" id="btnUpdate" class="btn btn-sm btn-warning hide">Update</button>
+                                <button type="button" id="btnCancel" class="btn btn-secondary btn-sm">Close</button>
+                                <span id="msg1" class="text-danger font-weight-bold ml-3"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div id="dataList">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        @foreach (var item in Model.ApproverList)
+                        {
+                            <div class="alert alert-info alert-dismissible fade show p-2 pl-4 mb-3" role="alert">
+                                <table width="100%">
+                                    <tr>
+                                        <td width="20%" align="left">
+                                        </td>
+                                        <td width="40%">
+                                            <span class="font-weight-bold text-dark text-gradient font-italic">Primary Approver : @item.PrimaryApprover</span> 
+                                            <button type="button" class="close">
+                                                <a title="Edit" href="javascript:void(0);" onclick="RowEdit('@item.Id')"><i class="fas fa-edit"></i></a>
+                                                <a title="Delete" href="javascript:void(0);" onclick="RowDelete('@item.Id')"><i class="fas fa-trash-alt ml-3 text-danger"></i></a>
+                                            </button>
+                                        </td>
+                                        <td width="40%">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="20%" align="left">
+                                            <h3 class="font-weight-bold text-gradient mb-0">@item.CustomerName</h3>
+                                        </td>
+                                        <td width="40%">
+                                            <span class="font-weight-bold text-dark">Approver 1 : </span>@item.Approver1
+                                        </td>
+                                        <td width="40%">
+                                            <span class="font-weight-bold text-dark">Approver 4 : </span>@item.Approver4
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="20%" align="left">
+                                        </td>
+                                        <td width="40%">
+                                            <span class="font-weight-bold text-dark">Approver 2 : </span>@item.Approver2
+                                        </td>
+                                        <td width="40%">
+                                            <span class="font-weight-bold text-dark">Approver 5 : </span>@item.Approver5
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="20%" align="left">
+                                        </td>
+                                        <td width="40%">
+                                            <span class="font-weight-bold text-dark">Approver 3 : </span>@item.Approver3
+                                        </td>
+                                        <td width="40%">
+                                            <span class="font-weight-bold text-dark">Approver 6 : </span>@item.Approver6
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/select.js"></script>
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#btnCancel").click(function (e) {
+                location.replace(location.href)
+            });
+        });
+        $("#btnUpdate").click(function (e) {
+            var eApprId = $('#eApprId').val();
+            var CustomerName = $('#CustomerName').val();
+            var PrimaryApprover = $('#PrimaryApprover').val();
+            var Approver1 = $('#Approver1').val();
+            var Approver2 = $('#Approver2').val();
+            var Approver3 = $('#Approver3').val();
+            var Approver4 = $('#Approver4').val();
+            var Approver5 = $('#Approver5').val();
+            var Approver6 = $('#Approver6').val();
+            if (CustomerName != '' && PrimaryApprover != '' && Approver1 != '' && Approver2 != '') {
+                $('#msg1').text('');
+                var requestUrl = 'DigitalTraining/UpdateApprover';
+                $.ajax({
+                    url: requestUrl,
+                    type: "POST",
+                    data: {
+                        eApprId: eApprId,
+                        CustomerName: CustomerName,
+                        PrimaryApprover: PrimaryApprover,
+                        Approver1: Approver1,
+                        Approver2: Approver2,
+                        Approver3: Approver3,
+                        Approver4: Approver4,
+                        Approver5: Approver5,
+                        Approver6: Approver6
+                    },
+                    success: function (response) {
+                        if (response.result === _errorStatus) {
+                            Swal.fire("Oops...", response.msg, "error");
+                        } else {
+                            Swal.fire("Saved!", response.msg, "success").then(function () {
+                                window.location.reload();
+                            })
+                        }
+                    },
+                    error: function () {
+                        Swal.fire("Oops...", "Something went wrong!", "error");
+                    }
+                });
+            }
+            else {
+                $('#msg1').text('All (*) marked fields are mandatory');
+            }
+        });
+        function RowDelete(id) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (result) {
+                if (result.value) {
+                    var requestUrl = 'DigitalTraining/DeleteApprover';
+                    $.ajax({
+                        url: requestUrl,
+                        type: "POST",
+                        data: { id: id },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire("Deleted!", response.responseMsg, "success").then(function () {
+                                    window.location.reload();
+                                })
+                            } else {
+                                Swal.fire("Oops...", "Something went wrong!", "error");
+                            }
+                        },
+                        error: function () {
+                            Swal.fire("Oops...", "Something went wrong!", "error");
+                        }
+                    });
+                }
+            });
+        }
+        function RowEdit(id) {
+            $('#eApprId').val(id);
+            var requestUrl = 'DigitalTraining/GetApproverById';
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                data: { id: id },
+                success: function (response) {
+                    $('#btnAdd,#dataList').hide();
+                    $('#btnUpdate').show();
+                    $('#headingSection').text('Edit Customer Approver');
+                    $('#CustomerName').val(response[0].customerName).change();
+                    $('#PrimaryApprover').val(response[0].primaryApprover).change();
+                    $('#Approver1').val(response[0].approver1).change();
+                    $('#Approver2').val(response[0].approver2).change();
+                    $('#Approver3').val(response[0].approver3).change();
+                    $('#Approver4').val(response[0].approver4).change();
+                    $('#Approver5').val(response[0].approver5).change();
+                    $('#Approver6').val(response[0].approver6).change();
+                },
+                error: function () {
+                    Swal.fire("Oops...", "Something went wrong!", "error");
+                }
+            });
+        }
+    </script>
+}

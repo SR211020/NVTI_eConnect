@@ -1,0 +1,220 @@
+﻿@model eConnectV2.ViewModels.EISViewModel
+@{
+    ViewData["Title"] = "Add UPH Target";
+    ViewData["PageHeading"] = "Add UPH Target";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string crntYear = DateTime.Now.Year.ToString();
+    string nxtYear = DateTime.Now.AddYears(1).Year.ToString();
+}
+
+<div class="panel">
+    <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+        <h2 class="justify-content-center">
+            <span class="fw-300 pr-1">Add</span> UPH Target
+        </h2>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content">
+            @using (Html.BeginForm("UPHTargetAdd", "EIS", FormMethod.Post, new { id = "myform", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+            {
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Plant<span class="text-danger ml-1">*</span></label>
+                            <div class="col-sm-6">
+                                <select asp-for="Plant" class="select2 custom-select form-control w-100" required>
+                                    <option value="">-- Select --</option>
+                                    <option value="BAWAL">Bawal</option>
+                                    <option value="MANESAR">Manesar</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Division<span class="text-danger ml-1">*</span></label>
+                            <div class="col-sm-6">
+                                <select asp-for="Division" class="select2 custom-select form-control w-100" required>
+                                    <option value="">-- Select --</option>
+                                    <option value="PACK">PACK</option>
+                                    <option value="SMT">SMT</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Year<span class="text-danger ml-1">*</span></label>
+                            <div class="col-sm-6">
+                                <select asp-for="Yr" class="select2 custom-select form-control w-100" required>
+                                    <option value="">-- Select --</option>
+                                    <option value="@crntYear" selected>@crntYear</option>
+                                    <option value="@nxtYear">@nxtYear</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Month<span class="text-danger ml-1">*</span></label>
+                            <div class="col-sm-6">
+                                <div class="input-group">
+                                    <select asp-for="Mon" class="select2 custom-select form-control w-100" required>
+                                        <option value="">-- Select --</option>
+                                        <option value="1">Jan</option>
+                                        <option value="2">Feb</option>
+                                        <option value="3">Mar</option>
+                                        <option value="4">Apr</option>
+                                        <option value="5">May</option>
+                                        <option value="6">Jun</option>
+                                        <option value="7">Jul</option>
+                                        <option value="8">Aug</option>
+                                        <option value="9">Sep</option>
+                                        <option value="10">Oct</option>
+                                        <option value="11">Nov</option>
+                                        <option value="12">Dec</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Line<span class="text-danger ml-1">*</span></label>
+                            <div class="col-sm-6">
+                                <select asp-for="LineType" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.LineList, "Value", "Text"))" required>
+                                    <option value="">-- Select --</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Bottom<span class="text-danger ml-1">*</span></label>
+                            <div class="col-sm-6">
+                                <input asp-for="Bottom" type="text" class="form-control w-100" placeholder="Please enter Bottom" autocomplete="off" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Basic<span class="text-danger ml-1">*</span></label>
+                            <div class="col-sm-6">
+                                <input asp-for="Basic" type="text" class="form-control w-100" placeholder="Please enter Basic" autocomplete="off" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Challenge<span class="text-danger ml-1">*</span></label>
+                            <div class="col-sm-6">
+                                <input asp-for="Challenge" type="text" class="form-control w-100" placeholder="Please enter Challenge" autocomplete="off" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4">
+                        <div class="row p-1">
+                            <div class="col-sm-4"></div>
+                            <div class="col-sm-8">
+                                <button id="btnSave" type="submit" name="submit" class="btn btn-primary btn-sm">Submit</button>
+                                <input asp-for="DocNo" type="hidden" value="0" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+            }
+        </div>
+        <div class="row p-2">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                        <thead class="bg-primary-800">
+                            <tr>
+                                <th class="notexport text-center" width="5%">Edit</th>
+                                <th>Year</th>
+                                <th>Month</th>
+                                <th>Plant</th>
+                                <th>Division</th>
+                                <th>Line</th>
+                                <th>Bottom</th>
+                                <th>Basic</th>
+                                <th>Challenge</th>
+                                <th>User Id</th>
+                                <th>TDate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.GridList != null && Model.GridList.Count > 0)
+                            {
+                                @foreach (var item in Model.GridList)
+                                {
+                            <tr>
+                                <td class="bg-primary-gradient text-center">
+                                    <a title='Edit' href='javascript:void(0)' onclick='FillUPHData("@item.DocNo")'><i class="fa fa-edit text-success mr-3 ml-3"></i></a>
+                                </td>
+                                <th> @item.Yr</th>
+                                <td> @item.MonthName</td>
+                                <td> @item.Plant</td>
+                                <td> @item.Division</td>
+                                <td> @item.LineType</td>
+                                <td> @item.Bottom</td>
+                                <td> @item.Basic</td>
+                                <td> @item.Challenge</td>
+                                <td> @item.UserId</td>
+                                <td> @item.TDate</td>
+                            </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section ScriptsBlock {
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/datagrid/datatables/dths_excel.js"></script>
+    <script src="~/js/inputfilter.js"></script>
+    <script>
+        $(function () {
+            $('.select2').select2();
+        })
+        setInputFilter(document.getElementById("Bottom"), function (value) {
+            return /^-?\d*[.,]?\d{0,2}$/.test(value);
+        });
+        setInputFilter(document.getElementById("Basic"), function (value) {
+            return /^-?\d*[.,]?\d{0,2}$/.test(value);
+        });
+        setInputFilter(document.getElementById("Challenge"), function (value) {
+            return /^-?\d*[.,]?\d{0,2}$/.test(value);
+        });
+
+        function FillUPHData(docno) {
+            var requestUrl = 'EIS/FillUPHByDocNo';
+            $.post(requestUrl,
+                {
+                    docno: docno,
+                },
+                function (model) {
+                    $("#DocNo").val(model.docNo);
+                    $("#Plant").val(model.plant).change();
+                    $("#Division").val(model.division).change();
+                    $("#Yr").val(model.yr).change();
+                    $("#Mon").val(model.mon).change();
+                    $("#LineType").val(model.lineType).change();
+                    $("#Bottom").val(model.bottom);
+                    $("#Basic").val(model.basic);
+                    $("#Challenge").val(model.challenge);
+
+                    $("#Plant").prop("disabled", true);
+                    $("#Division").prop("disabled", true);
+                    $("#Yr").prop("disabled", true);
+                    $("#Mon").prop("disabled", true);
+                    $("#LineType").prop("disabled", true);
+
+                    if ($("#DocNo").val() == 0) {
+                        $("#btnSave").html("Submit");
+                    }
+                    else {
+                        $("#btnSave").html("Update");
+                    }
+                });
+        }
+    </script>
+}

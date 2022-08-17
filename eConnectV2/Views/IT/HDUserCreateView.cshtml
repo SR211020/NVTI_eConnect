@@ -1,0 +1,270 @@
+﻿
+@model eConnectV2.ViewModels.ITViewModel
+@{
+    ViewData["Title"] = "Help Desk User Create";
+    ViewData["PageHeading"] = "Help Desk";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section HeadBlock {
+    <link href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css" rel="stylesheet" />
+}
+
+<div class="panel p-2">
+    <div class="panel-content-show">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-1 align-self-center">
+                        <a class="btn btn-warning pt-1" onclick="window.location='@Url.Action("HDUserIdCreate","IT")'" style="height:25px;" title="Add Request">
+                            <i class="fas fa-plus mr-1"></i>Add
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group row">
+                            <div class="col-sm-6">
+                                <div class="form-check form-check-inline row">
+                                    <input id="catg1" asp-for="Activity" class="form-check-input rdbutton" type="radio" value="PENDING_WITH_USER" onchange="FillCreateListData();" checked>
+                                    <label for="catg1" class="form-check-label text-danger font-weight-bold mr-4" style="font-size: 12px">Pending Request &nbsp;&nbsp;(@Model.HDCount1)</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label font-weight-bold">From</label>
+                            <div class="col-sm-6">
+                                <input asp-for="Date1" onchange="FillCreateListData();" autocomplete="off" class="form-control datepickertext" type="text" required data-date-format="dd-M-yyyy" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label font-weight-bold">To</label>
+                            <div class="col-sm-6">
+                                <input asp-for="Date2" onchange="FillCreateListData();" autocomplete="off" class="form-control datepickertext" type="text" required data-date-format="dd-M-yyyy" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-1">
+                        
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group row">
+                            <div class="col-sm-6">
+                                <div class="form-check form-check-inline row">
+                                    <input id="catg3" asp-for="Activity" class="form-check-input rdbutton" type="radio" value="VIEW" onchange="FillCreateListData();">
+                                    <label for="catg3" class="form-check-label text-success font-weight-bold mr-4" style="font-size: 12px">All Request &nbsp;&nbsp;(@Model.HDCount2)</label>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label font-weight-bold">Status</label>
+                            <div class="col-sm-6">
+                                <select asp-for="Status" onchange="FillCreateListData();" asp-items="@(new SelectList(Model.StatusList, "Value", "Text"))" class="select2 custom-select form-control w-100">
+                                    <option value="0">-- Select --</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                        <thead class="bg-primary-800">
+                            <tr>
+                                <th class="notexport" width="5%" style="text-align:center">Action</th>
+                                <th>Req No</th>
+                                <th>Status</th>
+                                <th>Pending With</th>
+                                <th hidden>Plant</th>
+                                <th hidden>Requestor Code</th>
+                                <th>Requestor Name</th>
+                                <th>Department</th>
+                                <th>Req For</th>
+                                <th>EmpCode</th>
+                                <th>EmpName</th>
+                                <th>Id Type</th>
+                                <th style="text-align:center">Ext_Email_Access</th>
+                                <th hidden>Description</th>
+                                <th hidden>Roles</th>
+                                <th>Req Date</th>
+                                <th hidden>UserId</th>
+                                <th hidden>Dept HOD</th>
+                                <th hidden>IT HOD</th>
+                                <th hidden>IT Engineer</th>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section ScriptsBlock {
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/rowdelete.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('.select2').select2();
+            runDatePicker();
+            FillCreateListData();
+        });
+
+
+        var controls = {
+            leftArrow: '<i class="fal fa-angle-left" style="font-size: 1.25rem"></i>',
+            rightArrow: '<i class="fal fa-angle-right" style="font-size: 1.25rem"></i>'
+        }
+        var runDatePicker = function () {
+            $('#Date1, #Date2').datepicker({
+                todayHighlight: true,
+                orientation: "bottom left",
+                templates: controls,
+                autoclose: true
+            });
+        }
+
+
+        function FillCreateListData() {
+            var category = $('[name="Activity"]:radio:checked').val();
+            var activity = '';
+            if (category == "VIEW") {
+                activity = "FILL_CREATE_USERS_VIEW_LIST";
+            }
+            else {
+                activity = "FILL_CREATE_USERS_PENDING_LIST";
+            }
+            var status = $("#Status").val();
+            var date1 = $("#Date1").val();
+            var date2 = $("#Date2").val();
+            var data1 = '';
+            $.ajax({
+                url: '/IT/FillUserCreateViewList',
+                type: "POST",
+                data: { activity: activity, status: status, date1: date1, date2: date2 },
+                success: function (data, status) {
+                    $("#dt-hs tbody").empty();
+                    $("#dt-hs").DataTable().destroy();
+                    $.each(data, function (index, item) {
+                        data1 += '<tr>';
+                        data1 += '<td class="text-center bg-primary-gradient" align="center">';
+                        if (category == "PENDING_WITH_USER") {
+                            if (item.status == 1) {
+                                data1 += '<a title="View" href="IT/HDUserIdCreate?Dno=' + item.param1 + '&RUrl=UserCreateView"><i class="fa fa-eye text-info mr-1"></i></a>';
+                                data1 += '<a title="Cancel" href="javascript:void(0);" onclick="CancelUserManageRequest(' + item.requestNo + ')"><i class="fa fa-ban text-danger"></i></a>';
+                            }
+                            else {
+                                data1 += '<a title="View" href="IT/HDUserCreateApprAdd?Dno=' + item.param1 + '&Uid=' + item.param2 + '&Utp=' + item.param3 + '&RUrl=UserCreateView">';
+                                data1 += '<i class="fa fa-eye text-info mr-1" ></i ></a>';
+                            }
+                        }
+                        else {
+                            data1 += '<a title="View" href="IT/HDUserCreateApprAdd?Dno=' + item.param1 + '&RUrl=UserCreateView">';
+                            data1 += '<i class="fa fa-eye text-info mr-1" ></i ></a>';
+                        }
+                        data1 += '</td>';
+                        data1 += '<td class="text-center">' + item.requestNo + '</td>';
+                        data1 += '<td>' + item.statusDescr + '</td>';
+                        data1 += '<td>' + item.apprName + '</td>';
+                        data1 += '<td hidden>' + item.plant + '</td>';
+                        data1 += '<td hidden>' + item.empCode + '</td>';
+                        data1 += '<td>' + item.empName + '</td>';
+                        data1 += '<td>' + item.deptName + '</td>';
+                        data1 += '<td>' + item.reqFor + '</td>';
+                        data1 += '<td>' + item.empCode2 + '</td>';
+                        data1 += '<td>' + item.empName2 + '</td>';
+                        data1 += '<td>' + item.idType + '</td>';
+                        data1 += '<td class="text-center">' + item.emailAccess + '</td>';
+                        data1 += '<td hidden>' + item.descr1 + '</td>';
+                        data1 += '<td hidden>' + item.roles + '</td>';
+                        data1 += '<td>' + item.tDate + '</td>';
+                        data1 += '<td hidden>' + item.userID + '</td>';
+                        data1 += '<td hidden>' + item.deptHOD + '</td>';
+                        data1 += '<td hidden>' + item.ithod + '</td>';
+                        data1 += '<td hidden>' + item.itEngineer + '</td>';
+                        data1 += '</tr >';
+                    });
+                    $("#dt-hs tbody").html(data1);
+                    $('#dt-hs').dataTable({
+                        responsive: false,
+                        order: [[1, 'desc']],
+                        "columnDefs": [
+                            { "orderable": false, "targets": [0] },
+                        ],
+                        lengthChange: false,
+                        "pageLength": 20,
+                        dom:
+                            "<'row'<'col-sm-12 col-md-3 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-3 d-flex align-items-center justify-content-center'i><'col-sm-12 col-md-3 d-flex align-items-center justify-content-end'lB><'col-sm-12 col-md-3 d-flex align-items-center justify-content-end'p>>" +
+                            "<'row'<'col-sm-12'tr>>" +
+                            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+
+                        buttons: [
+                            {
+                                extend: 'excelHtml5',
+                                text: 'Download',
+                                title: null,
+                                titleAttr: 'Download',
+                                className: 'btn-outline-dark btn-xs mr-1',
+                                exportOptions: {
+                                    columns: ':not(.notexport)'
+                                }
+                            },
+                        ]
+                    });
+                },
+                error: function () {
+                },
+            });
+        }
+
+        function CancelUserManageRequest(reqNo) {
+            Swal.fire({
+                title: "Are you sure to cancel this Request ?",
+                text: "You won't be able to revert this!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, cancel Request!"
+            }).then(function (result) {
+                if (result.value) {
+                    var requestUrl = '/IT/CancelUserManageRequest';
+                    $.ajax({
+                        url: requestUrl,
+                        type: "POST",
+                        data: { reqNo: reqNo },
+                        success: function (response) {
+                            if (response.flag == _errorStatus) {
+                                Swal.fire("Info!", response.msg, "error");
+                            } else {
+                                Swal.fire("Cancelled!", response.msg, "success").then(function () {
+                                    window.location.reload();
+                                })
+                            }
+                        },
+                        error: function () {
+                            Swal.fire("Oops...", "Something went wrong!", "error");
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}

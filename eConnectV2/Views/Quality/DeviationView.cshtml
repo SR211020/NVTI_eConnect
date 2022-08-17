@@ -1,0 +1,188 @@
+﻿@model eConnectV2.ViewModels.QualityViewModel
+@{
+    ViewData["Title"] = "Deviation View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+}
+
+<div class="panel p-2">
+    <div class="panel-content show">
+        <div class="row">
+            <div class="col-sm-12 row">
+                <div class="col-md-2 align-self-center pb-1">
+                    <a class="btn btn-warning pt-1" onclick="window.location='@Url.Action("DeviationAdd","Quality")'" style="height:25px;" title="Add Kaizen">
+                        <i class="fas fa-plus mr-1"></i>Add
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold">From</label>
+                        <div class="col-sm-9">
+                            <input asp-for="Date1" onchange="FillData();" autocomplete="off" class="form-control datepickertext" type="text" required data-date-format="dd-M-yyyy" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold">To</label>
+                        <div class="col-sm-9">
+                            <input asp-for="Date2" onchange="FillData();" autocomplete="off" class="form-control datepickertext" type="text" required data-date-format="dd-M-yyyy" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold">Status</label>
+                        <div class="col-sm-9">
+                            <select asp-for="Status" onchange="FillData();" asp-items="@(new SelectList(Model.StatusList, "Value", "Text"))" class="select2 custom-select form-control w-100">
+                                <option value="0">-- Select --</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row pt-2">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                        <thead class="bg-primary-800">
+                            <tr>
+                                <th class="notexport" width="5%" style="text-align:center">Action</th>
+                                <th width="5%">Req No</th>
+                                <th>Status</th>
+                                <th>Pending With</th>
+                                <th>User Id</th>
+                                <th>TDate</th>
+                                <th>Requestor</th>
+                                <th>Department</th>
+                                <th>Contact No</th>
+                                <th>Plant</th>
+                                <th>Validity</th>
+                                <th>Model</th>
+                                <th>Part No</th>
+                                <th>Qty</th>
+                                <th>Deviation Type</th>
+                                <th>Customer</th>
+                                <th>Nature of Issue</th>
+                                @*Hidden Parameters for Report*@
+                                <th hidden>Action Proposed</th>
+                                <th hidden>Root Cause</th>
+                                <th hidden>Corrective Action</th>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/rowdelete.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2();
+            runDatePicker();
+            FillData();
+        });
+
+        var controls = {
+            leftArrow: '<i class="fal fa-angle-left" style="font-size: 1.25rem"></i>',
+            rightArrow: '<i class="fal fa-angle-right" style="font-size: 1.25rem"></i>'
+        }
+        var runDatePicker = function () {
+            $('#Date1, #Date2').datepicker({
+                todayHighlight: true,
+                orientation: "bottom left",
+                templates: controls,
+                autoclose: true
+            });
+        }
+
+        function FillData() {
+            var status = $("#Status").val();
+            var date1 = $("#Date1").val();
+            var date2 = $("#Date2").val();
+            var data1 = '';
+            $.ajax({
+                url: '/Quality/FillDeviationViewList',
+                type: "POST",
+                data: { status: status, date1: date1, date2: date2 },
+                success: function (data, status) {
+                    $("#dt-hs tbody").empty();
+                    $("#dt-hs").DataTable().destroy();
+                    $.each(data, function (index, item) {
+                        data1 += '<tr>';
+                        data1 += '<td class="text-center bg-primary-gradient" align="center">';
+                        if (item.apprType == "REQUESTOR") {
+                            data1 += '<a title="View" href="Quality/DeviationAdd?Dno=' + item.param1 + '"><i class="fa fa-eye text-info mr-1"></i></a>';
+                        }
+                        else {
+                            data1 += '<a title="View" href="Quality/DeviationApprAdd?Dno=' + item.param1 + '&Utp=' + item.param2 + '"><i class="fa fa-eye text-info mr-1" ></i ></a>';
+                        }
+                        data1 += '</td>';
+                        data1 += '<td>' + item.requestNo + '</td>';
+                        data1 += '<td>' + item.statusDescr + '</td>';
+                        data1 += '<td>' + item.userType + '</td>';
+                        data1 += '<td>' + item.userID + '</td>';
+                        data1 += '<td>' + item.tDate + '</td>';
+                        data1 += '<td>' + item.empCode + ' - ' + item.empName + '</td>';
+                        data1 += '<td>' + item.deptName + '</td>';
+                        data1 += '<td>' + item.contactNo + '</td>';
+                        data1 += '<td>' + item.plant + '</td>';
+                        data1 += '<td>' + item.date1 + '</td>';
+                        data1 += '<td>' + item.modelName + '</td>';
+                        data1 += '<td>' + item.partNo + '</td>';
+                        data1 += '<td>' + item.qty + '</td>';
+                        data1 += '<td>' + item.type + '</td>';
+                        data1 += '<td>' + item.customer + '</td>';
+                        data1 += '<td>' + item.natureOfIssue + '</td>';
+                        /////////////Hidden Fields for Download////////////
+                        data1 += '<td hidden>' + item.actionProposed + '</td>';
+                        data1 += '<td hidden>' + item.rootCause + '</td>';
+                        data1 += '<td hidden>' + item.correctiveAction + '</td>';
+                        data1 += '</tr >';
+                    });
+                    $("#dt-hs tbody").html(data1);
+                    $('#dt-hs').dataTable({
+                        responsive: false,
+                        order: [[1, 'desc']],
+                        "columnDefs": [
+                            { "orderable": false, "targets": [0] },
+                        ],
+                        lengthChange: false,
+                        "pageLength": 20,
+                        dom:
+                            "<'row'<'col-sm-12 col-md-3 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-3 d-flex align-items-center justify-content-center'i><'col-sm-12 col-md-3 d-flex align-items-center justify-content-end'lB><'col-sm-12 col-md-3 d-flex align-items-center justify-content-end'p>>" +
+                            "<'row'<'col-sm-12'tr>>" +
+                            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                        buttons: [
+                            {
+                                extend: 'excelHtml5',
+                                text: 'Download',
+                                title: null,
+                                titleAttr: 'Download',
+                                className: 'btn-outline-dark btn-xs mr-1',
+                                exportOptions: {
+                                    columns: ':not(.notexport)'
+                                }
+                            },
+                        ]
+                    });
+                },
+                error: function () {
+                },
+            });
+        }
+    </script>
+}
+

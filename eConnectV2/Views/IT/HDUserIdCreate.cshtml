@@ -1,0 +1,347 @@
+﻿@model eConnectV2.ViewModels.ITViewModel
+@{
+    ViewData["PageHeading"] = "Help Desk";
+    ViewData["Title"] = "Help Desk ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var Mode = ViewBag.TagAttribute;
+}
+
+<div class="panel">
+    <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+        <a id="btn_backtoList" style="color:#fff" href="@Url.Action("HDUserCreateView", "IT")" title="Back">
+            <i class="fa fa-angle-double-left"></i> Back
+        </a>
+        <h2 class="justify-content-center">
+            <span class="fw-300 pr-1">User Id </span> Create
+        </h2>
+    </div>
+    <div class="panel-container show">
+        @using (Html.BeginForm("HDUserIdCreate", "IT", FormMethod.Post, new { id = "form", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+        {
+            <div class="panel-content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Request No</label>
+                                    <span class="col-sm-8 col-form-label text-info">@Model.RequestNo</span>
+                                    <input asp-for="RequestNo" value="@Model.RequestNo" hidden />
+                                    <input asp-for="Plant" value="@Model.Plant" hidden />
+                                    <input asp-for="ITHOD" value="@Model.ITHOD" hidden />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Status</label>
+                                    <span class="col-sm-6 col-form-label text-info">@Model.StatusDescr</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Select Approver<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-7">
+                                        <select asp-for="DeptHOD" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.ApproverList, "Value", "Text"))" required>
+                                            <option value="">-- Select --</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Request Date</label>
+                                    <span class="col-sm-8 col-form-label text-info font-weight-normal">@Model.TDate</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div id="div_Email" class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Email Id</label>
+                                    <span class="col-sm-8 col-form-label text-info font-weight-normal">@Model.Email</span>
+                                    <input asp-for="Email" hidden />
+                                </div>
+                            </div>
+                            <div class="col-md-4 pt-2">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 font-weight-bold">Select ID Type<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-7">
+                                        <select asp-for="IdType" class="select2 custom-select form-control w-100" onchange="ShowData();" required>
+                                            <option value="">-- Select --</option>
+                                            <option value="ADID">AD Id</option>
+                                            <option value="EMAILID">Email Id</option>
+                                            <option value="BIS">BIS</option>
+                                            <option value="MES">MES</option>
+                                            <option value="SAP">SAP</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Requestor</label>
+                                    <div class="col-sm-8">
+                                        <span class="text-info font-weight-normal pt-2">@Model.EmpCode - @Model.EmpName</span>
+                                        <input asp-for="EmpCode" value="@Model.EmpCode" hidden />
+                                        <input asp-for="EmpName" value="@Model.EmpName" hidden />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Contact No<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input asp-for="ContactNo" value="@Model.ContactNo" class="form-control" type="text" autocomplete="off" readonly />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Department</label>
+                                    <div id="div_Dept1" class="col-sm-8">
+                                        <span class="col-form-label text-info">@Model.DeptName</span>
+                                        <input asp-for="DeptCode" value="@Model.DeptCode" hidden />
+                                        <input asp-for="DeptName" value="@Model.DeptName" hidden />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                            </div>
+                            <div id="div_EmailAccess" class="col-md-4" style="display:none">
+                                <div class="form-group row">
+                                    <label class="col-sm-6 col-form-label font-weight-bold">External Email Access required ?</label>
+                                    <div class="col-sm-6">
+                                        <div class="form-check form-check-inline row">
+                                            <input id="EmailAccess1" asp-for="EmailAccess" class="form-check-input rdbutton" type="radio" value="Y">
+                                            <label for="EmailAccess1" class="form-check-label text-success font-weight-bold mr-2">Yes</label>
+                                            <input id="EmailAccess2" asp-for="EmailAccess" class="form-check-input rdbutton" type="radio" value="N" checked>
+                                            <label for="EmailAccess2" class="form-check-label text-info font-weight-bold mr-2">No</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Request For</label>
+                                    <div class="col-sm-8" onchange="ShowData();">
+                                        <div class="form-check form-check-inline row">
+                                            <input id="ReqFor1" asp-for="ReqFor" class="form-check-input rdbutton" type="radio" value="Self" required>
+                                            <label for="ReqFor1" class="form-check-label text-success font-weight-bold mr-2">Self</label>
+                                            <input id="ReqFor2" asp-for="ReqFor" class="form-check-input rdbutton" type="radio" value="Others" required>
+                                            <label for="ReqFor2" class="form-check-label text-info font-weight-bold mr-2">Others</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="div_EmpCode" class="col-md-4" style="display:none">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Employee Code<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input asp-for="EmpCode2" value="@Model.EmpCode2" class="form-control-alternate" type="text" autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="div_EmpName" class="col-md-4" style="display:none">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Employee Name<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-7">
+                                        <input asp-for="EmpName2" value="@Model.EmpName2" class="form-control-alternate" type="text" autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="div_Roles" class="row pt-2">
+                            <div class="col-md-8">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label font-weight-bold">Roles<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-10">
+                                        <textarea asp-for="Roles" required class="form-control" type="text" rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="div_Descr" class="row pt-2">
+                            <div class="col-md-8">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label font-weight-bold">Description<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-10">
+                                        <textarea asp-for="Descr1" required class="form-control" type="text" rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="div_Remarks" class="row pt-2">
+                            <div class="col-md-8">
+                                <div class="form-group row">
+                                    <div class="col-sm-2">
+                                        <b>Remarks</b>
+                                        <br />(if any)
+                                    </div>
+                                    <div class="col-sm-10">
+                                        <textarea asp-for="Remarks" class="form-control" type="text" rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-2">
+                            <div class="col-md-8">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label font-weight-bold"></label>
+                                    <div class="col-sm-2">
+                                        <button id="btnSubmit" type="submit" name="submit" class="btn btn-primary btn-sm">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@if (Model.HistoryList != null && Model.HistoryList.Count > 0)
+{
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="row col-md-8">
+            <div class="table-responsive">
+                <h3 class="text-info font-weight-bold text-center">Request History</h3>
+                <br />
+                <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                    <thead class="bg-primary-800">
+                        <tr>
+                            <th width="5%" class="text-center">#</th>
+                            <th width="12%">User Type</th>
+                            <th width="20%">User Name</th>
+                            <th>Remarks</th>
+                            <th width="15%">Status</th>
+                            <th width="20%">TDate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.HistoryList)
+                        {
+                            <tr>
+                                <td class="text-center">@item.SrNo</td>
+                                <td>@item.UserType</td>
+                                <td>@item.EmpName</td>
+                                <td>@item.Remarks</td>
+                                <td>@item.StatusDescr</td>
+                                <td>@item.TDate</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+    }
+
+
+@section ScriptsBlock {
+    @*<script src="~/js/defaultformvalidate.js"></script>*@
+    <script type="text/javascript">
+
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!CheckValidValue()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+
+
+        $(document).ready(function () {
+            $('.select2').select2();
+            FillForm();
+
+        });
+        function CheckValidValue() {
+            var reqFor = $('[name="ReqFor"]:radio:checked').val();
+            if (reqFor == 'Others') {
+                if ($('#EmpCode2').val() == '') {
+                    Swal.fire("Info!", "Fill Employee Code", "error");
+                    return false;
+                }
+                if ($('#EmpName2').val() == '') {
+                    Swal.fire("Info!", "Fill Employee Name", "error");
+                    return false;
+                }
+            }
+            if ($('#ContactNo').val() == '') {
+                Swal.fire("Info!", "Fill ContactNo<br>Go To MyProfile and Fill Contact details", "error");
+                return false;
+            }
+            return true;
+        }
+
+
+        function ShowData() {
+            debugger;
+            $('#div_EmpCode').hide();
+            $('#div_EmpName').hide();
+            $('#div_EmailAccess').hide();
+            var reqFor = $('[name="ReqFor"]:radio:checked').val();
+            if (reqFor == "Others") {
+                $('#div_EmpCode').show();
+                $('#div_EmpName').show();
+            }
+            else {
+                $('#div_EmpCode').hide();
+                $('#div_EmpCode').hide();
+            }
+            var idType = $("#IdType option:selected").val();
+            if (idType == "EMAILID")  {
+                $('#div_EmailAccess').show();
+            }
+            else {
+                $('#div_EmailAccess').hide();
+            }
+        }
+
+        function FillForm() {
+            if ("@Model.ReqFor" == "Others") {
+                $('#div_EmpCode').show();
+                $('#div_EmpName').show();
+            }
+            else {
+
+                $('#div_EmpCode').hide();
+                $('#div_EmpName').hide();
+            }
+            if ("@Model.IdType" == "EMAILID") {
+                $('#div_EmailAccess').show();
+
+            }
+            else {
+
+                $('#div_EmailAccess').hide();
+
+            }
+    }
+
+    </script>
+}
+

@@ -1,0 +1,141 @@
+﻿@model eConnectV2.ViewModels.MiscViewModel
+@{
+    ViewData["PageHeading"] = "Add Slider Image";
+    ViewData["Title"] = "Slider - Add Image";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section HeadBlock {
+    <style>
+        .image {
+            height: 169px;
+            width: 176px;
+            margin: auto;
+            border: none;
+        }
+    </style>
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel">
+            <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+                <h2 class="justify-content-center">
+                    <span class="fw-300 pr-1">Add </span> Slider Image
+                </h2>
+            </div>
+            <div class="panel-container show">
+                @using (Html.BeginForm("AddImage", "Misc", FormMethod.Post, new { id = "form", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+                {
+                    <div class="panel-content">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Upload Image</label>
+                                    <div class="col-sm-6">
+                                        <div class="custom-file">
+                                            <input type="file" name="Image" class="custom-file-input" id="Image" onchange="return ShowImagePreview(this)" required />
+                                            <label class="custom-file-label" for="empImage">Choose file</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="divImagePreview" class="col-md-6" style="display:none">
+                                <img id="imagePreview" class="image"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5"></div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary btn-sm" id="btnUpload"> Submit</button>
+                                </div>
+                            </div>
+                            <div class="col-md-5"></div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="row p-2">
+                <div class="col-md-12">
+                    <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                        <thead class="bg-primary-800">
+                            <tr class='text-nowrap text-center'>
+                                <th class="notexport" align="center">Action</th>
+                                <th>Image</th>
+                            </tr>
+                        </thead>
+                        <tbody class='text-nowrap'>
+                            @if (Model.ImageList != null && Model.ImageList.Count > 0)
+                            {
+                                @foreach (var item in Model.ImageList)
+                                {
+                                    <tr>
+                                        <td align="center">
+                                            <a title='Delete' class="text-danger pt-1" href='javascript:void(0)' onclick='DeleteImage("@item.Param1")'>
+                                                <i class="fa fa-trash-alt"></i>
+                                            </a>
+                                        </td>
+                                        <td align="center">
+                                            <img src="@item.DocName" height="150" width="300" />
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    @*<script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/rowdelete.js"></script>
+    <script src="~/js/datagrid/datatables/dths_excel.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>*@
+    <script>
+        function ShowImagePreview(input) {
+            if (input.files && input.files[0]) {
+                var fname = input.files[0].name;
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#imagePreview').prop('src', e.target.result);
+                    $('#divImagePreview').show();
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        function DeleteImage(param1) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (result) {
+                if (result.value) {
+                    var requestUrl = '/Misc/DeleteImage';
+                    $.ajax({
+                        url: requestUrl,
+                        type: "POST",
+                        data: { param1: param1 },
+                        success: function (response) {
+                            Swal.fire("Deleted!", response.msg, "success").then(function () {
+                                location.reload();
+                            })
+                        },
+                        error: function () {
+                            Swal.fire("Oops...", "Something went wrong!", "error");
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}
+
+

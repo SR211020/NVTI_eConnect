@@ -1,0 +1,388 @@
+﻿@model eConnectV2.ViewModels.QualityViewModel
+@{
+    ViewData["PageHeading"] = "Deviation Approve";
+    ViewData["Title"] = "Deviation Approve";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var Mode = ViewBag.TagAttribute;
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+}
+
+<div class="panel">
+    <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+        @if (@Mode == "RptView")
+        {
+            <a style="color:#fff" href="@Url.Action("DeviationReport", "Quality")" title="Back">
+                <i class="fa fa-angle-double-left"></i> Back
+            </a>
+        }
+        else
+        {
+            <a style="color:#fff" href="@Url.Action("DeviationView", "Quality")" title="Back">
+                <i class="fa fa-angle-double-left"></i> Back
+            </a>
+        }
+        <h2 class="justify-content-center">
+            <span class="fw-300 pr-1">Approve  </span> Deviation
+        </h2>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content">
+            @using (Html.BeginForm("DeviationApprAdd", "Quality", FormMethod.Post, new { id = "myform", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+            {
+            <div class="col-md-12">
+                <div class="row">
+                    <input asp-for="ApprType" value="@Model.ApprType" hidden />
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Request No</label>
+                            <span class="col-sm-8 col-form-label text-info">@Model.RequestNo</span>
+                            <input asp-for="RequestNo" value="@Model.RequestNo" hidden />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Requestor</label>
+                            <span class="col-sm-8 text-info font-weight-normal pt-2">@Model.EmpCode - @Model.EmpName</span>
+                            <input asp-for="EmpCode" value="@Model.EmpCode" hidden />
+                            <input asp-for="EmpName" value="@Model.EmpName" hidden />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Model</label>
+                            <div class="col-sm-7">
+                                <input asp-for="ModelName" value="@Model.ModelName" class="form-control" type="text" autocomplete="off" disabled />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Request Date</label>
+                            <span class="col-sm-8 col-form-label text-info font-weight-normal">@Model.TDate</span>
+                            <input asp-for="TDate" value="@Model.TDate" hidden />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Department</label>
+                            <span class="col-sm-8 col-form-label text-info">@Model.DeptName</span>
+                            <input asp-for="DeptCode" value="@Model.DeptCode" hidden />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Part No</label>
+                            <div class="col-sm-7">
+                                <input asp-for="PartNo" value="@Model.PartNo" class="form-control" type="text" autocomplete="off" disabled />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Plant</label>
+                            <div class="col-sm-7">
+                                <input asp-for="Plant" value="@Model.Plant" class="form-control" type="text" autocomplete="off" disabled />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Contact No</label>
+                            <div class="col-sm-7">
+                                <input asp-for="ContactNo" value="@Model.ContactNo" class="form-control" type="text" autocomplete="off" disabled />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Quantity</label>
+                            <div class="col-sm-7">
+                                <input asp-for="Qty" value="@Model.Qty" class="form-control" type="text" autocomplete="off" disabled />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Valid Upto</label>
+                            <div class="col-sm-7">
+                                <input asp-for="Date1" class="form-control" type="text" autocomplete="off" placeholder="dd-mmm-yyyy" data-date-format="dd-M-yyyy" disabled />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Customer</label>
+                            <div class="col-sm-7">
+                                <input asp-for="Customer" value="@Model.Customer" class="form-control" type="text" autocomplete="off" disabled />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Download File</label>
+                            <div class="col-sm-7 pt-2">
+                                @if (Model.DocName != "")
+                                {
+                                    <a title='Download' href='@Url.Action("DownloadDeviationkFile", "Quality", new { fileName = @Model.DocName })'>@Model.DocName</a> }
+                                else
+                                {
+                                    <label class="font-weight-bold">NA</label>}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-md-12">
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label font-weight-bold">Deviation Type</label>
+                            <div class="col-sm-10">
+                                <div class="form-check form-check-inline row">
+                                    <input asp-for="Type" value="@Model.Type" hidden />
+                                    <input asp-for="Type" class="form-check-input rdbutton" type="radio" value="Man">
+                                    <label class="form-check-label text-success font-weight-bold mr-2">Man</label>
+                                    <input asp-for="Type" class="form-check-input rdbutton" type="radio" value="Process">
+                                    <label class="form-check-label text-info font-weight-bold mr-2">Process</label>
+                                    <input asp-for="Type" class="form-check-input rdbutton" type="radio" value="Product">
+                                    <label class="form-check-label text-danger font-weight-bold mr-2">Product</label>
+                                    <input asp-for="Type" class="form-check-input rdbutton" type="radio" value="Machine">
+                                    <label class="form-check-label text-success font-weight-bold mr-2">Machine</label>
+                                    <input asp-for="Type" class="form-check-input rdbutton" type="radio" value="Material">
+                                    <label class="form-check-label text-success font-weight-bold mr-2">Material</label>
+                                    <input asp-for="Type" class="form-check-input rdbutton" type="radio" value="Specification">
+                                    <label class="form-check-label text-info font-weight-bold mr-2">Specification</label>
+                                    <input asp-for="Type" class="form-check-input rdbutton" type="radio" value="Customer Requirement">
+                                    <label class="form-check-label text-danger font-weight-bold mr-2">Customer Requirement</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-md-8">
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label font-weight-bold">Nature of Issue</label>
+                            <div class="col-sm-10">
+                                <textarea asp-for="NatureOfIssue" class="form-control" type="text" rows="3" autocomplete="off" disabled></textarea>
+                                <input asp-for="NatureOfIssue" value="@Model.NatureOfIssue" hidden />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-md-8">
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label font-weight-bold">Action Proposed & Controls</label>
+                            <div class="col-sm-10">
+                                <textarea asp-for="ActionProposed" class="form-control" type="text" rows="3" autocomplete="off" disabled></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-md-8">
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label font-weight-bold">Root Cause for the Deviation</label>
+                            <div class="col-sm-10">
+                                <textarea asp-for="RootCause" class="form-control" type="text" rows="3" autocomplete="off" disabled></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-md-8">
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label font-weight-bold">Corrective Action to avoid such Deviation in future</label>
+                            <div class="col-sm-10">
+                                <textarea asp-for="CorrectiveAction" class="form-control" type="text" rows="3" autocomplete="off" disabled></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 d-flex justify-content-center">
+                        <a title='View Approver List' href='javascript:void(0)' onclick="ViewApprovers()" data-toggle="modal" data-target="#default-example-modal-lg"><i class="fa fa-eye text-info mr-1">View Approvers List</i></a>
+                    </div>
+                </div>
+                <div id="divStatus" style="display:none" class="row pt-2">
+                    <div class="col-md-8">
+                        <div class="form-group row">
+                            <label class="col-sm-2 font-weight-bold">Approver Status<span class="text-danger ml-1 view">*</span></label>
+                            <div class="col-sm-10">
+                                <div class="form-check form-check-inline row">
+                                    <input asp-for="ApprStatus" class="form-check-input rdbuttonDCC" type="radio" value="Approve" checked>
+                                    <label class="form-check-label text-warning font-weight-bold mr-2">Approve</label>
+                                    <input asp-for="ApprStatus" class="form-check-input rdbuttonDCC" type="radio" value="Reject">
+                                    <label class="form-check-label text-secondary font-weight-bold mr-2">Reject</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="divRemarks" style="display:none" class="row pt-2">
+                    <div class="col-md-8">
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label font-weight-bold">Remarks</label>
+                            <div class="col-sm-10">
+                                <textarea asp-for="Remarks" class="form-control" type="text" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-md-8">
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label font-weight-bold"></label>
+                            <div class="col-sm-10">
+                                <button id="btnSubmit" style="display:none" type="submit" name="submit" class="btn btn-primary btn-sm">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>
+@if (Model.HistoryList != null && Model.HistoryList.Count > 0)
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-center">
+                <div class="col-md-10">
+                    <h3 class="text-info font-weight-bold text-center">Approval History</h3>
+                    <div class="table-responsive">
+                        <table class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                            <thead class="bg-primary-800">
+                                <tr>
+                                    <th width="5%" class="text-center">#</th>
+                                    <th width="12%">User Type</th>
+                                    <th width="20%">User Name</th>
+                                    <th>Remarks</th>
+                                    <th width="15%">Status</th>
+                                    <th width="20%">TDate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.HistoryList)
+                                {
+                                    <tr>
+                                        <td class="text-center">
+                                            @item.SrNo
+                                        </td>
+                                        <td>
+                                            @item.UserType
+                                        </td>
+                                        <td>
+                                            @item.UserID - @item.EmpName
+                                        </td>
+                                        <td>
+                                            @item.Remarks
+                                        </td>
+                                        <td>
+                                            @item.StatusDescr
+                                        </td>
+                                        <td>
+                                            @item.TDate
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<div class="modal fade" id="default-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary"><strong>APPROVER DETAILS</strong></h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+            </div>
+            <div class="modal-body pt-0">
+                <table id="tbl_ViewApprovers" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                    <thead class="bg-info-700">
+                        <tr>
+                            <th>Plant</th>
+                            <th>Department</th>
+                            <th>Employee Name</th>
+                            <th class='text-center'>Level</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/select.js"></script>
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2();
+            runDatePicker();
+            FillForm();
+        });
+
+        var controls = {
+            leftArrow: '<i class="fal fa-angle-left" style="font-size: 1.25rem"></i>',
+            rightArrow: '<i class="fal fa-angle-right" style="font-size: 1.25rem"></i>'
+        }
+        var runDatePicker = function () {
+            $('#Date1').datepicker({
+                todayHighlight: true,
+                orientation: "bottom left",
+                templates: controls,
+                autoclose: true,
+                startDate: '-0d',
+                changeMonth: true
+            });
+        }
+
+        function ViewApprovers() {
+            var plantVal = $('#Plant').val();
+            var requestUrl = 'Quality/ViewDeviationApprovers';
+            $.post(requestUrl,
+                {
+                    plant: plantVal,
+                },
+                function (data) {
+                    $('#tbl_ViewApprovers tbody').empty();
+                    var row = "<tr style='font-size: 14px; font - weight: 500'>";
+                    $.each(data, function (index, item) {
+                        row += "<tr>";
+                        row += "<td>" + item.plant + "</td>";
+                        row += "<td>" + item.apprType + "</td>";
+                        row += "<td>" + item.empName + "</td>";
+                        row += "<td class='text-center'>" + item.param1 + "</td>";
+                        row += "</tr>";
+                    });
+                    $("#tbl_ViewApprovers tbody").html(row);
+                });
+        }
+
+        function FillForm() {
+            $(".rdbutton").prop("disabled", true);
+            if ("@Mode" == "E") {
+                $("#divStatus").show();
+                $("#divRemarks").show();
+                $("#btnSubmit").show();
+            }
+    };
+    </script>
+}

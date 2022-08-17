@@ -1,0 +1,185 @@
+﻿@model eConnectV2.ViewModels.DTViewModel
+@{
+    ViewData["Title"] = "NVTI-Digital Training";
+    ViewData["PageHeading"] = "Upcoming Skill Test";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "Digital Training";
+    ViewBag.Category1 = "Upcoming Skill Test";
+}
+
+<style>
+    .blink {
+        animation: blinker 0.6s linear infinite;
+    }
+      @@keyframes blinker {
+        50% {
+          opacity: 0;
+        }
+      }
+      .blink-one {
+        animation: blinker-one 1s linear infinite;
+      }
+      @@keyframes blinker-one {
+        0% {
+          opacity: 0;
+        }
+      }
+</style>
+<div id="dataList1">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <h3 class="fw-900 font-italic text-gradient">
+                            Upcoming skill test list for D to C
+                        </h3>
+                        <div class="table-responsive">
+                            <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover nowrap">
+                                <thead class="bg-primary-800">
+                                    <tr>
+                                        <th>Skill Test Date</th>
+                                        <th>AadharNo</th>
+                                        <th>EmpCode</th>
+                                        <th>EmpName</th>
+                                        <th>DOJ</th>
+                                        <th>Grade</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white">
+                                    @foreach (var item in Model.ManPowerList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @item.Param1
+                                                @{
+                                                    if (Convert.ToInt32(item.Param2) == 0)
+                                                    {
+                                                        <span class="blink blink-one text-success font-italic pl-3 fw-900"> - Today</span>
+                                                    }
+                                                    else if (Convert.ToInt32(item.Param2) > 0)
+                                                    {
+                                                        <span class="text-danger font-italic pl-3 fw-900"> - Overdue</span>
+                                                    }
+                                                }
+                                            </td>
+                                            <td>@item.AadharNo</td>
+                                            <td>@item.EmpCode</td>
+                                            <td>@item.EmpName</td>
+                                            <td>@item.DOJ</td>
+                                            <td><span class="badge badge-primary pl-3 pr-3">@item.Grade</span></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="dataList2">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <h3 class="fw-900 font-italic text-gradient">
+                            Upcoming skill test list for C to B
+                        </h3>
+                        <div class="table-responsive">
+                            <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover nowrap">
+                                <thead class="bg-primary-800">
+                                    <tr>
+                                        <th>Last Certification Date</th>
+                                        <th>AadharNo</th>
+                                        <th>Employee</th>
+                                        <th>Station</th>
+                                        <th>Grade</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white">
+                                    @foreach (var item in Model.QuestionList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @item.CertificationDate
+                                                @{
+                                                    if (Convert.ToInt32(item.Param2) == 0)
+                                                    {
+                                                        <span class="blink blink-one text-success font-italic pl-3 fw-900"> - Today</span>
+                                                    }
+                                                    else if (Convert.ToInt32(item.Param2) > 0)
+                                                    {
+                                                        <span class="text-danger font-italic pl-3 fw-900"> - Overdue</span>
+                                                    }
+                                                }
+                                            </td>
+                                            <td>@item.AadharNo</td>
+                                            <td>@item.EmpName</td>
+                                            <td>@item.Station</td>
+                                            <td><span class="badge badge-primary pl-3 pr-3">@item.Grade</span></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="dataList3">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <h3 class="fw-900 font-italic text-gradient">
+                            Upcoming skill test list for B to A
+                        </h3>
+                        <div class="table-responsive">
+                            <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover nowrap">
+                                <thead class="bg-primary-800">
+                                    <tr>
+                                        <th>Last Certification Date</th>
+                                        <th>AadharNo</th>
+                                        <th>Employee</th>
+                                        <th>Station</th>
+                                        <th>Grade</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white">
+                                    @foreach (var item in Model.OJTDocumentList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @item.CertificationDate
+                                                @{
+                                                    if (Convert.ToInt32(item.Param2) == 0)
+                                                    {
+                                                        <span class="blink blink-one text-success font-italic pl-3 fw-900"> - Today</span>
+                                                    }
+                                                    else if (Convert.ToInt32(item.Param2) > 0)
+                                                    {
+                                                        <span class="text-danger font-italic pl-3 fw-900"> - Overdue</span>
+                                                    }
+                                                }
+                                            </td>
+                                            <td>@item.AadharNo</td>
+                                            <td>@item.EmpName</td>
+                                            <td>@item.Station</td>
+                                            <td><span class="badge badge-primary pl-3 pr-3">@item.Grade</span></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

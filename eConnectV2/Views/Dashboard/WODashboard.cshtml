@@ -1,0 +1,358 @@
+﻿@model eConnectV2.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "WO Details";
+    ViewData["PageHeading"] = "Work Order Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+
+    <link rel="stylesheet" media="screen, print" href="~/css/statistics/c3/c3.css">
+
+    <link href="~/css/statistics/c3/c3.css" rel="stylesheet" />
+}
+<div class="alert bg-primary-200 text-white" role="alert">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label font-weight-bold">Division</label>
+                <div class="col-sm-6">
+                    <select asp-for="Division" onchange="FillData();" class="select2 custom-select form-control w-100">
+                        <option value="SMT">SMT</option>
+                        <option value="PCM">PCM-BE</option>
+                        <option value="PACK">PACK</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label font-weight-bold">Customer</label>
+                <div class="col-sm-6">
+                    <select asp-for="Customer" onchange="FillData();" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.CustomerList, "Value", "Text"))">
+                        <option value="0">-- All --</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label font-weight-bold">From Date</label>
+                <div class="col-sm-6">
+                    <input asp-for="Date1" onchange="FillData();" autocomplete="off" class="form-control datepickertext" type="text" required data-date-format="dd-M-yyyy" />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label font-weight-bold">To Date</label>
+                <div class="col-sm-6">
+                    <input asp-for="Date2" onchange="FillData();" autocomplete="off" class="form-control datepickertext" type="text" required data-date-format="dd-M-yyyy" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr bg-gray-100">
+                <table class="w-100">
+                    <tr>
+                        <td>
+                            <h2 class="pl-3">
+                                WO Status
+                            </h2>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content bg-gray pt-4 pb-5">
+                    <div id="WOStatusChart">
+                        <canvas style="width:100%; height:300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+            <script type="text/javascript">
+                function fnWOStatus() {
+                    document.getElementById("WOStatusChart").innerHTML = '&nbsp;';
+                    document.getElementById("WOStatusChart").innerHTML = '<canvas style="width:100%; height:300px;"></canvas>';
+                    GetWOStatusData();
+                }
+            </script>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel">
+            <div class="panel-hdr bg-info-800 min-height-reset height-3">
+                <h2 class="justify-content-center">
+                    Work Order Count
+                </h2>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="table-responsive">
+                                <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                                    <thead class="bg-primary-800">
+                                        <tr>
+                                            <th>Model No</th>
+                                            <th>Status</th>
+                                            <th>Total</th>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel">
+            <div class="panel-hdr bg-warning-800 min-height-reset height-3">
+                <h2 class="justify-content-center">
+                    Work Orders Analysis
+                </h2>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="table-responsive">
+                                <table id="dt-hs_OpenWO" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                                    <thead class="bg-primary-800">
+                                        <tr>
+                                            <th>Work Order</th>
+                                            <th>Item Id</th>
+                                            <th>Model Name</th>
+                                            <th>Status</th>
+                                            <th>Create Date</th>
+                                            <th>Total</th>
+                                            <th>Finished</th>
+                                            <th>Pending</th>
+                                            <th>%(Completed)</th>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/rowdelete.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+
+    <script src="~/js/statistics/c3/c3.js"></script>
+    <script src="~/js/statistics/d3/d3.js"></script>
+
+    <script>
+        var colors1 = [color.warning._100, color.info._500, color.success._500];
+        var WOStatusData = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.WOStatusData))');
+
+        $(document).ready(function () {
+            $('.select2').select2();
+            runDatePicker();
+            WOStatusChart(WOStatusData);
+            FillWOCountStatusWise();
+            FillWODetails();
+        });
+
+        var controls = {
+            leftArrow: '<i class="fal fa-angle-left" style="font-size: 1.25rem"></i>',
+            rightArrow: '<i class="fal fa-angle-right" style="font-size: 1.25rem"></i>'
+        }
+        var runDatePicker = function () {
+            $('#Date1, #Date2').datepicker({
+                todayHighlight: true,
+                orientation: "bottom left",
+                templates: controls,
+                autoclose: true
+            });
+        }
+
+        function FillData() {
+            FillWOCountStatusWise();
+            FillWODetails();
+            GetWOStatusData();
+        }
+
+        function GetWOStatusData() {
+            var division = $('#Division').val();
+            var customer = $('#Customer').val();
+            var date1 = $('#Date1').val();
+            var date2 = $('#Date2').val();
+            var requestUrl = 'Dashboard/GetWOStatus';
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                data: { division: division, customer: customer, date1: date1, date2: date2 },
+                success: function (response) {
+                    WOStatusChart(response);
+                },
+                WOStatusChart: function () {
+                }
+            });
+        }
+        var WOStatusChart = function (data) {
+            var newwo = 0, newwo1 = 0;
+            var inprogress = 0, inprogress1 = 0;
+            var closed = 0, closed1 = 0;
+            var total = 0;
+            if (data != null) {
+                for (i = 0; i < data.length; i++) {
+                    if (data[i].statusDescr.toLowerCase() == 'new') { newwo1 = newwo = data[i].total; }
+                    if (data[i].statusDescr.toLowerCase() == 'in-progress') { inprogress1 = inprogress = data[i].total; }
+                    if (data[i].statusDescr.toLowerCase() == 'closed') { closed1 = closed = data[i].total; }
+                }
+                total = parseInt(newwo) + parseInt(inprogress) + parseInt(closed);
+            }
+            var donutChart = c3.generate({
+                bindto: "#WOStatusChart",
+                data: {
+                    columns: [
+                        ['New : ' + newwo1, newwo],
+                        ['In-Progress : ' + inprogress1, inprogress],
+                        ["Closed : " + closed1, closed],
+                    ],
+                    type: 'donut'
+                },
+                donut: {
+                    title: "Total : " + total
+                },
+                color: {
+                    pattern: colors1
+                },
+                legend: {
+                    position: 'right'
+                }
+            });
+        }
+
+        function FillWOCountStatusWise() {
+            var division = $("#Division").val();
+            var customer = $('#Customer').val();
+            var date1 = $("#Date1").val();
+            var date2 = $("#Date2").val();
+            var data1 = '';
+            $.ajax({
+                url: '/Dashboard/FillWOCountStatusWise',
+                type: "POST",
+                data: { division: division, customer: customer, date1: date1, date2: date2 },
+                success: function (data) {
+                    $("#dt-hs tbody").empty();
+                    $("#dt-hs").DataTable().destroy();
+                    $.each(data, function (index, item) {
+                        data1 += '<tr>';
+                        data1 += '<td>' + item.modelName + '</td>';
+                        data1 += '<td>' + item.statusDescr + '</td>';
+                        data1 += '<td>' + item.total + '</td>';
+                        data1 += '</tr >';
+                    });
+                    $("#dt-hs tbody").html(data1);
+                    $('#dt-hs').dataTable({
+                        responsive: false,
+                        order: [[1, 'desc']],
+                        "columnDefs": [
+                            { "orderable": false, "targets": [0] },
+                        ],
+                        lengthChange: false,
+                        "pageLength": 10,
+                        dom:
+                            "<'row'<'col-sm-12 col-md-4 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-8 d-flex align-items-center justify-content-end'lB>>" +
+                            "<'row'<'col-sm-12'tr>>" +
+                            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                        buttons: [
+                            {
+                                extend: 'excelHtml5',
+                                text: 'Download',
+                                title: null,
+                                titleAttr: 'Download',
+                                className: 'btn-outline-dark btn-xs mr-1',
+                                exportOptions: {
+                                    columns: ':not(.notexport)'
+                                }
+                            },
+                        ]
+                    });
+                },
+                error: function () {
+                },
+            });
+        }
+
+        function FillWODetails() {
+            var division = $("#Division").val();
+            var customer = $('#Customer').val();
+            var date1 = $("#Date1").val();
+            var date2 = $("#Date2").val();
+            var data1 = '';
+            $.ajax({
+                url: '/Dashboard/FillWODetails',
+                type: "POST",
+                data: { division: division, customer: customer, date1: date1, date2: date2 },
+                success: function (data) {
+                    $("#dt-hs_OpenWO tbody").empty();
+                    $("#dt-hs_OpenWO").DataTable().destroy();
+                    $.each(data, function (index, item) {
+                        data1 += '<tr>';
+                        data1 += '<td>' + item.workOrder + '</td>';
+                        data1 += '<td>' + item.itemId + '</td>';
+                        data1 += '<td>' + item.modelName + '</td>';
+                        data1 += '<td>' + item.statusDescr + '</td>';
+                        data1 += '<td>' + item.date1 + '</td>';
+                        data1 += '<td>' + item.total + '</td>';
+                        data1 += '<td>' + item.finished + '</td>';
+                        data1 += '<td>' + item.pending + '</td>';
+                        data1 += '<td>' + item.percentage + '</td>';
+                        data1 += '</tr >';
+                    });
+                    $("#dt-hs_OpenWO tbody").html(data1);
+                    $('#dt-hs_OpenWO').dataTable({
+                        responsive: false,
+                        //order: [[5, 'desc']],
+                        //"columnDefs": [
+                        //    { "orderable": false, "targets": [4] },
+                        //],
+                        lengthChange: false,
+                        "pageLength": 10,
+                        dom:
+                            "<'row'<'col-sm-12 col-md-4 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-8 d-flex align-items-center justify-content-end'lB>>" +
+                            "<'row'<'col-sm-12'tr>>" +
+                            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                        buttons: [
+                            {
+                                extend: 'excelHtml5',
+                                text: 'Download',
+                                title: null,
+                                titleAttr: 'Download',
+                                className: 'btn-outline-dark btn-xs mr-1',
+                                exportOptions: {
+                                    columns: ':not(.notexport)'
+                                }
+                            },
+                        ]
+                    });
+                },
+                error: function () {
+                },
+            });
+        }
+    </script>
+}
+

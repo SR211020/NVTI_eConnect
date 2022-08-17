@@ -1,0 +1,122 @@
+﻿
+@{
+    ViewData["Title"] = "My Attendance";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section HeadBlock{
+    <link href="~/css/formplugins/full-calender/fullcalendar.min.css" rel="stylesheet" />
+    <style>
+        .fc-time {
+            display: none;
+        }
+    </style>
+}
+
+<div class="panel">
+    <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+        <h2 class="justify-content-center">
+            <span class="fw-300 pr-1">My  </span> Attendance
+        </h2>
+    </div>
+    <div class="panel-content-show p-2">
+        <div id="calender">
+        </div>
+    </div>
+</div>
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary-800">
+                <h4 class="modal-title pl-1">
+                    <span>
+                        Card Punch Details
+                    </span>
+                </h4>
+                <button type="button" class="close bg-danger-900" data-dismiss="modal">×</button>
+            </div>
+            <div class="modal-body">
+                <p id="attendanceDetails"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock{
+    <script src="~/js/moment.min.js"></script>
+    <script src="~/js/fullcalendar.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            GetAttendance();
+        });
+
+        function GetAttendance() {
+            var attendance = [];
+            $.ajax({
+                type: "GET",
+                url: "/Attendance/GetAttendance",
+                success: function (data) {
+                    $.each(data, function (i, item) {
+                        if (item.inPunch != '' && item.outPunch != '') {
+                            attendance.push({
+                                employeeCode: item.empCode,
+                                start: moment(item.date1, "DD-MMM-YYYY"),
+                                title: 'In: ' + item.inPunch + '      Out: ' + item.outPunch,
+                                color: 'green',
+                                textColor: 'white',
+                                inDate: item.param1,
+                                inTime: item.inPunch,
+                                outDate: item.param2,
+                                outTime: item.outPunch,
+                                textEscape: false,
+                            });
+                        }
+                        else {
+                            attendance.push({
+                                employeeCode: item.empCode,
+                                start: moment(item.date1, "DD-MMM-YYYY"),
+                                title: 'In: ' + item.inPunch + '      Out: ' + item.outPunch,
+                                color: 'orange',
+                                textColor: 'white',
+                                inDate: item.param1,
+                                inTime: item.inPunch,
+                                outDate: item.param2,
+                                outTime: item.outPunch,
+                                textEscape: false,
+                            });
+                        }
+                    })
+                    GenerateCalender(attendance);
+                },
+                error: function (error) {
+                    Swal.fire("Info!", "Something went wrong", "error");
+                }
+            })
+        }
+
+        function GenerateCalender(attendance) {
+            $('#calender').fullCalendar('destroy');
+            $('#calender').fullCalendar({
+                contentHeight: 400,
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,basicWeek,basicDay'
+                },
+                eventLimit: false,
+                events: attendance,
+                eventClick: function (calEvent, jsEvent, view) {
+                    var $description = $('<div/>');
+                    $description.append($('<p/>').html('<b>Employee Code:</b> &nbsp;&nbsp;' + calEvent.employeeCode));
+                    $description.append($('<p/>').html('<b>Punch In:</b> &nbsp;&nbsp;' + calEvent.inDate));
+                    $description.append($('<p/>').html('<b>Punch Out:</b> &nbsp;&nbsp;' + calEvent.outDate));
+                    $('#attendanceDetails').empty().html($description);
+
+                    $('#myModal').modal();
+                }
+            })
+        }
+    </script>
+}
+

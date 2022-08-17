@@ -1,0 +1,297 @@
+﻿@model eConnectV2.ViewModels.KaizenViewModel
+@{
+    ViewData["Title"] = "Kaizen Approve";
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewBag.Module = "Kaizen";
+    ViewBag.Category1 = "Kaizen Approve";
+}
+
+<div class="panel">
+    <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+        @if (ViewBag.Login == "Y")
+        {
+            if (ViewBag.RUrl == "KaizenReports")
+            {
+                <a title="Back" href="@Url.Action("KaizenReports", "Kaizen")" style="color:#fff">
+                    <i class="fa fa-angle-double-left"></i> Back
+                </a>
+            }
+            else
+            {
+                <a title="Back" href="@Url.Action("KaizenView", "Kaizen")" style="color:#fff">
+                    <i class="fa fa-angle-double-left"></i> Back
+                </a>
+            }
+        }
+        else
+        {
+            <a title="Back" href="@Url.Action("Index", "Account")" style="color:#fff">
+                <i class="fa fa-angle-double-left"></i> Back
+            </a>
+        }
+        <h2 class="justify-content-center">
+            <span class="fw-300 pr-1">Help Desk  </span> Approver
+        </h2>
+    </div>
+    <div class="panel-container show">
+        @using (Html.BeginForm("KaizenApprAdd", "Kaizen", FormMethod.Post, new { id = "form", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+        {
+            <div class="panel-content">
+                <div class="row">
+                    <input asp-for="UserId" hidden />
+                    <input asp-for="ApprId" hidden />
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Kaizen No</label>
+                            <span class="col-sm-8 col-form-label text-info">@Model.DocNo</span>
+                            <input asp-for="DocNo" value="@Model.DocNo" hidden />
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Registration No</label>
+                            <div class="col-sm-8 align-self-center">
+                                <input asp-for="RegNo" type="text" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group row pb-2">
+                            <label class="col-sm-4 col-form-label">Kaizen Name</label>
+                            <div class="col-sm-8">
+                                <textarea asp-for="KaizenName" type="text" class="form-control" rows="3" cols="30" disabled> </textarea>
+                                <input asp-for="KaizenName" value="@Model.KaizenName" hidden />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Kaizen Type</label>
+                            <div class="col-sm-8">
+                                <input asp-for="KaizenType" type="text" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Respective Pillar</label>
+                            <div class="col-sm-8">
+                                <input asp-for="RespPillar" type="text" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="form-group row" id="txtImpact">
+                            <label class="col-sm-4 col-form-label">Kaizen Impact</label>
+                            <div class="col-sm-8">
+                                <input asp-for="SelectedImpact" type="text" class="form-control" disabled />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Plant</label>
+                            <div class="col-sm-8">
+                                <input asp-for="Plant" type="text" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Fin. Year</label>
+                            <div class="col-sm-8">
+                                <input asp-for="FinYearCode" type="text" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Year</label>
+                            <div class="col-sm-8">
+                                <input asp-for="Year" type="text" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Month</label>
+                            <div class="col-sm-8">
+                                <input asp-for="Month" type="text" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Machine/Area</label>
+                            <div class="col-sm-8">
+                                <input asp-for="MacArea" type="text" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Cost Savings</label>
+                            <div class="col-sm-8">
+                                <input asp-for="CostSaving" type="number" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">MP Worthy</label>
+                            <div class="col-sm-8">
+                                <div class="radio-inline">
+                                    @if (Model.MPWorthy == "Y")
+                                    {
+                                        <input type="text" class="form-control" value="Yes" disabled>
+                                    }
+                                    else
+                                    {
+                                        <input type="text" class="form-control" value="No" disabled>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Employee Name</label>
+                            <div class="col-sm-8">
+                                <input asp-for="EmpName" type="text" class="form-control" disabled>
+                                <input asp-for="EmpName" value="@Model.EmpName" hidden />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Employee Code</label>
+                            <div class="col-sm-8">
+                                <input asp-for="EmpCode" type="text" class="form-control" disabled>
+                                <input asp-for="EmpCode" value="@Model.EmpCode" hidden />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Department</label>
+                            <div class="col-sm-8">
+                                <input asp-for="DeptName" type="text" class="form-control" disabled>
+                                <input asp-for="DeptName" value="@Model.DeptName" hidden />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Approver Name</label>
+                            <div class="col-sm-8">
+                                <input asp-for="ApprName" type="text" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Circle No</label>
+                            <div class="col-sm-8">
+                                <input asp-for="CircleNo" autocomplete="off" type="number" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">No of HD Done</label>
+                            <div class="col-sm-8">
+                                <input asp-for="HDDone" autocomplete="off" type="number" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Upload File</label>
+                            <div class="custom-file col-sm-7 ml-2">
+                                @if (Model.DocName != "")
+                                {
+                                    <div class="col-sm-7 pt-2">
+                                        <a title='Preview' target="_blank" href='@Url.Action("DownloadKaizenFile", "Kaizen", new { fileName = @Model.DocName })'>@Model.DocName</a>
+                                        <input asp-for="Param1" value="@Model.DocName" hidden />
+                                    </div>
+                                }
+                                else
+                                {
+                                    @if (Model.DocNo > 0)
+                                    {
+                                        <div class="col-sm-8 pt-2">
+                                            <label class="font-weight-bold">NA</label>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <div id="divApprStatus" class="form-group row">
+                            <label class="col-sm-3 col-form-label font-weight-bold">Status<span class="text-danger ml-1">*</span></label>
+                            <div class="col-sm-9 form-check form-check-inline row pl-5">
+                                <input id="Status1" asp-for="Status" class="form-check-input rdApprove" type="radio" value="3" name="Status" required />
+                                <label for="Status1" class="form-check-label text-success font-weight-bold mr-2 rdApprove">Approve</label>
+                                <input id="Status2" asp-for="Status" class="form-check-input rdRejected" type="radio" value="4" name="Status" />
+                                <label for="Status2" class="form-check-label text-danger font-weight-bold mr-2 rdRejected">Reject</label>
+                                <input id="Status3" asp-for="Status" class="form-check-input rdRevieBack" type="radio" value="1" name="Status" />
+                                <label for="Status3" class="form-check-label text-warning font-weight-bold mr-2 rdRevieBack">Review Back</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="divRemarks" class="row pt-2">
+                    <div class="col-md-8">
+                        <div class="row">
+                            <label class="col-sm-2 col-form-label font-weight-bold">Remarks</label>
+                            <div class="col-sm-10">
+                                <textarea asp-for="Remarks" class="form-control" type="text" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-md-8">
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label font-weight-bold"></label>
+                            <div class="col-sm-10">
+                                <button id="btnSubmit" name="submit" type="submit" style="display:none" class="btn btn-primary btn-sm ml-3">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@if (Model.HistoryList != null && Model.HistoryList.Count > 0)
+{
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="row col-md-8">
+            <div class="table-responsive">
+                <h3 class="text-info font-weight-bold text-center">Kaizen History</h3>
+                <br />
+                <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                    <thead class="bg-primary-800">
+                        <tr>
+                            <th width="5%" class="text-center">#</th>
+                            <th width="12%">User Type</th>
+                            <th width="20%">User Id</th>
+                            <th>Remarks</th>
+                            <th width="15%">Status</th>
+                            <th width="20%">TDate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.HistoryList)
+                        {
+                            <tr>
+                                <td class="text-center">@item.SrNo</td>
+                                <td>@item.UserType</td>
+                                <td>@item.UserId</td>
+                                <td>@item.Remarks</td>
+                                <td>@item.StatusDescr</td>
+                                <td>@item.TDate</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+}
+
+@section ScriptsBlock {
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script>
+        $(document).ready(function () {
+            BindControls();
+        });
+
+        function BindControls() {
+            if ("@ViewBag.TagAttribute" == "E") {
+                $("#Remarks").prop("disabled", false);
+                $("#btnSubmit").show();
+            }
+            else {
+                $("#Status").prop("disabled", true);
+                $("#Remarks").prop("disabled", true);
+                $("#divApprStatus").hide();
+                $("#divRemarks").hide();
+                $("#btnSubmit").hide();
+            }
+    };
+    </script>
+}

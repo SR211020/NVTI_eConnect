@@ -1,0 +1,241 @@
+﻿@model eConnectV2.ViewModels.BISViewModel
+@{
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewData["Title"] = "UPPH Dashboard - All";
+    ViewData["HeaderTitle"] = "UPPH Dashboard (" + @Model.Plant + ")";
+    ViewData["URL"] = Url.Action("Dashboard", "Home");
+}
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+}
+<div class="panel">
+    <div class="row ml-1 pt-2 pb-2">
+        <div class="col-md-12 row">
+            <div class="col-sm-2">
+                <div class="input-group">
+                    <input asp-for="UpphDate" autocomplete="off" class="form-control datepickertext" type="text" placeholder="dd-mmm-yyyy" required data-date-format="dd-M-yyyy" />
+                    <div class="input-group-append">
+                        <span class="input-group-text fs-xl">
+                            <i class="fal fa-calendar-alt"></i>
+                        </span>
+                    </div>
+                </div>
+                <span id="Plant" hidden>@Model.Plant</span>
+                <input asp-for="FromTime" type="hidden" value="" />
+                <input asp-for="ToTime" type="hidden" value="" />
+                <input asp-for="Variance1" type="hidden" value="" />
+            </div>
+            <div class="col-sm-2">
+                <select asp-for="Shift" class="select2 custom-select form-control w-100" required asp-items="@(new SelectList(Model.ShiftList, "Value", "Text"))">
+                    <option value="0">Select Shift</option>
+                </select>
+            </div>
+            <div class="col-sm-2">
+                <select asp-for="LineNo" class="select2 custom-select form-control w-100" required asp-items="@(new SelectList(Model.LineNoList, "Value", "Text"))">
+                    <option value="">-- Select --</option>
+                </select>
+            </div>
+            <div class="col-sm-2">
+                <a href="javascript:void(0)" class="btn btn-block btn-default waves-effect waves-themed fs-xxl p-0" onclick="GetData()">
+                    <i class="fas fa-sync-alt"></i>
+                    Refresh
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel">
+    <div class="row">
+        <div class="col-md-12">
+            <table id="tbl_UPPH" border="1" style="width:100%; border-color:#E9E9E9;color:#000">
+                <thead class="thead-themed">
+                    <tr class="bd-highlight tbl_heading">
+                        <th class="text-left">Line No</th>
+                        <th class="text-left">Model</th>
+                        <th class="text-center">OCV</th>
+                        <th class="text-center">Linking</th>
+                        <th class="text-center">Pack Size</th>
+                        <th class="text-center">FT</th>
+                        <th class="text-center">Packing</th>
+                        <th class="text-center">UPH</th>
+                        <th class="text-center">UPPH</th>
+                    </tr>
+                </thead>
+                <tbody class='text-nowrap'>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock
+{
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script>
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        //// Bind Controls ////
+        $(document).ready(function () {
+            $(function () {
+                $('.select2').select2();
+                runDatePicker();
+            });
+            var controls = {
+                leftArrow: '<i class="fal fa-angle-left" style="font-size: 1.25rem"></i>',
+                rightArrow: '<i class="fal fa-angle-right" style="font-size: 1.25rem"></i>'
+            }
+            const dt = new Date();
+            var runDatePicker = function () {
+                $('#UpphDate').datepicker({
+                    todayHighlight: true,
+                    orientation: "bottom left",
+                    templates: controls,
+                    autoclose: true
+                });
+            }
+            $('#UpphDate').val(String("0" + dt.getDate()).slice(-2) + '-' + monthNames[dt.getMonth()] + '-' + dt.getFullYear());
+
+            FillLines();
+
+            $('#Shift').on('select2:select', function (e) {
+                GetShiftDetails(e.params.data.text);
+            });
+        });
+
+        //// Fill Line No ////
+        function FillLines() {
+            var requestUrl = 'BIS/FillLineForUPPH';
+            $.post(requestUrl,
+                {
+                    plant: $('#Plant').text(),
+                    division: 'PACK'
+                },
+                function (data) {
+                    $.each(data.lineNoList, function (index, item) {
+                        $("#LineNo").append($("<option></option>").val(item.value).html(item.text));
+                    });
+                });
+        }
+
+        //// Fill Shift Details ////
+        function GetShiftDetails(Shift) {
+            var requestUrl = 'BIS/GetShiftDetails';
+            $.post(requestUrl,
+                {
+                    plant: $('#Plant').text(),
+                    shift: Shift
+                },
+                function (model) {
+                    $("#FromTime").val(model.fromTime);
+                    $("#ToTime").val(model.toTime);
+                    $("#Variance1").val(model.variance1);
+                });
+        }
+
+        //// Get UPPH Data ////
+        function GetData() {
+            if ($('#Shift').val() == 0) {
+                Swal.fire("Select Shift", "", "error");
+            }
+            else if (new Date() < new Date($('#UpphDate').val() + " " + $('#FromTime').val())) {
+                Swal.fire("Shift not started yet", "", "error");
+            }
+            else {
+                FillUPPHData();
+            }
+        }
+
+        //// Fill UPPH Data ////
+        function FillUPPHData() {
+            var shiftVal = $("#Shift option:selected").text();
+            var lineNoVal = $('#LineNo').val() != 0 ? $("#LineNo option:selected").text() : '0';
+
+            var startDt = new Date($('#UpphDate').val() + " " + $('#FromTime').val());
+            var endDt = new Date($('#UpphDate').val() + " " + $("#ToTime").val());
+
+            if (shiftVal == "C") {
+                if (new Date() >= startDt) {
+                    endDt.setDate(endDt.getDate() + 1);
+                }
+                else {
+                    startDt.setDate(startDt.getDate() - 1);
+                }
+            }
+
+            if (shiftVal != null) {
+                var requestUrl = 'BIS/GetBatteryUPPHAllLines';
+                $.post(requestUrl,
+                    {
+                        plant: $('#Plant').text(),
+                        lineNo: lineNoVal,
+                        shift: shiftVal,
+                        startDate: String("0" + startDt.getDate()).slice(-2) + '-' + monthNames[startDt.getMonth()] + '-' + startDt.getFullYear() + ' ' + String("0" + startDt.getHours()).slice(-2) + ":" + String("0" + startDt.getMinutes()).slice(-2),
+                        endDate: String("0" + endDt.getDate()).slice(-2) + '-' + monthNames[endDt.getMonth()] + '-' + endDt.getFullYear() + ' ' + String("0" + endDt.getHours()).slice(-2) + ":" + String("0" + endDt.getMinutes()).slice(-2)
+                    },
+                    function (data) {
+                        $('#tbl_UPPH tbody').empty();
+                        var row = "";
+                        var count = 0;
+
+                        $.each(data, function (index, item) {
+                            count = count + 1;
+
+                            row += "<tr class='tbl_heading'>";
+                            row += "<td class='text-left'>" + item.lineNo + "</td>";
+                            row += "<td class='text-left'>" + item.modelName + "</td>";
+                            row += "<td class='text-center'>" + item.cellCount + "</td>";
+                            row += "<td class='text-center'>" + item.mappingCount + "</td>";
+                            row += "<td class='text-center'>" + item.packSizeCount + "</td>";
+                            row += "<td class='text-center'>" + item.ftCount + "</td>";
+                            row += "<td class='text-center'>" + item.packingCount + "</td>";
+
+                            var totalHours = parseFloat((((endDt - startDt) / 60000) - $("#Variance1").val()) / 60).toFixed(2);
+                            var uphVal = Math.round(item.packingCount / totalHours, 0);
+
+                            if (uphVal >= item.uphTarget) {
+                                row += "<td align='center' style='color: green; font - weight: bolder'>" + uphVal + "</td>";
+                            }
+                            else {
+                                row += "<td align='center' style='color: red; font - weight: bolder'>" + uphVal + "</td>";
+                            }
+
+                            var upphCountTotal = parseFloat(((item.packingCount / item.actualHC) / totalHours)).toFixed(2);
+                            if (upphCountTotal >= item.upphTarget) {
+                                row += "<td align='center' style='color: green; font - weight: bolder'>" + upphCountTotal + "</td>";
+                            }
+                            else {
+                                row += "<td align='center' style='color: red; font - weight: bolder'>" + upphCountTotal + "</td>";
+                            }
+                            row += "</tr>";
+                        });
+                        if (count == 0) {
+                            row += "<tr class='no-records-found text-left text-info'><td colspan='19'>No record found</td></tr>";
+                        }
+                        $("#tbl_UPPH tbody").html(row);
+                    });
+            }
+        }
+    </script>
+    <style>
+        .tbl_heading {
+            font-size: 36px;
+            font-weight: 500;
+        }
+
+        .tbl_footer {
+            font-size: 38px;
+            font-weight: 900;
+        }
+
+        .select2-selection__rendered {
+            font-size: 18px;
+            line-height: 1.3;
+            font-weight: bolder;
+        }
+
+        .datepickertext {
+            font-size: 18px;
+            line-height: 1.3;
+            font-weight: bolder;
+        }
+    </style>
+}

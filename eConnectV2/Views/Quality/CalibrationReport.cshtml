@@ -1,0 +1,231 @@
+﻿@model eConnectV2.ViewModels.QualityViewModel
+@{
+    ViewData["Title"] = "Calibration Report";
+    ViewData["PageHeading"] = "Calibration Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section HeadBlock {
+    <link href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css" rel="stylesheet" />
+}
+<style>
+    .blink {
+        animation: blink-animation 1s steps(20, start) infinite;
+        -webkit-animation: blink-animation 1s steps(2, start) infinite;
+        font-weight: bold;
+        font-size: 14px;
+        color: #FF4200;
+    }
+
+    @@keyframes blink-animation {
+        to {
+            visibility: hidden;
+        }
+    }
+
+    @@-webkit-keyframes blink-animation {
+        to {
+            visibility: hidden;
+        }
+    }
+</style>
+<div id="panel-1" class="panel p-2">
+    <div class="panel-container show">
+        <div class="row">
+            <div class="col-md-12 row">
+                <div class="col-md-1 align-self-center">
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold">Status</label>
+                        <div class="col-sm-9">
+                            <select asp-for="Status" onchange="FillData()" class="select2 custom-select form-control w-100">
+                                <option value="2">-- All --</option>
+                                <option value="1">Active</option>
+                                <option value="0">InActive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold">Category</label>
+                        <div class="col-sm-9">
+                            <select asp-for="Category" onchange="FillData()" class="select2 custom-select form-control w-100">
+                                <option value="0">-- All --</option>
+                                <option value="Instrument">Instrument</option>
+                                <option value="Fixture">Fixture</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label font-weight-bold">Due Days</label>
+                        <div class="col-sm-8">
+                            <select asp-for="Param1" onchange="FillData()" class="select2 custom-select form-control w-100">
+                                <option value="0">-- All --</option>
+                                <option value="15">Less than 15 days</option>
+                                <option value="7">Less than 7 days</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel-content">
+                    <div class="table-responsive">
+                        <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                            <thead class="bg-primary-800">
+                                <tr>
+                                    <th class="notexport text-center" width="5%">Action</th>
+                                    <th>IsActive</th>
+                                    <th class="text-center">Doc No</th>
+                                    <th>Calibration Status</th>
+                                    <th>Category</th>
+                                    <th>Plant</th>
+                                    <th>Division</th>
+                                    <th>Equipment Id</th>
+                                    <th>Calibration Date</th>
+                                    <th>Calibration Due Date</th>
+                                    <th>Due After</th>
+                                    <th>Certificate Status</th>
+                                    <th>Description</th>
+                                    <th>Make</th>
+                                    <th>Agency</th>
+                                    <th>Equip Model</th>
+                                    <th>Type</th>
+                                    <th>Location</th>
+                                    <th>Name Of Machine</th>
+                                    <th>Least Count</th>
+                                    <th>Full Range</th>
+                                    <th>Required Operating Range</th>
+                                    <th>Unit</th>
+                                    <th>User Id</th>
+                                    <th>TDATE</th>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    @*<script src="~/js/datagrid/datatables/dths_excel.js"></script>*@
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/rowdelete.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2();
+            FillData();
+        });
+
+        function FillData() {
+            var status = $("#Status").val();
+            var category = $("#Category").val();
+            var param1 = $("#Param1").val();
+            var data1 = '';
+            $.ajax({
+                url: '/Quality/FillCalibrationReport',
+                type: "POST",
+                data: { status: status, category: category, param1: param1 },
+                success: function (data, status) {
+                    $("#dt-hs tbody").empty();
+                    $("#dt-hs").DataTable().destroy();
+                    $.each(data, function (index, item) {
+                        //data1 += '<tr>';
+                        if (item.statusDescr == "False") {
+                            data1 += '<tr>';
+                            data1 += '<td class="text-center bg-primary-gradient">';
+                            data1 += '<a title="View" href="Quality/CalibrationAdd?Dno=' + item.param1 + '&Utp=' + item.param2 + '&RUrl=RptView">';
+                            data1 += '<i class="fa fa-eye text-info mr-1" ></i ></a>';
+                            data1 += '</td>';
+                            data1 += '<td> ' + item.statusDescr + '</td>';
+                        }
+                        else {
+                            data1 += '<tr>';
+                            data1 += '<td class="text-center bg-primary-gradient">';
+                            data1 += '<a title="View" href="Quality/CalibrationAdd?Dno=' + item.param1 + '&Utp=' + item.param2 + '&RUrl=RptView">';
+                            data1 += '<i class="fa fa-eye text-info mr-1" ></i ></a>';
+                            data1 += '</td>';
+                            data1 += '<td> ' + item.statusDescr + '</td>';
+                        }
+                        data1 += '<td class="text-center">' + item.requestNo + '</td>';
+                        if (item.calibrationStatus == 'Out of Calibration') {
+                            data1 += '<th class = "blink" >' + item.calibrationStatus + '</th>';
+                        }
+                        else {
+                            data1 += '<td style ="color:green">' + item.calibrationStatus + '</td>';
+                        }
+                        data1 += '<td>' + item.category + '</td>';
+                        data1 += '<td>' + item.plant + '</td>';
+                        data1 += '<td>' + item.division + '</td>';
+                        data1 += '<td>' + item.equipId + '</td>';
+                        data1 += '<td>' + item.date1 + '</td>';
+                        data1 += '<td>' + item.date2 + '</td>';
+                        if (item.dueDays <= 15) {
+                            data1 += '<th style ="color:red" >' + item.dueDays + '</th>';
+                        }
+                        else {
+                            data1 += '<td style ="color:green" >' + item.dueDays + '</td>';
+                        }
+                        data1 += '<td>' + item.certificateStatus + '</td>';
+                        data1 += '<td>' + item.description + '</td>';
+                        data1 += '<td>' + item.make + '</td>';
+                        data1 += '<td>' + item.agency + '</td>';
+                        data1 += '<td>' + item.equipModel + '</td>';
+                        data1 += '<td>' + item.type + '</td>';
+                        data1 += '<td>' + item.location + '</td>';
+                        data1 += '<td>' + item.macName + '</td>';
+                        data1 += '<td>' + item.leastCnt + '</td>';
+                        data1 += '<td>' + item.fullRange + '</td>';
+                        data1 += '<td>' + item.operatingRange + '</td>';
+                        data1 += '<td>' + item.unit + '</td>';
+                        data1 += '<td>' + item.userID + '</td>';
+                        data1 += '<td>' + item.tDate + '</td>';
+                        data1 += '</tr >';
+                    });
+                    $("#dt-hs tbody").html(data1);
+                    $('#dt-hs').dataTable({
+                        responsive: false,
+                        order: [[1, 'desc']],
+                        "columnDefs": [
+                            { "orderable": false, "targets": [0] },
+                        ],
+                        lengthChange: false,
+                        "pageLength": 20,
+                        dom:
+                            "<'row'<'col-sm-12 col-md-3 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-3 d-flex align-items-center justify-content-center'i><'col-sm-12 col-md-3 d-flex align-items-center justify-content-end'lB><'col-sm-12 col-md-3 d-flex align-items-center justify-content-end'p>>" +
+                            "<'row'<'col-sm-12'tr>>" +
+                            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                        buttons: [
+                            {
+                                extend: 'excelHtml5',
+                                text: 'Download',
+                                title: null,
+                                titleAttr: 'Download',
+                                className: 'btn-outline-dark btn-xs mr-1',
+                                exportOptions: {
+                                    columns: ':not(.notexport)'
+                                }
+                            },
+                        ]
+                    });
+                },
+                error: function () {
+                },
+            });
+        }
+
+
+    </script>
+}

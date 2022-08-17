@@ -1,0 +1,110 @@
+﻿@model eConnectV2.ViewModels.AdminViewModel
+@{
+    ViewData["Title"] = "NVTI-Employee";
+    ViewData["PageHeading"] = "Employee";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "Admin";
+    ViewBag.Category1 = "Employee";
+}
+
+<div id="EmpList">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <div class="table-responsive">
+                            <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover nowrap">
+                                <thead class="bg-primary-800">
+                                    <tr>
+                                        <th>Status</th>
+                                        <th>EmpCode ADID</th>
+                                        <th>EmpName</th>
+                                        <th>Gender</th>
+                                        <th>Designation</th>
+                                        <th>Department</th>
+                                        <th>Email</th>
+                                        <th>Contact</th>
+                                        <th>LandLine</th>
+                                        <th>DOB</th>
+                                        <th>DOJ</th>
+                                        <th>ApprId</th>
+                                        <th>ApprName</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white">
+                                    @foreach (var item in Model.EmpList)
+                                    {
+                                        string rowbg = "";
+                                        @if (item.Status != 1)
+                                        {
+                                            rowbg = "bg-gray-300";
+                                        }
+                                        <tr class="@rowbg">
+                                            <td>
+                                                @if (item.Status == 1)
+                                                {
+                                                    <span class="badge badge-primary badge-pill">Active</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-secondary badge-pill">Inactive</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <span class="text-primary">@item.EmpCode</span>
+                                                <span class="text-success font-weight-bold">@item.EmpAdId</span>
+                                            </td>
+                                            <td>
+                                                @item.EmpName
+                                            </td>
+                                            <td>
+                                                @item.Gender
+                                            </td>
+                                            <td>
+                                                @item.Designation
+                                            </td>
+                                            <td>
+                                                @item.DeptCode - <strong>@item.DeptName</strong>
+                                            </td>
+                                            <td>
+                                                <u>@item.EmpEmail</u>
+                                            </td>
+                                            <td>
+                                                @item.Contact
+                                            </td>
+                                            <td>
+                                                @item.LandLine
+                                            </td>
+                                            <td>
+                                                <code>@item.DOB</code>
+                                            </td>
+                                            <td>
+                                                @item.DOJ
+                                            </td>
+                                            <td>
+                                                @item.ApprId
+                                            </td>
+                                            <td>
+                                                @item.ApprName
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section ScriptsBlock {
+    <script type="text/javascript">
+        dtorderby = "desc";
+        dtorderbycol = 1;
+    </script>
+    <script src="~/js/datagrid/datatables/dths_excel.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+}

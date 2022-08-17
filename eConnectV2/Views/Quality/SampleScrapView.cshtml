@@ -1,0 +1,328 @@
+﻿@model eConnectV2.ViewModels.QualityViewModel
+@{
+    ViewData["Title"] = "Sample Scrap View";
+    ViewData["PageHeading"] = "Sample Scrap List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section HeadBlock {
+    <link href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css" rel="stylesheet" />
+}
+<style>
+    .blink {
+        animation: blink-animation 1s steps(20, start) infinite;
+        -webkit-animation: blink-animation 1s steps(2, start) infinite;
+        font-weight: bold;
+        font-size: 14px;
+        color: #FF4200;
+        text-align: center;
+    }
+
+    @@keyframes blink-animation {
+        to {
+            visibility: hidden;
+        }
+    }
+
+    @@-webkit-keyframes blink-animation {
+        to {
+            visibility: hidden;
+        }
+    }
+</style>
+
+
+<div id="panel-1" class="panel p-2">
+    <div class="panel-container show">
+        <div class="row">
+            <div class="col-md-12 row">
+                <div class="col-md-1 align-self-center">
+                    <a class="btn btn-warning pt-1" title="Add Sample Scrap" onclick="window.location='@Url.Action("SampleScrapAdd","Quality", new { RUrl = "ScrapView"})'" style="height:25px">
+                        <i class="fas fa-plus mr-1"></i>Add
+                    </a>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group row">
+                        <div class="col-sm-12">
+                            <div class="form-check form-check-inline row">
+                                <input id="catg1" asp-for="Activity" class="form-check-input rdbutton" type="radio" value="PENDING_WITH_USER" onchange="FillData()" checked >
+                                <label for="catg1" class="form-check-label text-danger font-weight-bold mr-4" style="font-size: 12px">Pending Request &nbsp;&nbsp;(@Model.ScrapCount1)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold">From</label>
+                        <div class="col-sm-7">
+                            <input asp-for="Date1" onchange="FillData();" autocomplete="off" class="form-control datepickertext" type="text" required data-date-format="dd-M-yyyy" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label font-weight-bold">Scrap Status</label>
+                        <div class="col-sm-8">
+                            <select asp-for="ScrapStatus" onchange="FillData()" class="select2 custom-select form-control w-100">
+                                <option value="0">-- All --</option>
+                                <option value="Y">Scrapped</option>
+                                <option value="N">Non Scrapped</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label font-weight-bold">Due Days</label>
+                        <div class="col-sm-8">
+                            <select asp-for="Param1" onchange="FillData()" class="select2 custom-select form-control w-100">
+                                <option value="0">-- All --</option>
+                                <option value="15">Less than 15 days</option>
+                                <option value="7">Less than 7 days</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row pt-2">
+            <div class="col-md-12 row">
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                    <div class="form-group row">
+                        <div class="col-sm-12">
+                            <div class="form-check form-check-inline row">
+                                <input id="catg2" asp-for="Activity" class="form-check-input rdbutton" type="radio" value="VIEW" onchange="FillData()">
+                                <label for="catg2" class="form-check-label text-success font-weight-bold mr-4" style="font-size: 12px">All Request &nbsp;&nbsp;(@Model.ScrapCount2)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold">To</label>
+                        <div class="col-sm-7">
+                            <input asp-for="Date2" onchange="FillData();" autocomplete="off" class="form-control datepickertext" type="text" required data-date-format="dd-M-yyyy" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label font-weight-bold">Status</label>
+                        <div class="col-sm-8">
+                            <select asp-for="Status" onchange="FillData();" asp-items="@(new SelectList(Model.StatusList, "Value", "Text"))" class="select2 custom-select form-control w-100">
+                                <option value="0">-- Select --</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel-content">
+                    <div class="table-responsive">
+                        <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                            <thead class="bg-primary-800">
+                                <tr>
+                                    <th class="notexport text-center" width="5%">Action</th>
+                                    <th class="text-center">Doc No</th>
+                                    <th>Status</th>
+                                    <th>Pending With</th>
+                                    <th>Create Date</th>
+                                    <th>Box Id </th>
+                                    <th class="text-center">Is Scrapped</th>
+                                    <th class="text-center">Due After(Days)</th>
+                                    <th>Plant</th>
+                                    <th>Division</th>
+                                    <th>Model Name </th>
+                                    <th>Customer Name</th>
+                                    <th>Test Complete Date</th>
+                                    <th>Sample Disposition Date</th>
+                                    <th>Retention Period</th>
+                                    <th>Sample Qty</th>
+                                    <th>Storage Location</th>
+                                    <th>Product</th>
+                                    <th>Description</th>
+                                    <th>User Id</th>
+                                    <th>TDate</th>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/rowdelete.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2();
+            runDatePicker();
+            FillData();
+        });
+        var controls = {
+            leftArrow: '<i class="fal fa-angle-left" style="font-size: 1.25rem"></i>',
+            rightArrow: '<i class="fal fa-angle-right" style="font-size: 1.25rem"></i>'
+        }
+        var runDatePicker = function () {
+            $('#Date1, #Date2').datepicker({
+                todayHighlight: true,
+                orientation: "bottom left",
+                templates: controls,
+                autoclose: true
+            });
+        }
+
+        function FillData() {
+            debugger;
+            var category = $('[name="Activity"]:radio:checked').val();
+            var activity = '';
+            if (category == "VIEW") {
+                activity = "FILL_VIEW_LIST";
+            }
+            else {
+                activity = "FILL_PENDING_LIST";
+            }
+            var date1 = $("#Date1").val();
+            var date2 = $("#Date2").val();
+            var status = $("#Status").val();
+            var scrapStatus = $("#ScrapStatus").val();
+            var dueDays = $("#Param1").val();
+            var data1 = '';
+            $.ajax({
+                url: '/Quality/FillSampleScrapViewList',
+                type: "POST",
+                data: { activity: activity, date1: date1, date2: date2, status: status, scrapStatus: scrapStatus, dueDays: dueDays },
+                success: function (data, status) {
+                    $("#dt-hs tbody").empty();
+                    $("#dt-hs").DataTable().destroy();
+                    $.each(data, function (index, item) {
+                        data1 += '<tr>';
+                        data1 += '<td class="text-center bg-primary-gradient" align="center">';
+                        if (category == "PENDING_WITH_USER") {
+                            if (item.status == 1) {
+                                data1 += '<a title="View" href="Quality/SampleScrapAdd?Dno=' + item.param1 + '&RUrl=ScrapView"><i class="fa fa-eye text-info mr-1"></i></a>';
+                            }
+                            else {
+                                data1 += '<a title="View" href="Quality/SampleScrapApprAdd?Dno=' + item.param1 + '&Uid=' + item.param2 + '&Utp=' + item.param3 + '&RUrl=ScrapView">';
+                                data1 += '<i class="fa fa-eye text-info mr-1" ></i ></a>';
+                            }
+                        }
+                        else {
+                            if (item.status == 2) {
+                                data1 += '<a title="View" href="Quality/SampleScrapAdd?Dno=' + item.param1 + '&RUrl=ScrapView"><i class="fa fa-eye text-info mr-1"></i></a>';
+                                data1 += '<a title="PrintLogo" href="javascript:void(0)" onclick="PrintLogo(' + item.requestNo + ')"><i class="fas fa-print"></i></a>';
+                            }
+                            else {
+                                data1 += '<a title="View" href="Quality/SampleScrapApprAdd?Dno=' + item.param1 + '&RUrl=ScrapView">';
+                                data1 += '<i class="fa fa-eye text-info mr-1" ></i ></a>';
+                            }
+                        }
+
+                        data1 += '</td>';
+                        data1 += '<td class="text-center">' + item.requestNo + '</td>';
+                        data1 += '<td>' + item.statusDescr + '</td>';
+                        data1 += '<td>' + item.apprName + '</td>';
+                        data1 += '<td>' + item.tDate + '</td>';
+                        data1 += '<td>' + item.boxId + '</td>';
+                        if (item.scrapStatus == "N") {
+                            data1 += '<td style="color:red" class="text-center">' + item.scrapStatus + '</td>';
+                        }
+                        else {
+                            data1 += '<td style ="color:green" class="text-center">' + item.scrapStatus + '</td>';
+                        }
+                        if (item.scrapStatus == "N") {
+                            if (item.dueDays <= 15) {
+                                data1 += '<th class = "blink" class="text-center">' + item.dueDays + '</th>';
+                            }
+                            else {
+                                data1 += '<td style ="color:green" class="text-center">' + item.dueDays + '</td>';
+                            }
+                        }
+                        else {
+                            data1 += '<th></th>';
+                        }
+                        data1 += '<td>' + item.plant + '</td>';
+                        data1 += '<td>' + item.division + '</td>';
+                        data1 += '<td>' + item.modelName + '</td>';
+                        data1 += '<td>' + item.customer + '</td>';
+                        data1 += '<td>' + item.date1 + '</td>';
+                        data1 += '<td>' + item.date2 + '</td>';
+                        data1 += '<td>' + item.period + '</td>';
+                        data1 += '<td>' + item.quantity + '</td>';
+                        data1 += '<td>' + item.location + '</td>';
+                        data1 += '<td>' + item.product + '</td>';
+                        data1 += '<td>' + item.description + '</td>';
+                        data1 += '<td>' + item.userID + '</td>';
+                        data1 += '<td>' + item.tDate + '</td>';
+                        data1 += '</tr>';
+                    });
+                    $("#dt-hs tbody").html(data1);
+                    $('#dt-hs').dataTable({
+                        responsive: false,
+                        order: [[1, 'desc']],
+                        "columnDefs": [
+                            { "orderable": false, "targets": [0] },
+                        ],
+                        lengthChange: false,
+                        "pageLength": 20,
+                        dom:
+                            "<'row'<'col-sm-12 col-md-3 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-3 d-flex align-items-center justify-content-center'i><'col-sm-12 col-md-3 d-flex align-items-center justify-content-end'lB><'col-sm-12 col-md-3 d-flex align-items-center justify-content-end'p>>" +
+                            "<'row'<'col-sm-12'tr>>" +
+                            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                        buttons: [
+                            {
+                                extend: 'excelHtml5',
+                                text: 'Download',
+                                title: null,
+                                titleAttr: 'Download',
+                                className: 'btn-outline-dark btn-xs mr-1',
+                                exportOptions: {
+                                    columns: ':not(.notexport)'
+                                }
+                            },
+                        ]
+                    });
+                },
+                error: function () {
+                },
+            });
+        }
+        function PrintLogo(reqNo) {
+            var requestUrl = '/Quality/GetScrapData';
+            $.post(requestUrl,
+                {
+                    reqNo: reqNo
+                },
+                function (data, status) {
+                    if (data == '') {
+                        Swal.fire({
+                            title: "Oops...",
+                            text: "Something went wrong!",
+                            width: 500,
+                            padding: "3em",
+                            background: "#fff url(/images/trees.png)",
+                            backdrop: '\n\t\t\t    rgba(0,0,123,0.4)\n\t\t\t    url("/images/nyan-cat.gif")\n\t\t\t    center left\n\t\t\t    no-repeat\n\t\t\t  '
+                        });
+                    }
+                    else {
+                        var divToPrint = '<table cellpadding="0" cellspacing="0" height="80%" width="100%" border="0" style="font-size:12px"><tr><td align="left" valign="middle" style="font-weight:bold; width:35%">Box Id</td><td>:&nbsp;</td><td align="left" valign="middle"> ' + data.result[0].boxId + '</td></tr><tr><td colspan="3" style="padding-top:5px"><table cellpadding="0" cellspacing="0" height="100%" width="100%" style="font-size:12px"><tr><td align="left" valign="top"><table cellpadding="0" cellspacing="0" height="100%" width="100%"style="font-size:12px"><tr><td align="left" valign="middle" style="font-weight: bold; width: 45%">Quantity</td><td>:&nbsp;</td><td align="left" style="font-size:12px" valign="middle">' + data.result[0].quantity + '</td></tr><tr><td align="left" valign="middle" style="font-weight:bold">Test Date</td><td>:&nbsp;</td><td align="left" valign="middle" style="font-size:12px">' + data.result[0].date1 + '</td></tr><tr><td align="left" valign="middle" style="font-weight:bold">Retain Days</td><td>:&nbsp;</td><td align="left" valign="middle" style="font-size:12px">' + data.result[0].period + '</td></tr><tr><td align="left" valign="middle" style="font-weight:bold">Scrap Date</td><td>:&nbsp;</td><td align="left" valign="middle" style="font-size:12px">' + data.result[0].date2 + '</td></tr></table></td><td align="right" valign="top" style="width:12%"><img src="' + data.img + '" alt="QRCode" width="50"></td></tr></table></td></tr></table>';
+                        var newWin = window.open('', 'Print-Window');
+                        newWin.document.open();
+                        newWin.document.write('<html><body onload="window.print()">' + divToPrint + '</body></html>');
+                        newWin.document.close();
+                        setTimeout(function () { newWin.close(); }, 500);
+                    }
+                });
+        }
+    </script>
+}

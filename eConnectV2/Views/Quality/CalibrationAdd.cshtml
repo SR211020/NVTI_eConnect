@@ -1,0 +1,511 @@
+﻿@model eConnectV2.ViewModels.QualityViewModel
+@{
+    ViewData["PageHeading"] = "Calibration Add";
+    ViewData["Title"] = "Add";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var Mode = ViewBag.TagAttribute;
+}
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+}
+
+<div class="panel">
+    <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+        @if (ViewBag.RUrl == "CalView")
+        {
+            <a title="Back" href="@Url.Action("CalibrationView", "Quality")" style="color:#fff">
+                <i class="fa fa-angle-double-left"></i> Back
+            </a>
+        }
+        else
+        {
+            <a title="Back" href="@Url.Action("CalibrationReport", "Quality")" style="color:#fff">
+                <i class="fa fa-angle-double-left"></i> Back
+            </a>
+        }
+    </div>
+    <div class="panel-container show">
+        @using (Html.BeginForm("CalibrationAdd", "Quality", FormMethod.Post, new { id = "form", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+        {
+            <div class="panel-content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Doc No</label>
+                                    <span class="col-sm-8 col-form-label text-info">@Model.RequestNo</span>
+                                    <input asp-for="RequestNo" value="@Model.RequestNo" hidden />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Category<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <div class="form-check form-check-inline row">
+                                            <input id="Category1" asp-for="Category" value="Instrument" class="form-check-input rdbutton" type="radio" checked>
+                                            <label for="Category1" class="form-check-label text-success font-weight-bold mr-2">Instrument</label>
+                                            <input id="Category2" asp-for="Category" value="Fixture" class="form-check-input rdbutton" type="radio">
+                                            <label for="Category2" class="form-check-label text-info font-weight-bold mr-2">Fixture</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Calibration Date<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input asp-for="Date1" class="form-control" type="text" autocomplete="off" placeholder="dd-mmm-yyyy" data-date-format="dd-M-yyyy" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Plant<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <select asp-for="Plant" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.PlantList, "Value", "Text"))" required>
+                                            <option value="">-- Select --</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Equipment Id<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input asp-for="EquipId" value="@Model.EquipId" class="form-control" type="text" autocomplete="off" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Calibration Due Date<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input asp-for="Date2" class="form-control" type="text" autocomplete="off" placeholder="dd-mmm-yyyy" data-date-format="dd-M-yyyy" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Division<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <select asp-for="Division" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.DivisionList, "Value", "Text"))" required>
+                                            <option value="">-- Select --</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Calibration Status</label>
+                                    <div class="col-sm-8">
+                                        <input asp-for="CalibrationStatus" value="@Model.CalibrationStatus" class="form-control" readonly />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Due After (Days)</label>
+                                    <div class="col-sm-8">
+                                        <input asp-for="DueDays" value="@Model.DueDays" class="form-control" readonly />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Description<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input asp-for="Description" value="@Model.Description" class="form-control" type="text" autocomplete="off" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Certificate Status<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <div class="form-check form-check-inline row">
+                                            <input id="Status1" asp-for="CertificateStatus" value="Received" class="form-check-input rdbutton" type="radio" required>
+                                            <label for="Status1" class="form-check-label text-success font-weight-bold mr-2">Received</label>
+                                            <input id="Status2" asp-for="CertificateStatus" value="Not Received" class="form-check-input rdbutton" type="radio" >
+                                            <label for="Status2" class="form-check-label text-danger font-weight-bold mr-2">Not Received</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Agency<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input asp-for="Agency" value="@Model.Agency" class="form-control" type="text" autocomplete="off" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Unit</label>
+                                    <div class="col-sm-8">
+                                        <input asp-for="Unit" value="@Model.Unit" class="form-control" type="text" autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Name Of Machine</label>
+                                    <div class="col-sm-8">
+                                        <input asp-for="MacName" value="@Model.MacName" class="form-control" type="text" autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Make<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <select asp-for="Make" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.MakeList, "Value", "Text"))" required>
+                                            <option value="">-- Select --</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Type<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <select asp-for="Type" class="select2 custom-select form-control w-100" required>
+                                            <option value="">-- Select --</option>
+                                            <option value="Analog">Analog</option>
+                                            <option value="Digital">Digital</option>
+                                            <option value="NA">NA</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Location</label>
+                                    <div class="col-sm-8">
+                                        <input asp-for="Location" value="@Model.Location" class="form-control" type="text" autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Equip Model<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input asp-for="EquipModel" value="@Model.EquipModel" class="form-control" type="text" autocomplete="off" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Least Count<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <textarea asp-for="LeastCnt" class="form-control" rows="3" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Full Range</label>
+                                    <div class="col-sm-8">
+                                        <textarea asp-for="FullRange" class="form-control" rows="3" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Required Operating Range</label>
+                                    <div class="col-sm-8">
+                                        <textarea asp-for="OperatingRange" class="form-control" rows="3" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-2 pb-2">
+                            <div id="Div_Remarks" class="col-md-8">
+                                <div class="row">
+                                    <label class="col-sm-2 col-form-label font-weight-bold">Remarks<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-10">
+                                        <textarea asp-for="Remarks" class="form-control" rows="3" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="Div_Upload" class="col-md-4" style="display:none">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Upload Certificate<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <div class="form-check form-check-inline row">
+                                            <input id="type1" asp-for="Param1" value="Yes" class="form-check-input rdbutton" type="radio" onchange="ShowCertificateDiv(this)" />
+                                            <label for="type1" class="form-check-label text-success font-weight-bold mr-2">Yes</label>
+                                            <input id="type2" asp-for="Param1" value="No" class="form-check-input rdbutton" type="radio" onchange="ShowCertificateDiv(this)" checked>
+                                            <label for="type2" class="form-check-label text-info font-weight-bold mr-2">No</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="Div_UploadCertificate" class="pt-2 pb-2" style="display: none; background-color: #E3F2FD">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold">Certificate Date<span class="text-danger ml-1 view">*</span></label>
+                                        <div class="col-sm-8">
+                                            <input asp-for="Date3" class="form-control-alternate" type="text" autocomplete="off" placeholder="dd-mmm-yyyy" data-date-format="dd-M-yyyy" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold">File Upload</label>
+                                        <div class="col-sm-8">
+                                            <div class="custom-file">
+                                                <input asp-for="DocName" type="file" class="custom-file-input" onchange="UploadFile()" />
+                                                <label class="custom-file-label">Choose file</label>
+                                                <span id="FileErrorMsg" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-2">
+                            <div class="col-md-8">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label font-weight-bold"></label>
+                                    <div class="col-sm-10">
+                                        <button id="btnSubmit" type="submit" class="btn btn-primary btn-sm">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @if (Model.CertificateList != null && Model.CertificateList.Count > 0)
+                        {
+                            <div class="row pt-4">
+                                <div class="col-md-2"></div>
+                                <div class="row col-md-8 alert alert-info">
+                                    <div class="table-responsive">
+                                        <h3 class="text-info font-weight-bold text-center">Certificate History</h3>
+                                        <br />
+                                        <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                                            <thead class="bg-primary-800">
+                                                <tr>
+                                                    <th width="5%" class="text-center">#</th>
+                                                    <th width="20%">User Name</th>
+                                                    <th width="20%">Certificate Date</th>
+                                                    <th>File Name</th>
+                                                    <th width="20%">TDate</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in Model.CertificateList)
+                                                {
+                                                    <tr>
+                                                        <td class="text-center">@item.SrNo</td>
+                                                        <td>@item.EmpName</td>
+                                                        <td>@item.Date3</td>
+                                                        <td>
+                                                            <a title='Download' target="_blank" href='@Url.Action("DownloadCalibrationFile", "Quality", new { fileName = @item.DocName })'>@item.DocName</a>
+                                                        </td>
+                                                        <td>@item.TDate</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-md-2"></div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+@if (Model.RequestNo != 0)
+{
+    <div class="pt-4">
+        @if (Model.HistoryList != null && Model.HistoryList.Count > 0)
+        {
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="row col-md-8">
+                    <div class="table-responsive">
+                        <h3 class="text-info font-weight-bold text-center">Calibration Update History</h3>
+                        <br />
+                        <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                            <thead class="bg-primary-800">
+                                <tr>
+                                    <th width="5%" class="text-center">#</th>
+                                    <th width="20%">User Id</th>
+                                    <th width="15%">Emp Name</th>
+                                    <th width="20%">Remarks</th>
+                                    <th width="20%">TDate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.HistoryList)
+                                {
+                                    <tr>
+                                        <td class="text-center">@item.SrNo</td>
+                                        <td>@item.UserID</td>
+                                        <td>@item.EmpName</td>
+                                        <td>@item.Remarks</td>
+                                        <td>@item.TDate</td>
+
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@section ScriptsBlock {
+    @*<script src="~/js/defaultformvalidate.js"></script>*@
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script>
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!CheckValidValue()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+
+        $(document).ready(function () {
+            $('.select2').select2();
+            runDatePicker();
+            FillForm();
+        });
+        var controls = {
+            leftArrow: '<i class="fal fa-angle-left" style="font-size: 1.25rem"></i>',
+            rightArrow: '<i class="fal fa-angle-right" style="font-size: 1.25rem"></i>'
+        }
+
+        var runDatePicker = function () {
+            $('#Date1,#Date2,#Date3').datepicker({
+                todayHighlight: true,
+                orientation: "bottom left",
+                templates: controls,
+                autoclose: true
+            });
+        }
+
+        function ShowCertificateDiv(radio) {
+            if (radio.value == "Yes") {
+                $('#Div_UploadCertificate').show();
+            }
+            else {
+                $('#Div_UploadCertificate').hide();
+            }
+        };
+
+        function UploadFile() {
+            var doc = document.getElementById("DocName");
+            var fileMsg = document.getElementById('FileErrorMsg');
+            fileMsg.textContent = '';
+            if (doc.files[0].size > 1000000) {
+                fileMsg.textContent = 'File Size must be under 1 MB';
+                doc.value = "";
+                return;
+            }
+            var ext = $('#DocName').val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['pdf']) == -1) {
+                fileMsg.textContent = 'Invalid Extension - Only .pdf format allowed';
+                $('#DocName').val('');
+            }
+        }
+
+        function FillForm() {
+            if ("@Mode" == "E") {
+                $("#EquipId").prop("disabled", true);
+                $('[name="Category"]').prop("disabled", true);
+                $("#Div_Upload").show();
+
+            }
+            if ("@Mode" == "V") {
+                $(".view").hide();
+                $("#Plant").prop("disabled", true);
+                $("#Division").prop("disabled", true);
+                $(".rdbutton").prop("disabled", true);
+                $("#EquipId").prop("disabled", true);
+                $("#Date1").prop("disabled", true);
+                $("#Date2").prop("disabled", true);
+                $("#Description").prop("disabled", true);
+                $("#Make").prop("disabled", true);
+                $("#Type").prop("disabled", true);
+                $("#LeastCnt").prop("disabled", true);
+                $("#EquipModel").prop("disabled", true);
+                $("#Location").prop("disabled", true);
+                $("#FullRange").prop("disabled", true);
+                $("#Agency").prop("disabled", true);
+                $("#MacName").prop("disabled", true);
+                $("#OperatingRange").prop("disabled", true);
+                $("#Unit").prop("disabled", true);
+                $("#Div_Remarks").hide();
+                $("#btnSubmit").hide();
+            }
+        };
+
+        function CheckValidValue()
+        {
+            var CertificateStatus = document.getElementsByName("CertificateStatus");
+            var count = 0;
+            for (var i = 0; i < CertificateStatus.length; i++) {
+                if (CertificateStatus[i].checked) {
+                    count = 1;
+                }
+            }
+            if (count == 0) {
+                Swal.fire("Info!", "Select Certificate Status", "error");
+                return false;
+            }
+
+            var uploadStatus = $('[name="Param1"]:radio:checked').val();
+            if (uploadStatus == "Yes")
+            {
+                if ($('#Date3').val() == '')
+                {
+                    Swal.fire("Info!", "Select Certificate Date", "error");
+                    return false;
+                }
+                if ($('#DocName').val() == '') {
+                    Swal.fire("Info!", "Upload Certificate", "error");
+                    return false;
+                }
+            }
+            return true;
+        }
+
+    </script>
+}

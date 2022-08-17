@@ -1,0 +1,141 @@
+﻿@model eConnectV2.ViewModels.SMTViewModel
+@{
+    ViewData["Title"] = "SMT StoreAdmin";
+    ViewData["PageHeading"] = "SMT";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "SMT";
+    ViewBag.Category1 = "Store Material";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+                <h2 >
+                    Store Admin - All Material
+                </h2>
+                <div class="panel-toolbar">
+                    @using (Html.BeginForm("StoreAdmin", "SMT", FormMethod.Post, new { id = "myform", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+                    {
+                        <select asp-for="TimeFrame" asp-items="@(new SelectList(Model.YearList, "Value", "Text"))" style="padding: 2px; width: 115px; border: ridge; border-color: lightgray;">
+                            <option value="0" selected>Last 30 days</option>
+                            <option value="1">Last 3 month</option>
+                            <option value="2">Last 6 month</option>
+                        </select>
+                        <input type="text" asp-for="QRCode" class="form-control-sm" placeholder="Enter QRcode" style="padding: 2px; width: 200px; border-color: lightgray; border: ridge; margin-left: 2px; height: 28px;" />
+                        <input type="text" asp-for="MaterialCategory" class="form-control-sm" placeholder="Enter material" style="padding: 2px; width: 105px; border-color: lightgray; border: ridge; margin-left: 2px; height: 28px;" />
+                        <input type="text" asp-for="VendorName" class="form-control-sm" placeholder="Enter vendor" style="padding: 2px; width: 105px; border-color: lightgray; border: ridge; margin-left: 2px; height: 28px;" />
+                        <button type="submit" class="btn btn-sm btn-outline-light waves-effect waves-themed ml-2">Search</button>
+                    }
+                </div>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content">
+                    <div class="table-responsive">
+                        <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap ">
+                            <thead class="bg-info-700">
+                                <tr class='notexport text-nowrap'>
+                                    <th class="notexport">Print | Block</th>
+                                    <th>Material</th>
+                                    <th>Vendor</th>
+                                    <th>QRcode</th>
+                                    <th>Store Received</th>
+                                    <th>Mfg. Date - Expiry Date</th>
+                                    <th>Dispatch</th>
+                                    <th>SMT Received</th>
+                                    <th>SMT Consume</th>
+                                    <th>Blocked</th>
+                                    <th>Material Id</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.SMTMaterialList)
+                                {
+                                    <tr>
+                                        <td class="text-center">
+                                            <span style="display:none;">@DateTime.Now.ToString("hh.mm.ss.ffffff")</span>
+                                            @if (item.SmtConsume == "Y" || item.IsBlocked == "Y")
+                                            {
+
+                                            }
+                                            else
+                                            {
+                                                <a title='Print QR Code' href='javascript:void(0)' onclick='PrintQRcode("@item.QRCode", "@item.WeekNo")'><i class="fas fa-print mr-3"></i></a>
+                                                <span>|</span>
+                                            }
+                                            @if (item.SmtConsume == "Y" || item.IsBlocked == "Y")
+                                            {
+
+                                            }
+                                            else
+                                            {
+                                                <a title='Block' href='javascript:void(0)' class="text-danger" onclick='BlockMaterial("@item.QRCode", "@item.PartNo", "@item.MaterialCategory","STORE")'><i class="fas fa-ban ml-3"></i></a>
+                                            }
+                                        </td>
+                                        <td>@item.MaterialCategory</td>
+                                        <td>@item.VendorName</td>
+                                        @if (item.IsBlocked == "Y")
+                                        {
+                                            <td>
+                                                <span class="badge border border-info text-secondary"><del>@item.QRCode</del></span>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td class="font-weight-bold">
+                                                <span class="badge border border-info text-info">@item.QRCode</span>
+                                            </td>
+                                        }
+                                        <td>
+                                            @item.StoreRecdDate
+                                        </td>
+                                        <td><u>@item.MfgDate</u> - <u>@item.Expdate</u></td>
+                                        @if (item.StoreDispatch == "Y")
+                                        {
+                                            <td class="text-center"><span class="text-success">Dispatched <span class="text-secondary">at</span> @item.StoreDispatchDate</span></td>
+                                        }
+                                        else
+                                        {
+                                            <td class="text-center"></td>
+                                        }
+                                        @if (!string.IsNullOrEmpty(item.SmtRecdDate))
+                                        {
+                                            <td class="text-center"><span class="text-success">Received <span class="text-secondary">at</span> @item.SmtRecdDate</span></td>
+                                        }
+                                        else
+                                        {
+                                            <td class="text-center"></td>
+                                        }
+                                        @if (item.SmtConsume == "Y")
+                                        {
+                                            <td class="text-center"><span class="text-success">Consumed <span class="text-secondary">at</span> @item.SmtConsumeDate</span></td>
+                                        }
+                                        else
+                                        {
+                                            <td class="text-center"></td>
+                                        }
+                                        @if (item.IsBlocked == "Y")
+                                        {
+                                            <td class="text-center"><span class="text-danger">Blocked <span class="text-secondary">at</span> @item.BlockDate</span></td>
+                                        }
+                                        else
+                                        {
+                                            <td class="text-center"></td>
+                                        }
+                                        <td>@item.MaterialNo</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section ScriptsBlock {
+    <script src="~/js/datagrid/datatables/dths.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/smt_generateqrcode.js"></script>
+    <script src="~/js/smt_materialblock.js"></script>
+}

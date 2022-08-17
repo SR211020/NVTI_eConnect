@@ -1,0 +1,201 @@
+﻿@model eConnectV2.ViewModels.PEViewModel
+
+@{ ViewData["Title"] = "RedBin Reports";
+    ViewData["PageHeading"] = "RedBin Reports";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "PE";
+    ViewBag.Category1 = "RedBinReports";
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/statistics/chartjs/chartjs.css">
+    <link href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css" rel="stylesheet" />
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-12">
+                <div id="panel-8" class="panel">
+                    <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+                        <div class="col-md-6">
+                            <h2 class="pl-3">
+                                RedBin Scrap<span class="fw-300"><i>Trend</i></span>
+                            </h2>
+                        </div>
+                        <div class="col-md-2">
+                            <input asp-for="Date1" onchange="fnRedBinData()" autocomplete="off" class="form-control datepickertext" type="text" placeholder="dd-mmm-yyyy" required data-date-format="dd-M-yyyy" />
+                        </div>
+                        <div class="col-md-2">
+                            <input asp-for="Date2" onchange="fnRedBinData()" autocomplete="off" class="form-control datepickertext" type="text" placeholder="dd-mmm-yyyy" required data-date-format="dd-M-yyyy" />
+                        </div>
+                        <div class="col-md-2">
+                            <select asp-for="Customer" onchange="fnRedBinData()" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.CustomerList, "Value", "Text"))" required>
+                                <option value="">--Select--</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="panel-container show">
+                        <div class="panel-content">
+                            <div id="RedBinChartdiv">
+                                <canvas style="width:100%; height:300px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <script type="text/javascript">
+                        function fnRedBinData() {
+                            var date1 = $('#Date1').val();
+                            var date2 = $('#Date2').val();
+                            var customer = $('#Customer').val();
+                            if (date1 != '' && date2 != '') {
+                                document.getElementById("RedBinChartdiv").innerHTML = '&nbsp;';
+                                document.getElementById("RedBinChartdiv").innerHTML = '<canvas style="width:100%; height:300px;"></canvas>';
+                                GetRedBinData(date1, date2, customer);
+                            }
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/statistics/chartjs/chartjs.bundle.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(function () {
+                $('.select2').select2();
+                runDatePicker();
+            });
+            var controls = {
+                leftArrow: '<i class="fas fa-angle-left" style="font-size: 1.25rem"></i>',
+                rightArrow: '<i class="fas fa-angle-right" style="font-size: 1.25rem"></i>'
+            }
+            var runDatePicker = function () {
+                $('#Date1,#Date2').datepicker({
+                    todayHighlight: true,
+                    orientation: "bottom right",
+                    templates: controls,
+                    autoclose: true
+                });
+            }
+            GetRedBinData();
+        });
+
+        function GetRedBinData(date1, date2, customer) {
+            var requestUrl = 'PE/ReportsData';
+            $.ajax({
+                url: requestUrl,
+                data: { date1: date1, date2: date2, customer: customer },
+                type: "POST",
+                success: function (response) {
+                    redBinChart(response);
+                },
+                error: function () {
+
+                }
+            });
+        }
+        var redBinChart = function (data) {
+            var dateList = [];
+            var targetList = [];
+            var actualList = [];
+            if (data != null) {
+                for (i = 0; i < data.length; i++) {
+                    dateList.push(data[i].date);
+                    targetList.push(data[i].target);
+                    actualList.push(data[i].actual);
+                }
+            }
+            var lineChartData = {
+                labels: dateList,
+                datasets: [{
+                    label: "Target",
+                    backgroundColor: color.danger._500,
+                    borderColor: color.danger._700,
+                    borderWidth: 1,
+                    data: targetList
+                }, {
+                    label: "Actual",
+                    backgroundColor: color.primary._300,
+                    borderColor: color.primary._500,
+                    borderWidth: 1,
+                    data: actualList
+                }]
+            };
+            var config = {
+                type: 'line',
+                data: lineChartData,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: false,
+                        text: 'Line Chart'
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 11
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 11
+                            }
+                        }]
+                    },
+                    "hover": {
+                        "animationDuration": 0
+                    },
+                    "animation": {
+                        "duration": 1,
+                        "onComplete": function () {
+                            var chartInstance = this.chart, ctx = chartInstance.ctx;
+                            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'bottom';
+                            this.data.datasets.forEach(function (dataset, i) {
+                                var meta = chartInstance.controller.getDatasetMeta(i);
+                                meta.data.forEach(function (bar, index) {
+                                    var data = dataset.data[index];
+                                    if (data == '0') {
+
+                                    }
+                                    else {
+                                        ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                                    }
+                                });
+                            });
+                        }
+                    }
+                }
+            }
+            new Chart($("#RedBinChartdiv > canvas").get(0).getContext("2d"), config);
+        }
+    </script>
+}

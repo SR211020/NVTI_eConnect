@@ -1,0 +1,230 @@
+﻿@model eConnectV2.ViewModels.BISViewModel
+@{
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewData["Title"] = "SMT FPY - Auto";
+    ViewData["HeaderTitle"] = "SMT FPY Dashboard";
+    ViewData["URL"] = Url.Action("Dashboard", "Home");
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+}
+<div class="panel">
+    <div class="row ml-1 pt-2 pb-2">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-2">
+                    <select asp-for="LineNo" class="select2 custom-select w-100" required asp-items="@(new SelectList(Model.LineNoList, "Value", "Text"))">
+                    </select>
+                    <span id="Plant" hidden>@Model.Plant</span>
+                    <input asp-for="FromTime" type="hidden" value="" />
+                    <input asp-for="ToTime" type="hidden" value="" />
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-block btn-secondary waves-effect waves-themed fs-xxl p-0">
+                        <span id="ModelName" class="text-white font-weight-bolder"></span>
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <div class="input-group">
+                        <input asp-for="Date1" autocomplete="off" disabled class="form-control datepickertext" type="text" placeholder="dd-mmm-yyyy" required data-date-format="dd-M-yyyy" />
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <button type="button" class="btn btn-block btn-secondary waves-effect waves-themed fs-xxl p-0">
+                        <span id="Shift" class="text-white font-weight-bolder"></span>
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <a href="javascript:void(0)" class="btn btn-block btn-default waves-effect waves-themed fs-xxl p-0" onclick="RefreshData()">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel">
+    <div class="row">
+        <div class="col-md-12">
+            <table id="tbl_FPY" border="1" style="width:100%; border-color:#E9E9E9;color:#000">
+                <thead class="thead-themed">
+                    <tr class="bd-highlight tbl_heading">
+                        <th class="text-center">Time</th>
+                        <th class="text-center">Total</th>
+                        <th class="text-center">Pass</th>
+                        <th class="text-center">NG</th>
+                        <th class="text-center">Yield</th>
+                    </tr>
+                </thead>
+                <tbody class='text-nowrap'>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock
+{
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script>
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        //// Bind Controls ////
+        $(document).ready(function () {
+            $(function () {
+                $('.select2').select2();
+            });
+            const dt = new Date();
+            $('#Date1').val(dt.getDate() + '-' + monthNames[dt.getMonth()] + '-' + dt.getFullYear());
+
+            FillSMTLinesForFPY();
+        });
+
+        function RefreshData() {
+            $("#LineNo").empty();
+            FillSMTLinesForFPY();
+        }
+
+        function FillSMTLinesForFPY() {
+            var requestUrl = 'BIS/FillSMTLinesForFPY';
+            $.post(requestUrl,
+                {
+                    plant: $('#Plant').text()
+                },
+                function (data) {
+                    $.each(data.lineNoList, function (index, item) {
+                        $("#LineNo").append($("<option></option>").val(item.value).html(item.text));
+                    });
+                    $("#ModelName").text($('#LineNo').val());
+                    FillShiftDetailsByTime();
+                });
+        }
+
+
+        function FillShiftDetailsByTime() {
+            var requestUrl = 'BIS/GetShiftDetailsByTime';
+            const dt = new Date();
+            $.post(requestUrl,
+                {
+                    plant: $('#Plant').text(),
+                    currTime: String("0" + dt.getHours()).slice(-2) + ':' + String("0" + dt.getMinutes()).slice(-2)
+                },
+                function (model) {
+                    $("#Shift").text(model.shift);
+                    $("#FromTime").val(model.fromTime);
+                    $("#ToTime").val(model.toTime);
+                    GetData();
+                });
+        }
+
+        function RefreshShiftByTime() {
+            var requestUrl = 'BIS/GetShiftDetailsByTime';
+            const dt = new Date();
+            $('#Date1').val(dt.getDate() + '-' + monthNames[dt.getMonth()] + '-' + dt.getFullYear());
+            $.post(requestUrl,
+                {
+                    plant: $('#Plant').text(),
+                    currTime: String("0" + dt.getHours()).slice(-2) + ':' + String("0" + dt.getMinutes()).slice(-2)
+                },
+                function (model) {
+                    $("#Shift").text(model.shift);
+                    $("#FromTime").val(model.fromTime);
+                    $("#ToTime").val(model.toTime);
+                    FillFPYData();
+                });
+        }
+
+        function RefreshSMTLinesForFPY() {
+            $("#LineNo").empty();
+            var requestUrl = 'BIS/FillSMTLinesForFPY';
+            $.post(requestUrl,
+                {
+                    plant: $('#Plant').text()
+                },
+                function (data) {
+                    $.each(data.lineNoList, function (index, item) {
+                        $("#LineNo").append($("<option></option>").val(item.value).html(item.text));
+                    });
+                    $("#ModelName").text($('#LineNo').val());
+                    FillFPYData();
+                });
+        }
+
+        function GetData() {
+            FillFPYData();
+            var totalLines = $('#LineNo option').length;
+            var count = 1;
+            setInterval(function () {
+                if (count >= totalLines) {
+                    count = 0;
+                    const dt = new Date();
+                    if (dt.getHours() == 7 || dt.getHours == 15)
+                    {
+                        RefreshSMTLinesForFPY();
+                    }
+                }
+                $("#LineNo").prop('selectedIndex', count).change();
+                $("#ModelName").text($('#LineNo').val());
+                RefreshShiftByTime();
+                count += 1;
+            }, 60000);
+        }
+
+        //// Fill FPY Data ////
+        function FillFPYData() {
+            var lineNoVal = $("#LineNo option:selected").text(); //$('#LineNo').find(":selected").text(); $('#LineNo').select2('data')[0].text;
+            var shiftVal = $('#Shift').text();
+            var requestUrl = 'BIS/GetSMTFPYHourly';
+            $.post(requestUrl,
+                {
+                    plant: $('#Plant').text(),
+                    mode:'AUTO',
+                    lineNo: lineNoVal,
+                    fpyDate: $('#Date1').val(),
+                    shift: shiftVal,
+                    fromTime: $('#FromTime').val(),
+                    toTime: $("#ToTime").val()
+                },
+
+                function (data) {
+                    $('#tbl_FPY tbody').empty();
+                    var row = "";
+                    var count = 0;
+                    $.each(data, function (index, item) {
+                        count = count + 1;
+                        row += "<tr class='tbl_heading'>";
+                        row += "<td class='text-center'>" + (item.fromTime).split(" ")[1] + "  -  " + (item.toTime).split(" ")[1] + "</td>";
+                        row += "<td class='text-center'>" + item.total + "</td>";
+                        row += "<td class='text-center'>" + item.totalPass + "</td>";
+                        row += "<td class='text-center'>" + item.ng + "</td>";
+                        row += "<td class='text-center'>" + item.fpy + "</td>";
+                        row += "</tr>";
+                    });
+                    if (count == 0) {
+                        row += "<tr class='no-records-found text-left text-info'><td colspan='19'>No record found</td></tr>";
+                    }
+                    $("#tbl_FPY tbody").html(row);
+                });
+        }
+    </script>
+    <style>
+        .tbl_heading {
+            font-size: 36px;
+            font-weight: 500;
+        }
+
+        .select2-selection__rendered {
+            font-size: 18px;
+            line-height: 1.3;
+            font-weight: bolder;
+        }
+
+        .datepickertext {
+            font-size: 18px;
+            line-height: 1.3;
+            font-weight: bolder;
+        }
+    </style>
+}
+

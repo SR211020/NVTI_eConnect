@@ -1,0 +1,529 @@
+﻿@model eConnectV2.ViewModels.LabTestViewModel
+@{
+    ViewData["Title"] = "NVTI-Reliability Lab";
+    ViewData["PageHeading"] = "Reliability Lab";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "Reliability Lab";
+    ViewBag.Category1 = "Sample";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div id="panel-1" class="panel mb-0">
+            <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+                <h2 id="headingSection">
+                    Sample Request
+                </h2>
+            </div>
+            @using (Html.BeginForm("Sample", "Quality", FormMethod.Post, new { id = "form", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+            {
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-md-5 col-form-label font-weight-bold">Product<span class="text-danger ml-1">*</span> : </label>
+                                    <div id="div_product" class="col-md-7">
+                                        <select class="select2 custom-select form-control w-100" asp-for="Product" required>
+                                            <option>Battery</option>
+                                            <option>Cell</option>
+                                            <option>PCM</option>
+                                            <option>Power Bank</option>
+                                            <option>Tape</option>
+                                            <option>Other</option>
+                                        </select>
+                                    </div>
+                                    <div id="div_productother" class="col-md-7" style="display:none">
+                                        <table width="100%">
+                                            <tr>
+                                                <td>
+                                                    <input type="text" asp-for="ProductOther" class="form-control" required autocomplete="off" value="0">
+                                                </td>
+                                                <td>
+                                                    <i id="prodOtherbtn" class="fas fa-times-circle text-danger" onclick="ProductOtherHide()"></i>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-5 col-form-label font-weight-bold">Model<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-md-7">
+                                        <input type="text" asp-for="ModelName" class="form-control" required autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-5 col-form-label font-weight-bold">Part No.<span class="text-danger ml-1">*</span> : </label>
+                                    <div class="col-md-7">
+                                        <input type="text" asp-for="PartNumber" class="form-control" required autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-5 col-form-label font-weight-bold">Sample Qty.<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-md-7">
+                                        <input type="text" asp-for="SampleQty" class="form-control" required autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;">
+                                        <span id="error" style="color: Red; display: none">* Input digits (0 - 9)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+
+                                <div class="form-group row">
+                                    <label class="col-md-5 col-form-label font-weight-bold">Test Name<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-md-7">
+                                        <input type="text" asp-for="TestName" class="form-control" required autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-5 col-form-label font-weight-bold">If Any Test Condition :</label>
+                                    <div class="col-md-7">
+                                        <textarea type="text" asp-for="TestConditionIfAny" class="form-control" autocomplete="off" rows="3"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-5 col-form-label font-weight-bold"></label>
+                                    <div class="col-md-7">
+                                        <div class="custom-file">
+                                            <input id="customFile" asp-for="AttachDocument" type="file" class="custom-file-input" onchange="GetFileSize()">
+                                            <label class="custom-file-label" for="customFile">Choose file...</label>
+                                            <p class="text-danger mt-2" id="fp"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-md-5 col-form-label font-weight-bold">Department <span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-md-7">
+                                        <input type="text" asp-for="Department" value="@User.Identity.GetDeptName()" class="form-control" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-5 col-form-label font-weight-bold">Request by<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-md-7">
+                                        <input type="text" asp-for="EmpName" value="@User.Identity.GetEmpName()" class="form-control" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-5 col-form-label font-weight-bold">Request Date<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-md-7">
+                                        <input type="text" asp-for="RequestDate" value="@DateTime.Now.ToString("dd'-'MMM'-'yyyy")" class="form-control" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-content border-faded border-left-0 border-right-0 border-bottom-0">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="col-md-5"></label>
+                                <button type="submit" id="btnAdd" class="btn btn-sm btn-primary">Submit</button>
+                                <button type="button" id="btnUpdate" class="btn btn-sm btn-warning hide">Update</button>
+                                <button type="button" id="btnCancel" class="btn btn-sm btn-default ml-3" onClick="window.location.reload();">Cancel</button>
+                                <button type="button" id="btnUpdateCancel" class="btn btn-sm btn-default ml-3 hide" onclick="UpdateCancel()">Cancel</button>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <span id="msg1" class="text-danger font-weight-bold ml-3"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div id="dataListOption" class="alert alert-link mb-0 pb-2">
+    <div class="icheck-primary d-inline">
+        <input type="radio" id="radioPrimary1" name="r1" value="Pending" checked="">
+        <label for="radioPrimary1" class="text-success">
+            Pending
+        </label>
+    </div>
+    <div class="icheck-danger d-inline ml-5">
+        <input type="radio" id="radioPrimary2" name="r1" value="All">
+        <label for="radioPrimary2" class="text-danger">
+            All
+        </label>
+    </div>
+</div>
+<div id="dataList">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <div class="table-responsive">
+                            <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover nowrap">
+                                <thead class="bg-primary-800">
+                                    <tr>
+                                        @if (ViewBag.SearchOption == "Pending")
+                                        {
+                                            <th class='notexport'>Action</th>
+                                            <th>Status</th>
+                                            <th>Product</th>
+                                            <th>Model</th>
+                                            <th>Part No.</th>
+                                            <th>Qty.</th>
+                                            <th>Test</th>
+                                            <th>Test Conditions</th>
+                                            <th>Request</th>
+                                        }
+                                        else
+                                        {
+                                            <th>Status</th>
+                                            <th>Product</th>
+                                            <th>Model</th>
+                                            <th>Part No.</th>
+                                            <th>Qty.</th>
+                                            <th>Test</th>
+                                            <th>Test Conditions</th>
+                                            <th>Reason</th>
+                                            <th>Request</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white">
+                                    @foreach (var item in Model.SampleList)
+                                    {
+                                        <tr>
+                                            @if (ViewBag.SearchOption == "Pending")
+                                            {
+                                                <td class="bg-primary-gradient">
+                                                    <span style="display:none;">@DateTime.Now.ToString("hh.mm.ss.ffffff")</span>
+                                                    <a title="Edit" href="javascript:void(0);" onclick='GetSample("@item.ID")'><i class="fas fa-edit ml-3"></i></a>
+                                                    <a title="Delete" href="javascript:void(0);" onclick='DeleteSample("@item.ID")'><i class="text-danger fas fa-trash-alt ml-3"></i></a>
+                                                </td>
+                                                <td class="font-weight-bold text-info"><span>@item.Status</span></td>
+                                                <td>
+                                                    @if (item.Product == "Other")
+                                                    {
+                                                        @item.ProductOther
+                                                    }
+                                                    else
+                                                    {
+                                                        @item.Product
+                                                    }
+                                                </td>
+                                                <td>@item.ModelName</td>
+                                                <td>@item.PartNumber</td>
+                                                <td class="font-weight-bold text-primary">@item.SampleQty</td>
+                                                <td>@item.TestName</td>
+                                                <td>
+                                                    @if (!string.IsNullOrEmpty(item.DocUId))
+                                                    {
+                                                        <a title="Download" href="@Url.Action("Download", "Quality", new { filename = item.DocUId })"><i class="fas fa-file-alt ml-2 mr-2 text-primary"></i></a>
+                                                    }
+                                                    <span id="SpanTitle_@item.ID" title="@item.TestConditionIfAny">
+                                                        @item.TestConditionIfAny.Substring(0, (item.TestConditionIfAny.Length > 30 ? 30 : item.TestConditionIfAny.Length))
+                                                        @{
+                                                            if (item.TestConditionIfAny.Length > 30)
+                                                            {
+                                                                <span class="font-weight-bold cursor-pointer" onclick="ShowFullText(@item.ID)">...show more</span>
+                                                            }
+                                                        }
+                                                    </span>
+                                                </td>
+                                                <td>@item.EmpName <b><i class="text-primary">at</i></b> @item.RequestDate</td>
+                                            }
+                                            else
+                                            {
+                                                <td class="font-weight-bold text-info">
+                                                    <span style="display:none;">@DateTime.Now.ToString("hh.mm.ss.ffffff")</span>
+                                                    @if (item.Status == "Accepted")
+                                                    {
+                                                        <span class="text-primary">@item.Status</span>
+                                                    }
+                                                    @if (item.Status == "TestRunning")
+                                                    {
+                                                        <span class="text-gradient">Test Running</span>
+                                                        <div class="spinner-border spinner-border-sm text-success ml-2" role="status">
+                                                            <span class="sr-only">Loading...</span>
+                                                        </div>
+                                                    }
+                                                    @if (item.Status == "Pass")
+                                                    {
+                                                        <span class="text-success">Pass</span>
+                                                    }
+                                                    @if (item.Status == "HoldFailed")
+                                                    {
+                                                        <span class="text-danger">Hold / Failed</span>
+                                                    }
+                                                    @if (item.Status == "Fail")
+                                                    {
+                                                        <span class="text-danger">Fail</span>
+                                                    }
+                                                    @if (item.Status == "Reject")
+                                                    {
+                                                        <span class="text-dark">@item.Status</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (item.Product == "Other")
+                                                    {
+                                                        @item.ProductOther
+                                                    }
+                                                    else
+                                                    {
+                                                        @item.Product
+                                                    }
+                                                </td>
+                                                <td>@item.ModelName</td>
+                                                <td>@item.PartNumber</td>
+                                                <td class="font-weight-bold text-primary">@item.SampleQty</td>
+                                                <td>@item.TestName</td>
+                                                <td>
+                                                    @if (!string.IsNullOrEmpty(item.DocUId))
+                                                    {
+                                                        <a title="Download" href="@Url.Action("Download", "Quality", new { filename = item.DocUId })"><i class="fas fa-file-alt ml-2 mr-2 text-primary"></i></a>
+                                                    }
+                                                    <span id="SpanTitle_@item.ID" title="@item.TestConditionIfAny">
+                                                        @item.TestConditionIfAny.Substring(0, (item.TestConditionIfAny.Length > 30 ? 30 : item.TestConditionIfAny.Length))
+                                                        @{
+                                                            if (item.TestConditionIfAny.Length > 30)
+                                                            {
+                                                                <span class="font-weight-bold cursor-pointer" onclick="ShowFullText(@item.ID)">...show more</span>
+                                                            }
+                                                        }
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span id="SpanReasonTitle_@item.ID" title="@item.RejectReason">
+                                                        @item.RejectReason.Substring(0, (item.RejectReason.Length > 30 ? 30 : item.RejectReason.Length))
+                                                        @{
+                                                            if (item.RejectReason.Length > 30)
+                                                            {
+                                                                <span class="font-weight-bold cursor-pointer" onclick="ShowReasonFullText(@item.ID)">...show more</span>
+                                                            }
+                                                        }
+                                                    </span>
+                                                </td>
+                                                <td>@item.EmpName <b><i class="text-primary">at</i></b> @item.RequestDate</td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="default-example-modal-center" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fal fa-times"></i></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <span id="span_showfull_text"></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/datagrid/datatables/dths.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script type="text/javascript">
+        var specialKeys = new Array();
+        specialKeys.push(8);
+        function IsNumeric(e) {
+            var keyCode = e.which ? e.which : e.keyCode
+            var ret = ((keyCode >= 48 && keyCode <= 57) || specialKeys.indexOf(keyCode) != -1);
+            document.getElementById("error").style.display = ret ? "none" : "inline";
+            return ret;
+        }
+    </script>
+    <script type="text/javascript">
+        var eId = "0";
+        $(document).ready(function () {
+            $('.select2').select2();
+            $('#Product').change(function () {
+                var prod = $("#Product option:selected").text();
+                if (prod == 'Other') {
+                    $('#div_product').css('display', 'none');
+                    $('#div_productother').css('display', '');
+                    $('#ProductOther').val('');
+                }
+                else {
+                    $('#div_product').css('display', '');
+                    $('#div_productother').css('display', 'none');
+                    $('#ProductOther').val('0');
+                }
+            });
+            var action = '@ViewBag.SearchOption'
+            if (action == 'Pending') {
+                 $("#radioPrimary1").prop("checked", true);
+             }
+            if (action == 'All') {
+                 $("#radioPrimary2").prop("checked", true);
+            }
+        });
+        $('input:radio[name="r1"]').change(function () {
+            if ($(this).is(':checked') && $(this).val() == 'Pending') {
+                GetSampleOption(1);
+            }
+            else {
+                GetSampleOption(2);
+            }
+        });
+        function GetSampleOption(type) {
+            var requestUrl = 'Quality/GetSampleOption';
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                data: { type: type },
+                success: function () {
+                    location.replace(location.href);
+                },
+                error: function () {
+
+                }
+            });
+        }
+        function ProductOtherHide() {
+            $('#div_product').css('display', '');
+            $('#div_productother').css('display', 'none');
+            $('#ProductOther').val('0');
+            $('#Product').val('Battery').change();
+        }
+        function GetSample(Id) {
+            eId = Id;
+            var requestUrl = 'Quality/GetSample';
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                data: { Id: Id },
+                success: function (response) {
+                    if (response[0].product == 'Other') {
+                        $('#div_product').css('display', 'none');
+                        $('#div_productother').css('display', '');
+                    } else {
+                        $('#div_product').css('display', '');
+                        $('#div_productother').css('display', 'none');
+                        $('#Product').prop('disabled', true)
+                    }
+                    $('#Product').val(response[0].product).change();
+                    $('#ProductOther').val(response[0].productOther).prop('readonly', true);
+                    $('#ModelName').val(response[0].modelName).prop('readonly', true);
+                    $('#PartNumber').val(response[0].partNumber).prop('readonly', true);
+                    $('#SampleQty').val(response[0].sampleQty);
+                    $('#TestName').val(response[0].testName);
+                    $('#TestConditionIfAny').val(response[0].testConditionIfAny);
+                    $('#headingSection').text('Edit Sample Request');
+                    $('#btnAdd').hide();
+                    $('#btnUpdate').show();
+                    document.getElementById("btnAdd").disabled = true;
+                },
+                error: function () {
+                    Swal.fire("Oops...", "Something went wrong!", "error");
+                }
+            });
+            $('#dataListOption').css('display', 'none');
+            $('#dataList').css('display', 'none');
+            $('#prodOtherbtn').css('display', 'none');
+            $('#btnCancel').hide();
+            $('#btnUpdateCancel').show();
+        }
+        function UpdateCancel() {
+            eId = "0";
+            $('#btnCancel').show();
+            $('#btnUpdateCancel').hide();
+            $('#Product').val('Battery').prop('disabled', false).change();
+            $('#ProductOther').val('0').prop('readonly', false);
+            $('#ModelName').val('').prop('readonly', false);
+            $('#PartNumber').val('').prop('readonly', false);
+            $('#SampleQty').val('');
+            $('#TestName').val('');
+            $('#TestConditionIfAny').val('');
+            $('#dataListOption').css('display', '');
+            $('#dataList').css('display', '');
+            $('#headingSection').text('Sample Request');
+            $('#prodOtherbtn').css('display', '');
+            $('#btnAdd').show();
+            $('#btnUpdate').hide();
+            document.getElementById("btnAdd").disabled = false;
+        }
+        function DeleteSample(keyId) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (result) {
+                if (result.value) {
+                    $.ajax({
+                        url: "/Quality/DeleteSample",
+                        type: "POST",
+                        data: { Id: keyId },
+                        success: function () {
+                            Swal.fire("Deleted!", "Record deleted successfully", "success").then(function () {
+                                window.location.reload();
+                            })
+                        },
+                        error: function () {
+                            Swal.fire("Oops...", "Something went wrong!", "error");
+                        }
+                    });
+                }
+            });
+        }
+        $('#btnUpdate').click(function () {
+            $('#msg1').text('');
+            var eSampleQty = $('#SampleQty').val();
+            var eTest = $('#TestName').val();
+            var eTestCond = $('#TestConditionIfAny').val();
+            var requestUrl = 'Quality/USample';
+            if (eSampleQty == "") {
+                $('#msg1').text('All (*) marked fields are mandatory');
+            }
+            else if (eTest == "") {
+                $('#msg1').text('All (*) marked fields are mandatory');
+            }
+            else {
+                $.ajax({
+                    url: requestUrl,
+                    type: "POST",
+                    data: { Id: eId, eSampleQty: eSampleQty, eTest: eTest, eTestCond: eTestCond },
+                    success: function () {
+                        Swal.fire("Updated!", "Record updated successfully", "success").then(function () {
+                            window.location.reload();
+                        })
+                    },
+                    error: function () {
+                        Swal.fire("Oops...", "Something went wrong!", "error");
+                    }
+                });
+            }
+        });
+        function ShowFullText(id) {
+            $('#span_showfull_text').text($('#SpanTitle_' + id).prop("title"))
+            $('#default-example-modal-center').modal("show");
+        }
+        function ShowReasonFullText(id) {
+            $('#span_showfull_text').text($('#SpanReasonTitle_' + id).prop("title"))
+            $('#default-example-modal-center').modal("show");
+        }
+        function GetFileSize() {
+            var ext = $('#customFile').val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['txt', 'doc', 'docx', 'pdf', 'xls', 'xlsx', 'png', 'jpg', 'jpeg', 'gif', 'csv']) == -1) {
+                document.getElementById('fp').innerHTML = 'Invalid extension!';
+                $('#customFile').val('');
+            }
+            else {
+                document.getElementById('fp').innerHTML = "";
+            }
+        }
+    </script>
+}

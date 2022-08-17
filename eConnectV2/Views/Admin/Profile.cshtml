@@ -1,0 +1,164 @@
+﻿@model eConnectV2.ViewModels.AdminViewModel
+@{
+    ViewData["Title"] = "My Profile";
+    ViewData["PageHeading"] = "Update Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="col-md-12">
+    <div class="panel">
+        <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+            <h2 class="justify-content-center">
+                <span class="fw-300 pr-1">Update </span> Profile
+            </h2>
+        </div>
+        <div class="panel-container show">
+            @using (Html.BeginForm("Profile", "Admin", FormMethod.Post, new { id = "form", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+            {
+                <div class="panel-content">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Employee AD Id</label>
+                                <span class="col-sm-8 col-form-label text-info">@Model.EmpAdId</span>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Employee Code</label>
+                                <span class="col-sm-8 text-info font-weight-normal pt-2">@Model.EmpCode</span>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Employee Name</label>
+                                <span class="col-sm-8 text-info font-weight-normal pt-2">@Model.EmpName</span>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Department</label>
+                                <span class="col-sm-8 text-info font-weight-normal pt-2">@Model.DeptName</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Email Id<span class="text-danger ml-1 view">*</span></label>
+                                <div class="col-sm-8">
+                                    <input asp-for="EmpEmail" class="form-control emp_email" onchange="validateEmail()" autocomplete="off" required>
+                                    <input asp-for="EmpEmail" value="@Model.EmpEmail" hidden />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Plant<span class="text-danger ml-1 view">*</span></label>
+                                <div class="col-sm-8">
+                                    <select asp-for="Plant" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.PlantList, "Value", "Text"))" required>
+                                        <option value="">-- Select --</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Contact Number<span class="text-danger ml-1 view">*</span></label>
+                                <div class="col-sm-8">
+                                    <input asp-for="Contact" class="form-control" autocomplete="off" required>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Extension</label>
+                                <div class="col-sm-8">
+                                    <input asp-for="ExtNo" class="form-control" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Upload Image</label>
+                                <div class="col-sm-7">
+                                    <div class="custom-file">
+                                        <input name="FuplImage" id="FuplImage" type="file" class="custom-file-input" onchange="return ShowImagePreview(this)" />
+                                        <label class="custom-file-label" for="FuplImage">Choose file</label>
+                                        <span id="FileError" class="text-danger" style="display:none">File size must be under 200 KB</span>
+                                        <span id="FileSize" class="text-danger" style="display:none">Invalid Extension</span>
+                                        <span id="emailError" class="text-danger" style="display:none">Please Enter Company Email ID</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            @if (Model.ImageName != null)
+                            {
+                            <img id="dbImage" src="@Model.ImageName" class="justify-content-center img-thumbnail" style="width: 200px; height:200px"/>
+                            }
+                            else
+                            {
+                                <img src="~/img/DefaultProfile.jpg" class="justify-content-center" width="150" height="150" />
+                            }
+                            <img src="" id="imagePreview" class="image img-thumbnail" width="200" height="200" style="display:none" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="row justify-content-center">
+                                <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+@section ScriptsBlock {
+    <script src="~/js/defaultformvalidate.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2();
+            disableEmail();
+        });
+        function validateEmail() {
+            var email = $('.emp_email').val();
+            var sEmails = email.split("@@");
+            var user = sEmails[0];
+            var domain = sEmails[1];
+            if (domain != "nvtpower.com" && user != "") {
+                $("#emailError").show();
+            }
+            else {
+                $("#emailError").hide();
+            }
+        }
+
+        function disableEmail() {
+            var email = document.getElementById("EmpEmail").value;
+            var sEmails = email.split("@@");
+            var domain = sEmails[1];
+            if (domain == "nvtpower.com") {
+                $("#EmpEmail").prop("disabled", true);
+            }
+        }
+
+        function ShowImagePreview(input) {
+            var doc = document.getElementById("FuplImage");
+            var ext = $('#FuplImage').val().split('.').pop().toLowerCase();
+            if (doc.files[0].size > 200000) {
+                doc.value = "";
+                $("#FileError").show();
+            }
+            else {
+                $("#FileError").hide();
+            }
+            if ($.inArray(ext, ['jpg', 'jpeg', 'png']) == -1) {
+                $('#FuplImage').val('');
+                $("#FileSize").show();
+            }
+            else {
+                $("#FileSize").hide();
+            }
+            if (input.files && input.files[0]) {
+                var fname = input.files[0].name;
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $("#FuplImage").hide();
+                    $("#dbImage").hide();
+                    $('#imagePreview').show();
+                    $('#imagePreview').prop('src', e.target.result);
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}

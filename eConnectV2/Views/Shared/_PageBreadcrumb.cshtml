@@ -1,0 +1,14 @@
+<ol class="breadcrumb page-breadcrumb mb-0 small font-italic">
+    @if (ViewBag.Module?.Length > 0)
+    {
+<li class="breadcrumb-item" style="overflow:unset"><a href="javascript:void(0);">@ViewData["Module"]</a></li>
+}
+    @if (ViewBag.Category1?.Length > 0)
+    {
+<li class="breadcrumb-item" style="overflow:unset">@ViewBag.Category1</li>
+}
+    @if (ViewBag.Category2?.Length > 0)
+    {
+<li class="breadcrumb-item active" style="overflow:unset">@ViewBag.Category2</li>
+}
+</ol>

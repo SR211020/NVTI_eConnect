@@ -1,0 +1,103 @@
+﻿@model eConnectV2.ViewModels.ITViewModel
+@{
+    ViewData["Title"] = "IT HelpDesk Index";
+    ViewData["PageHeading"] = "IT HelpDesk";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section HeadBlock {
+    <meta http-equiv="refresh" content="600">
+    <style>
+        .btn1 {
+            height: 80px;
+            font-size: 25px;
+            width: 300px;
+        }
+
+            .btn1 .badge {
+                position: absolute;
+                top: -1px;
+                right: -1px;
+                padding: 5px 10px;
+                border-radius: 50%;
+                background: red;
+                color: white;
+            }
+    </style>
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="row pt-2">
+            <div class="col-md-4">
+                <a class="btn btn1 btn-warning pt-1" onclick="window.location='@Url.Action("HDAdd","IT")'"><i class="fa fa-plus-circle mr-1"></i>Create Helpdesk Request</a>
+            </div>
+            <div class="col-md-4">
+                <a class="btn btn1 pt-1" onclick="window.location='@Url.Action("HDView","IT")'" style="background-color:yellowgreen; color:white;">
+                    <i class="fa fa-eye mr-1"></i>View Helpdesk Request
+                    @if (Model.HDTotal > 0)
+                    {
+                        <span class="badge">@Model.HDTotal</span>
+                    }
+                </a>
+            </div>
+            <div class="col-md-4 ITEngg" style="display:none">
+                <a class="btn btn1 pt-3" onclick="window.location='@Url.Action("HDReport","IT")'" style="background-color: plum; color: white;">
+                    <i class="fas fa-chart-bar mr-1"></i>Helpdesk Report
+                </a>
+            </div>
+        </div>
+
+        <div class="row pt-6">
+            <div class="col-md-4">
+                <a class="btn btn1 pt-1" onclick="window.location='@Url.Action("HDUserIdCreate","IT")'" style="background-color: #55B4B0; color: white;">
+                    <i class="fa fa-plus-square mr-1"></i>Create Request For UserId
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a class="btn btn1 pt-1" onclick="window.location='@Url.Action("HDUserCreateView","IT")'" style="background-color: #6B5B95; color: white;">
+                    <i class="fa fa-eye mr-1"></i>View UserId Request
+                    @if (Model.HDCount3 > 0)
+                    {
+                        <span class="badge">@Model.HDCount3</span>
+                    }
+                </a>
+            </div>
+            <div class="col-md-4 ITEngg" style="display:none">
+                <a class="btn btn1 pt-3" onclick="window.location='@Url.Action("HDUserCreateReport","IT")'" style="background-color: #FF6F61; color: white;">
+                    <i class="fas fa-chart-pie mr-1"></i>UserId Create Report
+                </a>
+            </div>
+        </div>
+            @*<div class="row pt-3 ITEngg" style="display:none">
+                <div class="col-md-4 ITEngg">
+                    <a class="btn btn1 btn-secondary pt-3" onclick="window.location='@Url.Action("AssetAdd","IT")'" style="color:white"><i class="fas fa-dolly mr-1"></i>Manage Asset</a>
+                </div>
+                <div class="col-md-4">
+
+                </div>
+                <div class="col-md-4">
+
+                </div>
+            </div>*@
+        </div>
+    </div>
+
+
+@section ScriptsBlock {
+    <script src="~/js/statistics/chartjs/chartjs.bundle.js"></script>
+    <script src="~/js/statistics/d3/d3.js"></script>
+    <script src="~/js/statistics/c3/c3.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script>
+        $(document).ready(function () {
+            if ('@Model.DeptCode' == "DP0010") {
+                $('.ITEngg').show();
+            }
+            else {
+                $('.ITEngg').hide();
+            }
+        });
+
+    </script>
+}

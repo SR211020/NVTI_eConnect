@@ -1,0 +1,461 @@
+﻿@model eConnectV2.ViewModels.DTViewModel
+@{
+    ViewData["Title"] = "NVTI-Skill Question";
+    ViewData["PageHeading"] = "Manage Skill Question";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "Digital Training";
+    ViewBag.Category1 = "Skill Question";
+    int counter = 1;
+}
+<style>
+    .swal2-container {
+        z-index: 300000 !important;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="alert alert-info mb-1">
+            @using (Html.BeginForm("SkillQuestion", "DigitalTraining", FormMethod.Post, new { id = "form", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+            {
+                <div class="row pl-3">
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Station :</label>
+                            <div class="col-sm-8">
+                                <select class="select2 custom-select form-control w-100" asp-for="Station" required asp-items="@(new SelectList(Model.StationList, "Value", "Text"))">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Grade :</label>
+                            <div class="col-sm-8">
+                                <select class="select2 custom-select form-control w-100" asp-for="Grade" required asp-items="@(new SelectList(Model.EmpGradeList, "Value", "Text"))">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <div class="col-sm-6">
+                                <button type="submit" class="btn btn-sm btn-primary mt-1"><span class="fal fa-search mr-1"></span>Search</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+                <h2>
+                    All Questions
+                </h2>
+                <span id="spanTotalQue" class="font-italic fw-700 text-warning mr-4">Total No. of Questions Answered:  @Model.QuestionList.Count()</span>
+                <div class="panel-toolbar">
+                    <button type="button" class="btn btn-sm btn-outline-light waves-effect waves-themed ml-2" onclick="ShowModal()">Add New Question</button>
+                </div>
+            </div>
+            <div class="panel-container">
+                <div class="panel-content p-0">
+                    @foreach (var item in Model.QuestionList)
+                    {
+                        <div class="alert alert-primary m-3 p-1" style="height: 100%">
+                            <table width="100%">
+                                <tr>
+                                    <td style="width:50px;font-weight:bold" valign="top">
+                                        Que @counter:
+                                    </td>
+                                    <td>
+                                        <table width="100%">
+                                            <tr>
+                                                <td>
+                                                    @item.Que
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <table width="100%">
+                                            <tr>
+                                                <td>
+                                                    <span class="font-weight-bold mr-1">A.</span>
+                                                    @item.Option1
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <span class="font-weight-bold mr-1">B.</span>
+                                                    @item.Option2
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <span class="font-weight-bold mr-1">C.</span>
+                                                    @item.Option3
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <span class="font-weight-bold mr-1">D.</span>
+                                                    @item.Option4
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr style="border-top: 1px solid lightsteelblue; ">
+                                    <td style="width:50px;font-weight:bold;" valign="middle">
+                                        Ans:
+                                    </td>
+                                    <td>
+                                        <table width="100%">
+                                            <tr>
+                                                <td class="text-success">
+                                                    <span class="font-weight-bold mr-1">@item.Ans.</span>
+                                                    @{
+                                                        if (item.Ans == "A")
+                                                        {
+                                                            <span>@item.Option1</span>
+                                                        }
+                                                        else if (item.Ans == "B")
+                                                        {
+                                                            <span>@item.Option2</span>
+                                                        }
+                                                        else if (item.Ans == "C")
+                                                        {
+                                                            <span>@item.Option3</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>@item.Option4</span>
+                                                        }
+                                                    }
+                                                </td>
+                                                <td width="50%">
+                                                    <div class="panel-tag alert alert-primary p-1">
+                                                        Station :
+                                                        <span class="pr-2 font-italic fw-900 text-gradient"> @item.Station</span>
+                                                        Grade :
+                                                        <span>
+                                                            <span class="font-italic fw-900 text-gradient"> @item.Grade</span>
+                                                        </span>
+                                                        <a title="Edit" href="javascript:void(0);" onclick="RowEdit('@item.Id')"><i class="fas fa-edit ml-3"></i></a>
+                                                        <a title="Delete" href="javascript:void(0);" onclick="RowDelete('@item.Id')"><i class="fas fa-trash-alt ml-3 text-danger"></i></a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        counter++;
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="default-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content alert alert-primary">
+            <div class="modal-header">
+                <h3 id="modalHeading" class="modal-title text-primary"><strong>Add New Question</strong></h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label font-weight-bold">Station<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-sm-9">
+                                        <select id="eStation" class="form-control">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label font-weight-bold">Grade<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-sm-9">
+                                        <select id="eGrade" class="form-control">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label font-weight-bold">Que<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-sm-9">
+                                        <textarea type="text" id="eQue" placeholder="Enter your question..." class="form-control col-md-12" rows="4" required autocomplete="off"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label font-weight-bold"></label>
+                                    <div class="col-sm-9">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">A.</span>
+                                            </div>
+                                            <input type="text" id="eOption1" class="form-control height-3" placeholder="Enter option A">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label font-weight-bold"></label>
+                                    <div class="col-sm-9">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">B.</span>
+                                            </div>
+                                            <input type="text" id="eOption2" class="form-control height-3" placeholder="Enter option B">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label font-weight-bold"></label>
+                                    <div class="col-sm-9">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">C.</span>
+                                            </div>
+                                            <input type="text" id="eOption3" class="form-control height-3" placeholder="Enter option C">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label font-weight-bold"></label>
+                                    <div class="col-sm-9">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">D.</span>
+                                            </div>
+                                            <input type="text" id="eOption4" class="form-control height-3" placeholder="Enter option D">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-3">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label font-weight-bold">Ans<span class="text-danger ml-1">*</span></label>
+                                    <div class="col-sm-9">
+                                        <select id="eAns" class="form-control col-md-3 mr-auto">
+                                            <option value="A">A</option>
+                                            <option value="B">B</option>
+                                            <option value="C">C</option>
+                                            <option value="D">D</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-3">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label font-weight-bold"></label>
+                                    <div class="col-sm-9">
+                                        <input type="hidden" id="eId" value="0">
+                                        <button type="button" id="btnQueSave" class=" btn btn-sm btn-primary text-center">Save</button>
+                                        <button type="button" id="btnQueUpdate" class=" btn btn-sm btn-warning text-center">Update</button>
+                                        <span id="msg2" class="text-danger font-weight-bold ml-3"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/select.js"></script>
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script>
+        $(document).ready(function () {
+            BindStation();
+        });
+        function BindStation() {
+            var requestUrl = 'DigitalTraining/GetStation';
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                success: function (data) {
+                    $("#eStation").empty();
+                    $.each(data, function (index, item) {
+                        $("#eStation").append($("<option></option>").val(item.value).html(item.text));
+                    });
+                    BindGrade();
+                },
+                error: function () {
+
+                }
+            });
+        }
+        function BindGrade() {
+            var requestUrl = 'DigitalTraining/GetGrade';
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                success: function (data) {
+                    $("#eGrade").empty();
+                    $.each(data, function (index, item) {
+                        $("#eGrade").append($("<option></option>").val(item.value).html(item.text));
+                    });
+                },
+                error: function () {
+
+                }
+            });
+        }
+        $("#btnQueSave").click(function (e) {
+            ManageQues("A");
+        });
+        $("#btnQueUpdate").click(function (e) {
+            ManageQues("U");
+        });
+        function RowDelete(id) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (result) {
+                if (result.value) {
+                    var requestUrl = 'DigitalTraining/DeleteQuestion';
+                    $.ajax({
+                        url: requestUrl,
+                        type: "POST",
+                        data: { id: id },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire("Deleted!", response.responseMsg, "success").then(function () {
+                                    window.location.reload();
+                                })
+                            } else {
+                                Swal.fire("Oops...", "Something went wrong!", "error");
+                            }
+                        },
+                        error: function () {
+                            Swal.fire("Oops...", "Something went wrong!", "error");
+                        }
+                    });
+                }
+            });
+        }
+        function RowEdit(id) {
+            $('#eId').val(id);
+            $('#eStation,#eGrade').attr("style", "pointer-events: none;");
+            var requestUrl = 'DigitalTraining/GetQueById';
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                data: { id: id },
+                success: function (response) {
+                    $('#default-example-modal-lg').modal("show");
+                    $('#btnQueSave').hide();
+                    $('#btnQueUpdate').show();
+                    $('#modalHeading').text('Edit Question');
+                    $('#eStation').val(response[0].station);
+                    $('#eGrade').val(response[0].grade);
+                    $('#eQue').val(response[0].que);
+                    $('#eOption1').val(response[0].option1);
+                    $('#eOption2').val(response[0].option2);
+                    $('#eOption3').val(response[0].option3);
+                    $('#eOption4').val(response[0].option4);
+                    $('#eAns').val(response[0].ans);
+                },
+                error: function () {
+                    Swal.fire("Oops...", "Something went wrong!", "error");
+                }
+            });
+        }
+        function ShowModal() {
+            $('#default-example-modal-lg').modal("show");
+            $('#eStation,#eGrade').removeAttr("style", "pointer-events: none;");
+            $('#btnQueSave').show();
+            $('#btnQueUpdate').hide();
+            $('#modalHeading').text('Add New Question');
+            $('#eId').val('0');
+            $('#eStation').val($('#Station').val());
+            $('#eGrade').val($('#Grade').val());
+        }
+        function ManageQues(action) {
+            var eId = $('#eId').val();
+            var eStation = $('#eStation').val();
+            var eGrade = $('#eGrade').val();
+            var eQue = $('#eQue').val();
+            var eOption1 = $('#eOption1').val();
+            var eOption2 = $('#eOption2').val();
+            var eOption3 = $('#eOption3').val();
+            var eOption4 = $('#eOption4').val();
+            var eAns = $('#eAns').val();
+            var eAction = action;
+            if (eStation != '' && eGrade != '' && eQue != '' && eOption1 != '' && eOption2 != '' && eOption3 != '' && eOption4 != '' && eAns != '') {
+                $('#msg2').text('');
+                var requestUrl = 'DigitalTraining/ManageQuestion';
+                $.ajax({
+                    url: requestUrl,
+                    type: "POST",
+                    data: {
+                        eStation: eStation,
+                        eGrade: eGrade,
+                        eQue: eQue,
+                        eOption1: eOption1,
+                        eOption2: eOption2,
+                        eOption3: eOption3,
+                        eOption4: eOption4,
+                        eAns: eAns,
+                        eAction: eAction,
+                        eId: eId
+                    },
+                    success: function (response) {
+                        if (response.result === _errorStatus) {
+                            Swal.fire("Oops...", response.msg, "error");
+                        } else {
+                            $('#default-example-modal-lg').hide();
+                            Swal.fire("Saved!", response.msg, "success").then(function () {
+                                window.location.reload();
+                            })
+                        }
+                    },
+                    error: function () {
+                        Swal.fire("Oops...", "Something went wrong!", "error");
+                    }
+                });
+            }
+            else {
+                $('#msg2').text('All (*) marked fields are mandatory');
+            }
+        }
+    </script>
+}

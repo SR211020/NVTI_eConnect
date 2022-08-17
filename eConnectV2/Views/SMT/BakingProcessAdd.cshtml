@@ -1,0 +1,344 @@
+﻿@model eConnectV2.ViewModels.SMTViewModel
+@{
+    ViewData["Title"] = "SMT Baking Process";
+    ViewData["PageHeading"] = "Baking Process";
+    ViewBag.Module = "SMT";
+    ViewBag.Category1 = "BakingProcessAdd";
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+}
+<div class="panel">
+    <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+        <a id="btn_backtoList" style="color:#fff" href="@Url.Action("BakingProcessView", "SMT")" title="Back">
+            <i class="fa fa-angle-double-left"></i> Back
+        </a>
+        <h2 class="justify-content-center">
+            <span class="fw-300 pr-1">Baking  </span> Process
+        </h2>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content">
+            @using (Html.BeginForm("BakingProcessAdd", "SMT", FormMethod.Post, new { id = "myform", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+            {
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold" for="MfgDate">Mfg Date<span class="text-danger ml-1">*</span></label>
+                            <div class="col-sm-6">
+                                <div class="input-group">
+                                    <input asp-for="MfgDate" autocomplete="off" class="form-control" type="text" placeholder="dd-mmm-yyyy" required data-date-format="d-M-yyyy" />
+                                    <div class="input-group-append">
+                                        <span class="input-group-text fs-xl">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold" for="LotNo">Lot No<span class="text-danger ml-1">*</span></label>
+                            <div class="col-sm-6">
+                                <input class="form-control" required asp-for="LotNo" placeholder="Please enter Lot No." />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold" for="MatCode">Material Code<span class="text-danger ml-1">*</span></label>
+                            <div class="col-sm-6">
+                                <input class="form-control" required asp-for="MatCode" placeholder="Please scan Barcode" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold" for="Quantity">No. of Bakes<span class="text-danger ml-1">*</span></label>
+                            <div class="col-sm-6">
+                                <input class="form-control" required asp-for="Quantity" placeholder="Please enter no. of bakes" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold" for="PartNo">Part No<span class="text-danger ml-1">*</span></label>
+                            <div class="col-sm-6">
+                                <select class="select2 custom-select form-control" asp-for="PartNo" required asp-items="@(new SelectList(Model.DDLPartList,"Value", "Text"))">
+                                    <option value="">--Select--</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold" for="Quantity">Operator Id<span class="text-danger ml-1">*</span></label>
+                            <div class="col-sm-6">
+                                <input class="form-control" required asp-for="InOperator" placeholder="Please enter your Id" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-4"></label>
+                            <div class="col-sm-6">
+                                <button id="btnSaveUpdate" class="btn btn-sm btn-primary" type="submit">Save</button>
+                                <button onclick="Cancel()" class="btn btn-sm btn-secondary" type="button">Cancel</button>
+                                <input asp-for="Action" type="hidden" value="@Model.Action" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div id="panel-1" class="panel">
+    <div class="panel-hdr text-primary">
+        <h2>
+            <span class="icon-stack fs-xxl mr-2">
+                <i class="base base-7 icon-stack-3x opacity-100 color-primary-500"></i>
+                <i class="base base-7 icon-stack-2x opacity-100 color-primary-300"></i>
+                <i class="fa-cog icon-stack-1x opacity-100 color-white fa-spin"></i>
+            </span>
+            Bake
+            <span class="fw-300">
+                <i>Process</i>
+            </span>
+        </h2>
+    </div>
+    <div class="panel-container collapse show" style="max-height: 400px; overflow-y: scroll;">
+        <div class="panel-content">
+            <div class="col-md-12">
+                <div class="row" id="refreshDiv">
+                    @foreach (var item in Model.BakedListDetail)
+                    {
+                        var tableColor = "bg-success-400";
+                        if (@item.LeftTime < 0)
+                        {
+                            tableColor = "bg-danger-400";
+                        }
+                        else
+                        {
+                            tableColor = "bg-success-400";
+                        }
+                        <a href="javascript:void(0)" class="@tableColor m-1" onclick="Edit('@item.MatCode')" data-toggle="modal">
+                            <table border="1" cellpadding="8" cellspacing="8" width="100%">
+                                <tr>
+                                    <td style="text-align:center; width:50%">
+                                        <span>@item.MatCode</span>
+                                    </td>
+                                    <td style="text-align:center">
+                                        <span>@item.PartNo (@item.ModelName)</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:center">
+                                        @item.Date1<br />
+                                        @item.StartTime
+                                    </td>
+                                    <td style="text-align:center">
+                                        @if (item.LeftTime < 0)
+                                        {
+                                            <span style="font-weight:bold">Time(left):</span>
+                                        }
+                                        else
+                                        {
+                                            <span style="font-weight:bold">Time(over):</span>
+                                        }
+                                        <br />
+                                        <span style="font-weight:bold">@item.LeftTime</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade hide" id="default-example-modal-lg" tabindex="-1" role="complementary" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary"><strong>Bake Out</strong></h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body pt-0">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold" for="MfgDate">Mfg Date<span class="text-danger ml-1">*</span></label>
+                                        <div class="col-sm-6">
+                                            <div class="input-group">
+                                                <input id="editMfgDate" autocomplete="off" class="form-control" type="text" placeholder="dd-mmm-yyyy" required data-date-format="d-M-yyyy" />
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text fs-xl">
+                                                        <i class="fas fa-calendar-alt"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold" for="LotNo">Lot No<span class="text-danger ml-1">*</span></label>
+                                        <div class="col-sm-6">
+                                            <input class="form-control" readonly id="editLotNo" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold" for="MatCode">Material Code<span class="text-danger ml-1">*</span></label>
+                                        <div class="col-sm-6">
+                                            <input class="form-control" readonly id="editMatCode" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold" for="Quantity">No. of Bakes<span class="text-danger ml-1">*</span></label>
+                                        <div class="col-sm-6">
+                                            <input class="form-control" readonly id="editQuantity" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold" for="PartNo">Part No<span class="text-danger ml-1">*</span></label>
+                                        <div class="col-sm-6">
+                                            <input class="form-control" readonly id="editPartNo" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold" for="OperatorId">Operator Id</label>
+                                        <div class="col-sm-6">
+                                            <input class="form-control" requireds asp-for="OutOperator" placeholder="Please enter your Id" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold" for="Remarks">Remarks</label>
+                                        <div class="col-sm-6">
+                                            <input class="form-control" asp-for="Remarks" placeholder="Please enter Remarks" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-sm-8">
+                                            <span class="text-success ml-1 hide" id="MsgSuccess">Material is baked successfully !</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pt-2">
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4"></label>
+                                        <div class="col-sm-6">
+                                            <button id="btnUpdate" class="btn btn-sm btn-primary" type="button" onclick="UpdateRecord()">Save</button>
+                                            <button onclick="Cancel()" class="btn btn-sm btn-secondary" type="button">Cancel</button>
+                                            <input asp-for="Param1" type="hidden" value="@Model.Param1" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsBlock {
+    <script src="~/js/inputFilter.js"></script>
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/datagrid/datatables/dths.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script type="text/javascript">
+
+        var action = '@Model.Action'
+        $(document).ready(function () {
+            $(function () {
+                $('.select2').select2();
+                runDatePicker();
+            });
+            var controls = {
+                leftArrow: '<i class="fas fa-angle-left" style="font-size: 1.25rem"></i>',
+                rightArrow: '<i class="fas fa-angle-right" style="font-size: 1.25rem"></i>'
+            }
+            var runDatePicker = function () {
+                $('#MfgDate').datepicker({
+                    todayHighlight: true,
+                    orientation: "bottom left",
+                    templates: controls,
+                    autoclose: true
+                });
+            };
+
+            setInterval(function () {
+                $("#refreshDiv").load(window.location.href + " #refreshDiv");
+            }, 10000);
+        });
+
+        setInputFilter(document.getElementById("LotNo"), function (value) {
+            return /^-?\d*[.,]?\d{0,2}$/.test(value);
+        });
+        setInputFilter(document.getElementById("Quantity"), function (value) {
+            return /^-?\d*[.,]?\d{0,2}$/.test(value);
+        });
+
+        function Edit(matCode) {
+            $('#MsgSuccess').hide();
+            $("#default-example-modal-lg").modal('hide');
+            var requestUrl = 'SMT/BindMatDetail';
+                $.post(requestUrl,
+                    {
+                        matCode: matCode
+                    },
+                    function (data, status) {
+                        $("#Param1").val(data.param1);
+                        if (data.param1 < 0) {
+                            $('.close').click();
+                            Swal.fire("Oops...", "Material is not baked yet !", "error");
+                        }
+                        else {
+                            $("#default-example-modal-lg").modal('show');
+                            $("#editMfgDate").val(data.mfgDate);
+                            $("#editLotNo").val(data.lotNo);
+                            $("#editQuantity").val(data.quantity);
+                            $("#editMatCode").val(data.matCode);
+                            $("#editPartNo").val(data.partNo);
+                            $("#Action").val("UPDATE")
+                        }
+                    });
+        }
+
+        function Cancel() {
+            location.replace(location.pathname)
+        }
+
+
+        function UpdateRecord() {
+            var matCode = $('#editMatCode').val();
+            var operatorId = $('#OutOperator').val();
+            var remarks = $('#Remarks').val();
+            if (matCode == '' ) {
+
+            } else {
+                $.ajax({
+                    url: "SMT/UpdateBakingItem",
+                    type: "POST",
+                    data: { matCode: matCode, remarks: remarks, operatorId: operatorId},
+                    success: function (response) {
+                        $('#MsgSuccess').show();
+                        window.setTimeout(function () { location.reload() }, 1000)
+                    },
+                    error: function () {
+
+                    }
+                });
+            }
+        }
+    </script>
+}

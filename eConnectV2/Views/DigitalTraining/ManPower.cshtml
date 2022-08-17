@@ -1,0 +1,870 @@
+﻿@model eConnectV2.ViewModels.DTViewModel
+@{
+    ViewData["Title"] = "NVTI-Digital Training";
+    ViewData["PageHeading"] = "Manage ManPower";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "Digital Training";
+    ViewBag.Category1 = "ManPower";
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+    <style>
+        .swal2-container {
+            z-index: 300000 !important;
+        }
+
+        .modal-lg {
+            max-width: 80%;
+        }
+
+        .blink_me {
+            animation: blinker 1s linear infinite;
+            color: orange;
+        }
+
+        @@keyframes blinker {
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div id="panel-1" class="panel mb-0">
+            <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+                <h2 id="headingSection">
+                    Add ManPower
+                </h2>
+                <span class="float-right text-warning"><i class="fas fa-info-circle"></i> <strong>Aadhar number</strong> and <strong>EmpCode</strong> cannot be edited later. </span>
+            </div>
+            @using (Html.BeginForm("ManPower", "DigitalTraining", FormMethod.Post, new { id = "form", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+            {
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-md-5 col-form-label font-weight-bold">Aadhaar No.<span class="text-danger ml-1">*</span> : <i title="Aadhar number cannot be edited later" class="fas fa-info-circle text-warning"></i></label>
+                                    <div class="col-md-7">
+                                        <input type="text" asp-for="AadharNo" class="form-control" required autocomplete="off" onblur="CheckValidAadharNo()" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-5 col-form-label font-weight-bold">Emp Name<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-md-7">
+                                        <input type="text" asp-for="EmpName" class="form-control" required autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-5 col-form-label font-weight-bold">Emp Code<span class="text-danger ml-1">*</span> : <i title="EmpCode cannot be edited later" class="fas fa-info-circle text-warning"></i></label>
+                                    <div class="col-md-7">
+                                        <input type="text" asp-for="EmpCode" class="form-control" required autocomplete="off">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-md-5 col-form-label font-weight-bold">Qualification<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-md-7">
+                                        <input type="text" asp-for="Qualification" class="form-control" required autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-5 col-form-label font-weight-bold">DOJ<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-md-7">
+                                        <div class="input-group">
+                                            <input asp-for="DOJ" autocomplete="off" class="form-control" type="text" placeholder="dd-mmm-yyyy" required data-date-format="d-M-yyyy" />
+                                            <div class="input-group-append">
+                                                <span class="input-group-text fs-xl">
+                                                    <i class="fas fa-calendar-alt"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-5 col-form-label font-weight-bold">Emp Type<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-md-7">
+                                        <select class="form-control w-100" asp-for="EmpType" required asp-items="@(new SelectList(Model.EmpTypeList, "Value", "Text"))">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-md-5 col-form-label font-weight-bold">Status<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-md-7">
+                                        <select class="form-control w-100" asp-for="EmpStatus" required asp-items="@(new SelectList(Model.EmpStatusList, "Value", "Text"))">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-5 col-form-label font-weight-bold">Grade<span class="text-danger ml-1">*</span> :</label>
+                                    <div class="col-md-7">
+                                        <select class="form-control w-100" asp-for="Grade" required asp-items="@(new SelectList(Model.EmpGradeList, "Value", "Text"))">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-5 col-form-label font-weight-bold"></label>
+                                    <div class="col-md-7">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-content border-faded border-left-0 border-right-0 border-bottom-0">
+                        <div class="row">
+                            <label class="col-md-1 col-form-label font-weight-bold"></label>
+                            <div class="col-md-11">
+                                @if (Model.IsEmpStatusLeft)
+                                {
+                                    <span class="blink_me">Do you want to rejoin this employee ? If yes, enter new Emp Code.</span>
+                                    <button type="submit" id="btnRejoin" class="btn btn-sm btn-warning ml-3">Yes</button>
+                                    <button type="button" id="btnCancel" class="btn btn-sm btn-default ml-3">No</button>
+                                    <input asp-for="IsEmpReJoin" type="hidden" value="true" />
+                                    <input asp-for="OldEmpCode" type="hidden" value="@Model.OldEmpCode" />
+                                    <input asp-for="DOL" type="hidden" value="@Model.DOL" />
+                                }
+                                else
+                                {
+                                    <button type="submit" id="btnAdd" class="btn btn-sm btn-primary">Submit</button>
+                                    <button type="button" id="btnCancel" class="btn btn-sm btn-default ml-3">Cancel</button>
+                                }
+                                <span id="msg1" class="text-danger font-weight-bold ml-3"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div id="dataListOption" class="alert alert-link mb-0 pb-2">
+    <div class="icheck-primary d-inline">
+        <input type="radio" id="radioPrimary1" name="r1" value="ActiveManpower" checked="">
+        <label for="radioPrimary1" class="text-success">
+            Active Manpower
+        </label>
+    </div>
+    <div class="icheck-danger d-inline ml-5">
+        <input type="radio" id="radioPrimary2" name="r1" value="InActiveManpower">
+        <label for="radioPrimary2" class="text-danger">
+            InActive Manpower
+        </label>
+    </div>
+</div>
+<div id="dataList">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <div class="table-responsive">
+                            <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover nowrap">
+                                <thead class="bg-primary-800">
+                                    <tr>
+                                        <th class='notexport'>Action</th>
+                                        <th>Aadhar</th>
+                                        <th>Emp Code</th>
+                                        <th>Emp Name</th>
+                                        <th>Max. Grade</th>
+                                        <th>Skill Set</th>
+                                        <th>Status</th>
+                                        <th>Type</th>
+                                        <th>DOJ</th>
+                                        <th>Qualification</th>
+                                        @if (Model.ShowActiveManPowerList == 1)
+                                        {
+
+                                        }
+                                        else
+                                        {
+                                            <th>DOL</th>
+                                            <th style="white-space: normal;">Reason</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white">
+                                    @foreach (var item in Model.ManPowerList)
+                                    {
+                                        <tr>
+                                            <td class="bg-primary-gradient">
+                                                <span style="display:none;">@DateTime.Now.ToString("hh.mm.ss.ffffff")</span>
+                                                @if (item.EmpStatus.ToLower() == "active")
+                                                {
+                                                    <a title="Edit" href="javascript:void(0);" onclick='GetManPower("@item.AadharNo")' data-toggle="modal" data-target="#default-example-modal-lg"><i class="fas fa-edit ml-3"></i></a>
+                                                }
+                                            </td>
+                                            <td>@item.AadharNo</td>
+                                            <td>@item.EmpCode</td>
+                                            <td>@item.EmpName</td>
+                                            <td><span class="badge badge-primary pl-3 pr-3">@item.Grade</span></td>
+                                            <td>
+                                                <a title="Show Skill Set" href="javascript:void(0);" onclick='GetManPowerSkill("@item.AadharNo")' data-toggle="modal" data-target="#default-example-modal-lg1"><i class="fas fa-eye ml-3"></i> Show Skill Set</a>
+                                            </td>
+                                            @if (item.EmpStatus.ToLower().Trim() == "active")
+                                            {
+                                                <td class="text-success font-weight-bold">@item.EmpStatus</td>
+                                            }
+                                            else if (item.EmpStatus.ToLower().Trim() == "left")
+                                            {
+                                                <td>
+                                                    <span class="text-warning font-weight-bold">
+                                                        @item.EmpStatus
+                                                    </span>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td class="text-danger font-weight-bold">@item.EmpStatus</td>
+                                            }
+                                            <td class="font-weight-bold">@item.EmpType</td>
+                                            <td>@item.DOJ</td>
+                                            <td>@item.Qualification</td>
+                                            @if (Model.ShowActiveManPowerList == 1)
+                                            {
+
+                                            }
+                                            else
+                                            {
+                                                <td>@item.DOL</td>
+                                                <td style="white-space: normal;" class="fw-500 font-italic">@item.Reason</td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="default-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content alert alert-primary p-0">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary"><strong>Edit Manpower</strong></h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+            </div>
+            <div class="modal-body pt-0">
+                <table class="w-100">
+                    <tr>
+                        <td class="font-weight-bold">Aadhar No.<span class="text-danger ml-1">*</span> :</td>
+                        <td>
+                            <div class="form-group row">
+                                <div class="col-md-10">
+                                    <input type="text" id="eAadharNo" class="form-control" autocomplete="off" readonly>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="font-weight-bold">Qualification<span class="text-danger ml-1">*</span> :</td>
+                        <td>
+                            <div class="form-group row">
+                                <div class="col-md-10">
+                                    <input type="text" id="eQualification" class="form-control" autocomplete="off">
+                                </div>
+                            </div>
+                        </td>
+                        <td class="font-weight-bold">Status<span class="text-danger ml-1">*</span> :</td>
+                        <td>
+                            <div class="form-group row">
+                                <div class="col-md-10">
+                                    <select id="eEmpStatus" class="form-control">
+                                    </select>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold">Emp Name<span class="text-danger ml-1">*</span> :</td>
+                        <td>
+                            <div class="form-group row">
+                                <div class="col-md-10">
+                                    <input type="text" id="eEmpName" class="form-control" autocomplete="off">
+                                </div>
+                            </div>
+                        </td>
+                        <td class="font-weight-bold">DOJ<span class="text-danger ml-1">*</span> :</td>
+                        <td>
+                            <div class="form-group row">
+                                <div class="col-md-10">
+                                    <div class="input-group">
+                                        <input id="eDOJ" autocomplete="off" class="form-control" type="text" placeholder="dd-mmm-yyyy" required data-date-format="d-M-yyyy" />
+                                        <div class="input-group-append">
+                                            <span class="input-group-text fs-xl">
+                                                <i class="fas fa-calendar-alt"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="font-weight-bold">Grade<span class="text-danger ml-1">*</span> :</td>
+                        <td>
+                            <div class="form-group row">
+                                <div class="col-md-10">
+                                    <input type="text" id="eGrade" class="form-control" required autocomplete="off" readonly>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold">Emp Code<span class="text-danger ml-1">*</span> :</td>
+                        <td>
+                            <div class="form-group row">
+                                <div class="col-md-10">
+                                    <input type="text" id="eEmpCode" class="form-control" required autocomplete="off" readonly>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="font-weight-bold"><span id="edolspan">DOL<span class="text-danger ml-1">*</span> :</span></td>
+                        <td>
+                            <div class="form-group row" id="edolcal">
+                                <div class="col-md-10">
+                                    <div class="input-group">
+                                        <input id="eDOL" autocomplete="off" class="form-control" type="text" placeholder="dd-mmm-yyyy" required data-date-format="d-M-yyyy" />
+                                        <div class="input-group-append">
+                                            <span class="input-group-text fs-xl">
+                                                <i class="fas fa-calendar-alt"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="font-weight-bold">Emp Type<span class="text-danger ml-1">*</span> :</td>
+                        <td>
+                            <div class="form-group row">
+                                <div class="col-md-10">
+                                    <select id="eEmpType" class="form-control">
+                                    </select>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <div class="form-group row pt-3">
+                                <div class="col-md-10">
+                                    <button type="submit" id="btnUpdate" class="btn btn-sm btn-warning">Update</button>
+                                    <button type="button" id="btnModalCancel" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="font-weight-bold"><span id="eReasonspan">Reason<span class="text-danger ml-1">*</span> :</span></td>
+                        <td colspan="3">
+                            <div class="form-group row">
+                                <div class="col-md-11">
+                                    <textarea id="eReason" class="form-control" autocomplete="off"></textarea>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer mr-auto pt-0">
+                <span id="msg2" class="text-danger font-weight-bold ml-3"></span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="default-example-modal-lg1" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content alert alert-primary">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary"><strong>Skill Set</strong></h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+            </div>
+            <div class="modal-body pt-0">
+                <table class="w-100">
+                    <tr>
+                        <td class="font-weight-bold">Aadhar No. :</td>
+                        <td>
+                            <div class="form-group row">
+                                <div class="col-md-10">
+                                    <input type="text" id="eAadharNo1" class="form-control" readonly>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="font-weight-bold">Qualification :</td>
+                        <td>
+                            <div class="form-group row">
+                                <div class="col-md-10">
+                                    <input type="text" id="eQualification1" class="form-control" readonly>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="font-weight-bold">Status :</td>
+                        <td>
+                            <div class="form-group row">
+                                <div class="col-md-10">
+                                    <select id="eEmpStatus1" class="form-control" disabled>
+                                    </select>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold">Emp Name :</td>
+                        <td>
+                            <div class="form-group row">
+                                <div class="col-md-10">
+                                    <input type="text" id="eEmpName1" class="form-control" readonly>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="font-weight-bold">DOJ :</td>
+                        <td>
+                            <div class="form-group row">
+                                <div class="col-md-10">
+                                    <div class="input-group">
+                                        <input id="eDOJ1" autocomplete="off" class="form-control" type="text" readonly placeholder="dd-mmm-yyyy" required data-date-format="d-M-yyyy" />
+                                        <div class="input-group-append">
+                                            <span class="input-group-text fs-xl">
+                                                <i class="fas fa-calendar-alt"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="font-weight-bold">Max. Grade :</td>
+                        <td>
+                            <div class="form-group row">
+                                <div class="col-md-10">
+                                    <input type="text" id="eGrade1" class="form-control" readonly>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold">Emp Code :</td>
+                        <td>
+                            <div class="form-group row">
+                                <div class="col-md-10">
+                                    <input type="text" id="eEmpCode1" class="form-control" readonly>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="font-weight-bold"><span id="edolspan">DOL :</span></td>
+                        <td>
+                            <div class="form-group row" id="edolcal">
+                                <div class="col-md-10">
+                                    <div class="input-group">
+                                        <input id="eDOL1" autocomplete="off" class="form-control" readonly type="text" placeholder="dd-mmm-yyyy" required data-date-format="d-M-yyyy" />
+                                        <div class="input-group-append">
+                                            <span class="input-group-text fs-xl">
+                                                <i class="fas fa-calendar-alt"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="font-weight-bold">Emp Type :</td>
+                        <td>
+                            <div class="form-group row">
+                                <div class="col-md-10">
+                                    <select id="eEmpType1" class="form-control" disabled>
+                                    </select>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <div id="modalSkillSetTbl" class="mt-3">
+
+                </div>
+                <div id="modalSkillSetTbl1" class="mt-3">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/js/datagrid/datatables/dths_excel.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script>
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!AadharValidate()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+        $(document).ready(function () {
+            $(function () {
+                runDatePicker();
+                var action = '@Model.ShowActiveManPowerList'
+                if (action == '1') {
+                    $("#radioPrimary1").prop("checked", true);
+                    $("#radioPrimary2").prop("checked", false);
+                }
+                else {
+                    $("#radioPrimary1").prop("checked", false);
+                    $("#radioPrimary2").prop("checked", true);
+                }
+                var isEmpStatusLeft = '@Model.IsEmpStatusLeft'
+                if (isEmpStatusLeft == 'True') {
+                    $('#EmpName').prop("readonly", true);
+                }
+                else {
+                    $('#EmpName').prop("readonly", false);
+                }
+            });
+            var controls = {
+                leftArrow: '<i class="fas fa-angle-left" style="font-size: 1.25rem"></i>',
+                rightArrow: '<i class="fas fa-angle-right" style="font-size: 1.25rem"></i>'
+            }
+            var runDatePicker = function () {
+                $('#DOJ,#eDOJ,#DOL,#eDOL').datepicker({
+                    todayHighlight: true,
+                    orientation: "bottom left",
+                    templates: controls,
+                    autoclose: true,
+                    endDate: '+0d'
+                });
+            }
+            $("#btnCancel").click(function (e) {
+                location.replace(location.href)
+            });
+            $("#btnUpdate").click(function (e) {
+                var eAadharNo = $('#eAadharNo').val();
+                var eEmpName = $('#eEmpName').val();
+                var eEmpCode = $('#eEmpCode').val();
+                var eQualification = $('#eQualification').val();
+                var eDOJ = $('#eDOJ').val();
+                var eDOL = $('#eDOL').val();
+                var eReason = $('#eReason').val();
+                var eEmpStatus = $('#eEmpStatus').val();
+                var eGrade = $('#eGrade').val();
+                var eEmpType = $('#eEmpType').val();
+                var isValid = false;
+                if (eAadharNo != '' && eEmpName != '' && eEmpCode != '' && eQualification != '' && eDOJ != '' && eEmpStatus != '' && eEmpType != '') {
+                    if (eEmpStatus == '1') {
+                        $('#msg2').text('');
+                        isValid = true;
+                    }
+                    else {
+                        if (eDOL == '' || eReason == '') {
+                            $('#msg2').text('All (*) marked fields are mandatory');
+                        }
+                        else {
+                            $('#msg2').text('');
+                            isValid = true;
+                        }
+                    }
+                }
+                else {
+                    $('#msg2').text('All (*) marked fields are mandatory');
+                }
+                if (isValid) {
+                    var requestUrl = 'DigitalTraining/SaveManPower';
+                    $.ajax({
+                        url: requestUrl,
+                        type: "POST",
+                        data: {
+                            eAadharNo: eAadharNo,
+                            eEmpName: eEmpName,
+                            eEmpCode: eEmpCode,
+                            eQualification: eQualification,
+                            eDOJ: eDOJ,
+                            eDOL: eDOL,
+                            eEmpStatus: eEmpStatus,
+                            eEmpType: eEmpType,
+                            eGrade: eGrade,
+                            eReason: eReason
+                        },
+                        success: function (response) {
+                            if (response.result === _errorStatus) {
+                                Swal.fire("Oops...", response.msg, "error");
+                            } else {
+                                $('#default-example-modal-lg').hide();
+                                Swal.fire("Updated!", response.msg, "success").then(function () {
+                                    window.location.reload();
+                                })
+                            }
+                        },
+                        error: function () {
+                            Swal.fire("Oops...", "Something went wrong!", "error");
+                        }
+                    });
+                }
+            });
+            $('#eEmpStatus').change(function () {
+                var selectedVal = $("#eEmpStatus option:selected").val();
+                if (selectedVal == '1') {
+                    $('#edolspan,#eReasonspan').hide();
+                    $('#edolcal,#eReason').hide();
+                }
+                else {
+                    $('#edolspan,#eReasonspan').show();
+                    $('#edolcal,#eReason').show();
+                }
+            });
+            BindStatus();
+        });
+        function CheckValidAadharNo() {
+            var isValid = true;
+            var msg = '';
+            isValid = AadharValidate();
+            if (!isValid) {
+                msg = "Invalid Aadhar Number.";
+            }
+            $('#msg1').text(msg);
+        }
+        function AadharValidate() {
+            var aadhar = $('#AadharNo').val();
+            var adharcardTwelveDigit = /^\d{12}$/;
+            var adharSixteenDigit = /^\d{16}$/;
+            if (aadhar != '') {
+                if (aadhar.match(adharcardTwelveDigit)) {
+                    return true;
+                }
+                else if (aadhar.match(adharSixteenDigit)) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+        function GetManPower(aNo) {
+            $('#eAadharNo').val(aNo);
+            $('#msg2').text('');
+            var requestUrl = 'DigitalTraining/GetManPowerDetails';
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                data: { aNo: aNo },
+                success: function (response) {
+                    $('#eAadharNo').val(response[0].aadharNo);
+                    $('#eEmpName').val(response[0].empName);
+                    $('#eEmpCode').val(response[0].empCode);
+                    $('#eQualification').val(response[0].qualification);
+                    $('#eDOJ').val(response[0].doj);
+                    $('#eDOL').val(response[0].dol);
+                    $('#eEmpStatus').val(response[0].empStatus);
+                    if (response[0].empStatus == '1') {
+                        $('#edolspan,#eReasonspan').hide();
+                        $('#edolcal,#eReason').hide();
+                    }
+                    else {
+                        $('#edolspan,#eReasonspan').show();
+                        $('#edolcal,#eReason').show();
+                    }
+                    $('#eGrade').val(response[0].grade);
+                    $('#eEmpType').val(response[0].empType);
+                },
+                error: function () {
+                    Swal.fire("Oops...", "Something went wrong!", "error");
+                }
+            });
+        }
+        $('input:radio[name="r1"]').change(function () {
+            if ($(this).is(':checked') && $(this).val() == 'ActiveManpower') {
+                GetManPowerList(1);
+            }
+            else {
+                GetManPowerList(0);
+            }
+        });
+        function GetManPowerList(type) {
+            var requestUrl = 'DigitalTraining/GetManPowerSet';
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                data: { type: type },
+                success: function () {
+                    location.replace(location.href);
+                },
+                error: function () {
+
+                }
+            });
+        }
+        function BindStatus() {
+            var requestUrl = 'DigitalTraining/GetEmpStatus';
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                success: function (data) {
+                    $("#eEmpStatus,#eEmpStatus1").empty();
+                    $.each(data, function (index, item) {
+                        $("#eEmpStatus,#eEmpStatus1").append($("<option></option>").val(item.value).html(item.text));
+                    });
+                    BindType();
+                },
+                error: function () {
+
+                }
+            });
+        }
+        function BindType() {
+            var requestUrl = 'DigitalTraining/GetEmpType';
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                success: function (data) {
+                    $("#eEmpType,#eEmpType1").empty();
+                    $.each(data, function (index, item) {
+                        $("#eEmpType,#eEmpType1").append($("<option></option>").val(item.value).html(item.text));
+                    });
+                },
+                error: function () {
+
+                }
+            });
+        }
+        function GetManPowerSkill(aNo) {
+            $('#eAadharNo').val(aNo);
+            var requestUrl = 'DigitalTraining/GetManPowerDetails';
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                data: { aNo: aNo },
+                success: function (response) {
+                    $('#eAadharNo1').val(response[0].aadharNo);
+                    $('#eEmpName1').val(response[0].empName);
+                    $('#eEmpCode1').val(response[0].empCode);
+                    $('#eQualification1').val(response[0].qualification);
+                    $('#eDOJ1').val(response[0].doj);
+                    $('#eDOL1').val(response[0].dol);
+                    $('#eEmpStatus1').val(response[0].empStatus);
+                    if (response[0].empStatus == '1') {
+                        $('#edolspan').hide();
+                        $('#edolcal').hide();
+                    }
+                    else {
+                        $('#edolspan').show();
+                        $('#edolcal').show();
+                    }
+                    $('#eGrade1').val(response[0].grade);
+                    $('#eEmpType1').val(response[0].empType);
+                    var requestUrl = 'DigitalTraining/GetManPowerSkills';
+                    $.ajax({
+                        url: requestUrl,
+                        type: "POST",
+                        data: { aNo: aNo },
+                        success: function (response1) {
+                            var tempEmpCode = '';
+                            var showValidSkill = '0';
+                            var showInValidSkill = '0';
+                            var row = '<table id="tableModal" style="width: 100%;" class="border-dark border">';
+                            row = row + '<tr class="border-dark border bg-primary text-white pl-1"><td class="border-dark border pl-1">#</td><td class="border-dark border pl-1">AadharNo</td><td class="border-dark border pl-1">EmpName</td><td class="border-dark border pl-1">DOJ</td><td class="border-dark border pl-1">Certification Date</td><td class="border-dark border pl-1">Station</td><td class="border-dark border pl-1">Grade</td></tr>';                            
+                            var count = 1;
+                            for (i = 0; i < response1.length; i++) {
+                                if (response1[i].param1 == '0') {
+                                    showValidSkill = '1';
+                                    if (tempEmpCode == '') {
+                                        tempEmpCode = response1[i].doj;
+                                    }
+                                    if (tempEmpCode != response1[i].doj) {
+                                        tempEmpCode = response1[i].doj;
+                                        row = row + '<tr class="border-dark border pl-1"><td class="border-dark border bg-info-50 pl-1">#</td><td class="border-dark border pl-1 bg-info-50 h5 font-italic" colspan="6"> Date of Leaving: ' + response1[i].dol + '</td></tr>';
+                                        count = 1;
+                                    }
+                                    row = row + '<tr class="border-dark border pl-1"><td class="border-dark border pl-1">' + count + '</td><td class="border-dark border pl-1">' + response1[i].aadharNo + '</td>';
+                                    row = row + '<td class="border-dark border pl-1">' + response1[i].empName + '</td><td class="border-dark border pl-1">' + response1[i].doj + '</td><td class="border-dark border pl-1">' + response1[i].certificationDate + '</td><td class="border-dark border text-secondary h6 font-italic pl-2">' + response1[i].station + '</td>';
+                                    if (response1[i].grade == 'A') {
+                                        row = row + '<td class="border-dark border text-success h6 font-italic pl-2">' + response1[i].grade + ' <i class="fas fa-certificate"></i></td></tr>';
+                                    }
+                                    else {
+                                        row = row + '<td class="border-dark border text-secondary h6 font-italic pl-2">' + response1[i].grade + '</td></tr>';
+                                    }
+                                    count = count + 1;
+                                    classname = 'red';
+                                }
+                            }
+                            row = row + '</table>';
+                            $('#modalSkillSetTbl').html(row);
+
+
+
+                            var rowSkillNot = '<table id="tableModal1" style="width: 100%;" class="border-dark border">';
+                            rowSkillNot = rowSkillNot + '<tr class="border-dark border pl-1"><td class="border-dark border bg-danger-300 pl-1">#</td><td class="border-dark border pl-1 bg-danger-300 h5 font-italic" colspan="6">Below skill matrix not be considered due to 30+ days gap.</td></tr>';
+                            count = 1;
+                            tempEmpCode = '';
+                            for (i = 0; i < response1.length; i++) {
+                                if (response1[i].param1 == '1') {
+                                    showInValidSkill = '1';
+                                    if (tempEmpCode == '') {
+                                        tempEmpCode = response1[i].doj;
+                                    }
+                                    if (tempEmpCode != response1[i].doj) {
+                                        tempEmpCode = response1[i].doj;
+                                        rowSkillNot = rowSkillNot + '<tr class="border-dark border pl-1"><td class="border-dark border bg-info-50 pl-1">#</td><td class="border-dark border pl-1 bg-info-50 h5 font-italic" colspan="6"> Date of Leaving: ' + response1[i].dol + '</td></tr>';
+                                        count = 1;
+                                    }
+                                    rowSkillNot = rowSkillNot + '<tr class="border-dark border bg-danger-50 pl-1"><td class="border-dark border pl-1">' + count + '</td><td class="border-dark border pl-1">' + response1[i].aadharNo + '</td>';
+                                    rowSkillNot = rowSkillNot + '<td class="border-dark border pl-1">' + response1[i].empName + '</td><td class="border-dark border pl-1">' + response1[i].doj + '</td><td class="border-dark border pl-1">' + response1[i].certificationDate + '</td><td class="border-dark border text-secondary h6 font-italic pl-2">' + response1[i].station + '</td>';
+                                    if (response1[i].grade == 'A') {
+                                        rowSkillNot = rowSkillNot + '<td class="border-dark border text-success h6 font-italic pl-2">' + response1[i].grade + ' <i class="fas fa-certificate"></i></td></tr>';
+                                    }
+                                    else {
+                                        rowSkillNot = rowSkillNot + '<td class="border-dark border text-secondary h6 font-italic pl-2">' + response1[i].grade + '</td></tr>';
+                                    }
+                                    count = count + 1;
+                                    classname = 'red';
+                                }
+                            }
+                            rowSkillNot = rowSkillNot + '</table>';
+                            $('#modalSkillSetTbl1').html(rowSkillNot);
+
+
+                            if (showInValidSkill == '1') {
+                                $('#modalSkillSetTbl1').show();
+                            }
+                            else {
+                                $('#modalSkillSetTbl1').hide();
+                            }
+                            if (showValidSkill == '1') {
+                                $('#modalSkillSetTbl').show();
+                            }
+                            else {
+                                $('#modalSkillSetTbl').hide();
+                            }
+
+                        },
+                        error: function () {
+                            Swal.fire("Oops...", "Something went wrong!", "error");
+                        }
+                    });
+                },
+                error: function () {
+                    Swal.fire("Oops...", "Something went wrong!", "error");
+                }
+            });
+        }
+    </script>
+}

@@ -1,0 +1,317 @@
+﻿@model eConnectV2.ViewModels.PEViewModel
+@{ ViewData["Title"] = "Red Bin";
+    ViewData["PageHeading"] = "Red Bin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "PE";
+    ViewBag.Category1 = "Red Bin"; }
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+}
+
+<div class="panel">
+    <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+        <h2 class="justify-content-center">
+            <span class="fw-300 pr-1">Red Bin</span>(Battery Scrap Entry)
+        </h2>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content">
+            @using (Html.BeginForm("RedBin", "PE", FormMethod.Post, new { id = "myform", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+            {
+                <div class="panel-content">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold">Customer Name<span class="text-danger ml-1 view">*</span></label>
+                                        <div class="col-sm-8">
+                                            <select asp-for="Customer" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.CustomerList, "Value", "Text"))" required>
+                                                <option value="">--Select--</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold">Line No<span class="text-danger ml-1 view">*</span></label>
+                                        <div class="col-sm-8">
+                                            <select asp-for="Line" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.LineNoList, "Value", "Text"))" required>
+                                                <option value="">--Select--</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold">Scrap Catg<span class="text-danger ml-1 view">*</span></label>
+                                        <div class="col-sm-8">
+                                            <select asp-for="ScrapCatg" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.ScrapCatgList, "Value", "Text"))" required>
+                                                <option value="">--Select--</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pt-2">
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold">Model Name<span class="text-danger ml-1 view">*</span></label>
+                                        <div class="col-sm-8">
+                                            <select asp-for="ModelName" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.ModelNameList, "Value", "Text"))" required>
+                                                <option value="">--Select--</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold">4-M Catg<span class="text-danger ml-1 view">*</span></label>
+                                        <div class="col-sm-8">
+                                            <select asp-for="MCatg" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.MCatgList, "Value", "Text"))" required>
+                                                <option value="">--Select--</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold">Scrap Sub-Catg<span class="text-danger ml-1 view">*</span></label>
+                                        <div class="col-sm-8">
+                                            <select asp-for="ScrapSubCatg" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.ScrapSubCatgList, "Value", "Text"))" required>
+                                                <option value="">--Select--</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pt-2">
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold">Bar Code<span class="text-danger ml-1 view">*</span></label>
+                                        <div class="col-sm-8">
+                                            <input asp-for="BarCode" class="form-control" type="text" required autocomplete="off" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold">Shift<span class="text-danger ml-1 view">*</span></label>
+                                        <div class="col-sm-8">
+                                            <select asp-for="Shift" required class="select2 custom-select form-control w-100">
+                                                <option value="">--Select--</option>
+                                                <option value="A">A</option>
+                                                <option value="B">B</option>
+                                                <option value="C">C</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold">Scrap Date<span class="text-danger ml-1 view">*</span></label>
+                                        <div class="col-sm-8">
+                                            <input asp-for="ScrapDate" class="form-control" type="text" autocomplete="off" required placeholder="dd-mmm-yyyy" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pt-2">
+                                <div class="col-md-8">
+                                    <div class="row">
+                                        <label class="col-sm-2 col-form-label font-weight-bold">Remarks</label>
+                                        <div class="col-sm-10">
+                                            <textarea asp-for="Remarks" class="form-control" type="text" rows="3"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold">Operator Id<span class="text-danger ml-1 view">*</span></label>
+                                        <div class="col-sm-8">
+                                            <input asp-for="OperatorId" class="form-control" type="text" required autocomplete="off" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pt-2">
+                                <div id="divButtons" class="col-md-12 row">
+                                    <div class="col-md-4"></div>
+                                    <div class=" col-md-4">
+                                        <div class="row p-1">
+                                            <div class="offset-lg-2 col-lg-10">
+                                                <button type="submit" name="submit" value="Post" class="btn btn-primary btn-sm ml-3">Submit</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+        </div>
+    </div>
+    <div class="row p-2">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                    <thead class="bg-primary-800">
+                        <tr>
+                            @if (ViewBag.Admin == "Y")
+                            {
+                                <th class="notexport" width="5%" style="text-align:center">Action</th>
+                            }
+                            <th>Bar Code</th>
+                            <th>Customer</th>
+                            <th>Model</th>
+                            <th>Line No</th>
+                            <th>Shift</th>
+                            <th>Scrap Catg</th>
+                            <th>Scrap Sub-Catg</th>
+                            <th>Scrap Date</th>
+                            <th>4-M Catg</th>
+                            <th>Remarks</th>
+                            <th>Operator Id</th>
+                            <th>User Id</th>
+                            <th>TDate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.BinList != null && Model.BinList.Count > 0)
+                        {
+                            @foreach (var item in Model.BinList)
+                            {
+                        <tr>
+                            @if (ViewBag.Admin == "Y")
+                            {
+                                <td class="text-center">
+                                    <a title="Delete" class="text-danger" href="javascript:void(0);" onclick="DeleteRedBinData('@item.BarCode')"><i class="fa fa-trash"></i></a>
+                                </td>
+                            }
+                            <td>@item.BarCode</td>
+                            <td>@item.Customer</td>
+                            <td>@item.ModelName</td>
+                            <td>@item.Line</td>
+                            <td>@item.Shift</td>
+                            <td>@item.ScrapCatg</td>
+                            <td>@item.ScrapSubCatg</td>
+                            <td>@item.ScrapDate</td>
+                            <td>@item.MCatg</td>
+                            <td>@item.Remarks</td>
+                            <td>@item.OperatorId</td>
+                            <td>@item.UserId</td>
+                            <td>@item.Date1</td>
+                        </tr>
+}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/datagrid/datatables/dths_excel.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(function () {
+                $('.select2').select2();
+                runDatePicker();
+                $('#Customer').on('select2:select', function (e) {
+                    $('#ModelName').val('');
+                    BindModel(e.params.data.id);
+                });
+                $('#ScrapCatg').on('select2:select', function (e) {
+                    $('#ScrapSubCatg').val('');
+                    BindScrapSubCatg(e.params.data.id);
+                });
+            });
+        });
+
+        var controls = {
+            leftArrow: '<i class="fal fa-angle-left" style="font-size: 1.25rem"></i>',
+            rightArrow: '<i class="fal fa-angle-right" style="font-size: 1.25rem"></i>'
+        }
+        var runDatePicker = function () {
+            $('#ScrapDate').datepicker({
+                todayHighlight: true,
+                orientation: "bottom left",
+                templates: controls,
+                autoclose: true,
+                endDate: '-0d',
+                changeMonth: true
+            });
+        }
+
+        function BindModel(customer) {
+            var requestUrl = 'PE/GetModelName';
+            $.post(requestUrl,
+                {
+                    customer: customer
+                },
+                function (data, status) {
+                    $("#ModelName").empty();
+                    $("#ModelName").append($("<option></option>").val('').html('--Select--'));
+                    $.each(data, function (index, item) {
+                        $("#ModelName").append($("<option></option>").val(item.value).html(item.text));
+                    });
+                });
+        }
+
+        function BindScrapSubCatg(scrapCatg) {
+            var requestUrl = 'PE/GetScrapSubCatg';
+            $.post(requestUrl,
+                {
+                    scrapCatg: scrapCatg
+                },
+                function (data, status) {
+                    $("#ScrapSubCatg").empty();
+                    $("#ScrapSubCatg").append($("<option></option>").val('').html('--Select--'));
+                    $.each(data, function (index, item) {
+                        $("#ScrapSubCatg").append($("<option></option>").val(item.value).html(item.text));
+                    });
+                });
+        }
+        if ('@ViewBag.Admin' == 'Y') {
+
+        }
+
+        function DeleteRedBinData(barcode) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (result) {
+                if (result.value) {
+                    var requestUrl = '/PE/DeleteRedBinData';
+                    $.ajax({
+                        url: requestUrl,
+                        type: "POST",
+                        data: { barcode: barcode },
+                        success: function (response) {
+                            if (response.flag == _errorStatus) {
+                                Swal.fire("Info!", response.msg, "error");
+                            } else {
+                                Swal.fire("Removed!", response.msg, "success").then(function () {
+                                    window.location.reload();
+                                })
+                            }
+                        },
+                        error: function () {
+                            Swal.fire("Oops...", "Something went wrong!", "error");
+                        }
+                    });
+                }
+            });
+        };
+    </script>
+}

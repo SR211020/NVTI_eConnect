@@ -1,0 +1,2252 @@
+﻿@model eConnectV2.ViewModels.HRViewModel
+@{
+    ViewData["Title"] = "Take Survey";
+    ViewData["PageHeading"] = "Take Survey";
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewBag.Module = "HR";
+    ViewBag.Category1 = "Take Survey";
+}
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+    <style>
+        .hindiQSN {
+            visibility: hidden;
+        }
+
+        .bg_0 {
+            background-color: #f7fdfc;
+        }
+
+        .bg_6 {
+            background-color: #5b9d5d;
+        }
+
+        .bg_5 {
+            background-color: #a7d9ad;
+        }
+
+        .bg_4 {
+            background-color: #ffe69e;
+        }
+
+        .bg_3 {
+            background-color: #fecc8c;
+        }
+
+        .bg_2 {
+            background-color: #fcbca7;
+        }
+
+        .bg_1 {
+            background-color: #f35554;
+        }
+
+        .quetext {
+            font-family: cursive;
+            color: #45a197;
+            background-color: #f7fdfc;
+            border-color: #a3ebe4;
+        }
+    </style>
+}
+
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    <table width="100%" align="center">
+        <tr><td align="center" valign="middle"><h1 class="fw-700">Onboarding feedback Survey</h1></td></tr>
+        <tr><td align="center" valign="middle"> Tell us what you think <br /><br /></td></tr>
+        @if (ViewBag.IsValidRequest == 1)
+        {
+            @if (ViewBag.OnBoardSurveyStart == 0)
+            {
+                <tr>
+                    <td align="center" valign="middle">
+                        <label class="col-form-label col-12 col-lg-3 form-label">Date of Joining :</label>
+                        <div class="form-group row col-2">
+                            <div class="input-group">
+                                <input type="text" class="form-control " readonly="" value="11-Apr-2022" id="OBdoj" name="OBdoj" autocomplete="off" placeholder="dd-mmm-yyyy" data-date-format="d-M-yyyy">
+                                <div class="input-group-append">
+                                    <span class="input-group-text fs-xl">
+                                        <i class="fal fa-calendar-alt"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center" valign="middle">
+                        <br />
+                        <button type="button" onclick="btn_start()" class="font-weight-bold btn btn-warning waves-effect waves-themed">Let's start</button>
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td align="right" class="text-danger">
+                        Note: All questions are mandatory
+                    </td>
+                </tr>
+                if (ViewBag.DaySurvey == 5)
+                {
+                    <tr>
+                        <td align="center">
+                            <table class="table table-sm compact border-danger">
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 01 : </span>
+                                        <span id='r11' class="quetext">I am comfortable with the culture and values of NVTI </span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 01 : </span><span class="quetext">मैं NVTI की संस्कृति और मूल्यों से संतुष्ट हूँ </span>
+                                    </td>
+                                    <td width="30%">
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r12" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r13'>Brand</span>
+                                            <span id='r14'>Work </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 02 : </span>
+                                        <span id='r21' class="quetext">NVTI’s vision, core values, and business performance were clearly explained to me</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 02 : </span><span class="quetext">NVTI की सोच, इनके प्रमुख मूल्यों और व्यावसायिक प्रदर्शन के बारे में मुझे साफ-साफ समझाया गया</span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r22" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r23'>Brand</span>
+                                            <span id='r24'>Work </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 03 : </span>
+                                        <span id='r31' class="quetext">NVTI delivers on the employee experience it promises</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 03 : </span><span class="quetext">NVTI कर्मचारियों से किये वायदों को पूरा करता है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r32" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r33'>Brand</span>
+                                            <span id='r34'>Work </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 04 : </span>
+                                        <span id='r41' class="quetext">NVTI is considered one of the best places to work for someone with my skills and experience</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 04 : </span><span class="quetext">मेरे जैसे कुशल और अनुभवी किसी भी व्यक्ति के काम करने के लिए NVTI एक सबसे अच्छी जगह मानी जाती है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r42" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r43'>Brand</span>
+                                            <span id='r44'>Work </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 05 : </span>
+                                        <span id='r51' class="quetext">I am proud to be part of NVTI</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 05 : </span><span class="quetext">मुझे NVTI से जुड़ने का गर्व है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r52" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r53'>Brand</span>
+                                            <span id='r54'>Work </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 06 : </span>
+                                        <span class="quetext" id='r61'>If I have questions about anything at NVTI, I know how to get them answered</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 06 : </span><span class="quetext">अगर NVTI में किसी भी चीज के बारे में मेरे मन में कोई सवाल होता है, तो मुझे पता है कि उसका सही जवाब कहाँ मिल सकता है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r62" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r63'>Communication</span>
+                                            <span id='r64'>Enablement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 07 : </span>
+                                        <span class="quetext" id='r71'>I have a clear understanding of our HR Policies & Programs</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 07 : </span><span class="quetext">मुझे हमारे मानव संसाधन नीतियों और कार्यक्रमों की स्पष्ट समझ है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r72" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r73'>Communication</span>
+                                            <span id='r74'>Enablement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 08 : </span>
+                                        <span class="quetext" id='r81'>I receive sufficient information about NVTI's business outcomes (financial, people, customer related etc.)</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 08 : </span><span class="quetext">मुझे NVTI के व्यावसायिक परिणामों (वित्तीय, लोग, ग्राहक संबंधी आदि) के बारे में पर्याप्त जानकारी प्राप्त होती है। </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r82" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r83'>Communication</span>
+                                            <span id='r84'>Enablement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 09 : </span>
+                                        <span class="quetext" id='r91'>Information given about HR programs was clear and easy to follow</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 09 : </span><span class="quetext">मानव संसाधन कार्यक्रमों के बारे में दी गई जानकारी स्पष्ट और पालन करने में सरल थी </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r92" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r93'>Communication</span>
+                                            <span id='r94'>Enablement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 10 : </span>
+                                        <span class="quetext" id='r101'>My co-workers provide adequate support required for me to succeed</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 10 : </span><span class="quetext">मेरे सहकर्मी मुझे सफल होने के लिए आवश्यक पर्याप्त सहायता प्रदान करते हैं </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r102" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r103'>Co-Workers</span>
+                                            <span id='r104'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 11 : </span>
+                                        <span class="quetext" id='r111'>I felt welcomed by my team</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 11 : </span><span class="quetext">मुझे अपनी टीम द्वारा स्वागत महसूस हुआ </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r112" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r113'>Co-Workers</span>
+                                            <span id='r114'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 12 : </span>
+                                        <span class="quetext" id='r121'>My co-workers respect my thoughts and feelings</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 12 : </span><span class="quetext">मेरे सहकर्मी मेरे विचारों और भावनाओं की कद्र करते हैं </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r122" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r123'>Co-Workers</span>
+                                            <span id='r124'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 13 : </span>
+                                        <span class="quetext" id='r131'>We have a work environment that is accepting of diverse backgrounds and ways of thinking</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 13 : </span><span class="quetext">हम जिस वातावरण में काम करते हैं उसमें अलग-अलग पृष्ठभूमियों और विचारों का खुले दिल से स्वागत किया जाता है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r132" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r133'>Diversity &amp; Inclusion</span>
+                                            <span id='r134'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 14 : </span>
+                                        <span class="quetext" id='r141'>My manager is available to answer my questions or concerns</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 14 : </span><span class="quetext">मेरे मैनेजर मेरे सवालों या समस्याओं के हल के लिए उपलब्ध रहते हैं </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r142" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r143'>Manager</span>
+                                            <span id='r144'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 15 : </span>
+                                        <span class="quetext" id='r151'>During my first week, I was able to obtain the tools and resources necessary to do my job (E.g. ID Badge, Helmets, Shoes, PC etc.) </span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 15 : </span><span class="quetext">अपने पहले सप्ताह के दौरान, मैं अपना काम करने के लिए आवश्यक उपकरण और संसाधन प्राप्त करने में सक्षम था (जैसे आईडी बैज, हेलमेट, जूते, पीसी आदि) </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r152" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r153'>Enabling Infrastructure</span>
+                                            <span id='r154'>Enablement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 16 : </span>
+                                        <span class="quetext" id='r161'>The technology (machines, equipment) provided by NVTI allows me to be as productive as possible</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 16 : </span><span class="quetext">NVTI द्वारा प्रदान की गई तकनीक (मशीनें, उपकरण) मुझे मेरे काम को सबसे अच्छे ढंग से पूरा करने में सहायक है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r162" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r163'>Enabling Infrastructure</span>
+                                            <span id='r164'>Enablement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 17 : </span>
+                                        <span class="quetext" id='r171'>It would take a lot to get me to leave NVTI</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 17 : </span><span class="quetext">मुझे NVTI छोड़ने के लिए बहुत सोचना पड़ेगा </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r172" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r173'>Engagement</span>
+                                            <span id='r174'>Engagement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 18 : </span>
+                                        <span class="quetext" id='r181'>I would not hesitate to recommend NVTI to a friend seeking employment</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 18 : </span><span class="quetext">मैं रोजगार चाहने वाले किसी दोस्त को NVTI की सिफारिश करने में संकोच नहीं करूंगा </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r182" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r183'>Engagement</span>
+                                            <span id='r184'>Engagement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 19 : </span>
+                                        <span class="quetext" id='r191'>NVTI inspires me to do my best work every day</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 19 : </span><span class="quetext">NVTI मुझे हर रोज़ इस बात की प्रेरणा मिलती है कि मैं अपना काम सर्वश्रेष्ठ तरीके से कर सकूँ </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r192" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r193'>Engagement</span>
+                                            <span id='r194'>Engagement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 20 : </span>
+                                        <span class="quetext" id='r201'>I rarely think about leaving NVTI to work somewhere else</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 20 : </span><span class="quetext">NVTI को छोड़कर कहीं और काम करने के बारे में मेरे मन में शायद ही कभी खयाल आता हो </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r202" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r203'>Engagement</span>
+                                            <span id='r204'>Engagement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 21 : </span>
+                                        <span class="quetext" id='r211'>Given the opportunity, I tell others great things about working here</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 21 : </span><span class="quetext">मौका मिलने पर, मैं दूसरों को यहां काम करने के बारे में बहुत अच्छी बातें बताता हूं </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r212" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r213'>Engagement</span>
+                                            <span id='r214'>Engagement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 22 : </span>
+                                        <span class="quetext" id='r221'>NVTI motivates me to contribute more than is normally required to complete my work</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 22 : </span><span class="quetext">NVTI मुझे अपना काम पूरा करने के लिए सामान्य से अधिक योगदान करने के लिए प्रेरित करता है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r222" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r223'>Engagement</span>
+                                            <span id='r224'>Engagement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 23 : </span>
+                                        <span class="quetext" id='r231'>My peer contact (Buddy) called me prior to my date of joining </span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 23 : </span><span class="quetext">मेरे सहकर्मी संपर्क (बडी) ने मेरे शामिल होने की तिथि से पहले मुझे कॉल किया </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r232" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r233'>Hiring Process</span>
+                                            <span id='r234'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 24 : </span>
+                                        <span class="quetext" id='r241'>My peer contact (Buddy) helped me feel comfortable prior to joining </span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 24 : </span><span class="quetext">मेरे सहकर्मी संपर्क (बडी) ने शामिल होने से पहले मुझे सहज महसूस करने में मदद की </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r242" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r243'>Hiring Process</span>
+                                            <span id='r244'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 25 : </span>
+                                        <span class="quetext" id='r251'>The hiring experience has been very positive for me</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 25 : </span><span class="quetext">भर्ती का अनुभव मेरे लिए बहुत सकारात्मक रहा है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r252" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r253'>Hiring Process</span>
+                                            <span id='r254'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 26 : </span>
+                                        <span class="quetext" id='r261'>My manager provides the support I need to succeed</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 26 : </span><span class="quetext">मेरे मैनेजर मुझे मेरी सफलता के लिए आवश्यक सहायता प्रदान करते हैं </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r262" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r263'>Manager</span>
+                                            <span id='r264'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 27 : </span>
+                                        <span class="quetext" id='r271'>My manager develops a positive team atmosphere</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 27 : </span><span class="quetext">मेरे मैनेजर टीम का माहौल सकारात्मक बनाये रखते हैं </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r272" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r273'>Manager</span>
+                                            <span id='r274'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 28 : </span>
+                                        <span class="quetext" id='r281'>I felt welcomed by my manager</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 28 : </span><span class="quetext">मुझसे मिलकर मेरे मैनेजर खुश दिखे। </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r282" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r283'>Manager</span>
+                                            <span id='r284'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 29 : </span>
+                                        <span class="quetext" id='r291'>I am treated with respect at NVTI</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 29 : </span><span class="quetext">मेरे साथ NVTI में सम्मान के साथ व्यवहार किया जाता है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r292" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r293'>Respect</span>
+                                            <span id='r294'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 30 : </span>
+                                        <span class="quetext" id='r301'>I am treated like a valued member of NVTI</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 30 : </span><span class="quetext">NVTI के एक महत्वपूर्ण सदस्य के रूप में मेरी कद्र होती है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r302" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r303'>Respect</span>
+                                            <span id='r304'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 31 : </span>
+                                        <span class="quetext" id='r311'>I get enough good information about pay and benefits</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 31 : </span><span class="quetext">मुझे मेरे वेतन और लाभों के बारे में पर्याप्त रूप से अच्छी जानकारी मिलती है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r312" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r313'>Rewards &amp; Recognition</span>
+                                            <span id='r314'>Enablement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 32 : </span>
+                                        <span class="quetext" id='r321'>Workplace safety and security are considered important at NVTI</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 32 : </span><span class="quetext">NVTI में कार्यस्थल की सुरक्षा और संरक्षा को महत्वपूर्ण माना जाता है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r322" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r323'>Safety</span>
+                                            <span id='r324'>Work </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 33 : </span>
+                                        <span class="quetext" id='r331'>Senior leadership is appropriately visible and accessible to employees</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 33 : </span><span class="quetext">कर्मचारी, उचित कारणों से सीनियर लीडरशिप से आसानी से संपर्क कर सकते हैं </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r332" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r333'>Senior Leadership</span>
+                                            <span id='r334'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 34 : </span>
+                                        <span class="quetext" id='r341'>Senior leadership makes me excited about the future of NVTI</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 34 : </span><span class="quetext">सीनियर लीडरशिप मुझे NVTI के भविष्य के बारे में उत्साहित करता है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r342" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r343'>Senior Leadership</span>
+                                            <span id='r344'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 35 : </span>
+                                        <span class="quetext" id='r351'>I have been given enough training to do my job well</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 35 : </span><span class="quetext">मुझे अपना काम अच्छी तरह से करने के लिए पर्याप्त प्रशिक्षण दिया गया है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r352" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r353'>Training &amp; Orientation</span>
+                                            <span id='r354'>Enablement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 36 : </span>
+                                        <span class="quetext" id='r361'>The orientation program/job onboarding was useful and informative</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 36 : </span><span class="quetext">ओरिएंटेशन प्रोग्राम/जॉब ऑनबोर्डिंग उपयोगी और सूचनात्मक था </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r362" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r363'>Training &amp; Orientation</span>
+                                            <span id='r364'>Enablement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 37 : </span>
+                                        <span class="quetext" id='r371'>I have a clear understanding of my job responsibilities and how they link to NVTI's goals</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 37 : </span><span class="quetext">मुझे अपनी नौकरी की जिम्मेदारियों की स्पष्ट समझ है और वे NVTI के लक्ष्यों से कैसे जुड़ते हैं </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r372" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r373'>Work Tasks</span>
+                                            <span id='r374'>Work </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 38 : </span>
+                                        <span class="quetext" id='r381'>I received meaningful work to perform within the first week</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 38 : </span><span class="quetext">मुझे पहले सप्ताह के भीतर प्रदर्शन करने के लिए सार्थक कार्य प्राप्त हुआ </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r382" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r383'>Work Tasks</span>
+                                            <span id='r384'>Work </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 39 : </span>
+                                        <span class="quetext" id='r391'>My job is what I expected it to be</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 39 : </span><span class="quetext">मेरा काम मेरी अपेक्षाओं के अनुरूप है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r392" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r393'>Work Tasks</span>
+                                            <span id='r394'>Work </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 40 : </span>
+                                        <span class="quetext" id='r401'>My work related stress is manageable for me</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 40 : </span><span class="quetext">मुझ पर काम का उतना ही दबाव होता है जिसे मैं सहज तरीके से पूरा कर सकूँ </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r402" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r403'>Work/Life Balance</span>
+                                            <span id='r404'>Work </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 41 : </span>
+                                        <span class="quetext" id='r411'>What did you like about your onboarding experience at NVTI?</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 41 : </span><span class="quetext">आपको NVTI में अपने ऑनबोर्डिंग अनुभव के बारे में क्या पसंद आया? </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <textarea id="r412" rows="2" cols="8" style="width:250px" maxlength="2000"></textarea>
+                                        <div class="hide">
+                                            <span id='r413'>Open Ended</span>
+                                            <span id='r414'>Open Ended</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 42 : </span>
+                                        <span class="quetext" id='r421'>What can we focus on to make your onboarding experience at NVTI better?</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 42 : </span><span class="quetext">NVTI में आपके ऑनबोर्डिंग अनुभव को बेहतर बनाने के लिए हम किस पहलू पर ध्यान केंद्रित कर सकते हैं? </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <textarea id="r422" rows="2" cols="8" style="width:250px" maxlength="2000"></textarea>
+                                        <div class="hide">
+                                            <span id='r423'>Open Ended</span>
+                                            <span id='r424'>Open Ended</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" align="center">
+                                        <button id="btnSubmitOnboard" type="submit" class="btn btn-success font-weight-bold aves-effect waves-themed" style="padding-left: 75px; padding-right: 75px; }">
+                                            Submit
+                                        </button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                }
+                @if (ViewBag.DaySurvey == 60)
+                {
+                    <tr>
+                        <td align="center">
+                            <table class="table table-sm compact border-danger">
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 01 : </span>
+                                        <span id='r11' class="quetext">I am comfortable with the culture and values of NVTI </span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 01 : </span><span class="quetext">मैं NVTI की संस्कृति और मूल्यों से संतुष्ट हूँ </span>
+                                    </td>
+                                    <td width="30%">
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r12" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r13'>Brand</span>
+                                            <span id='r14'>Work </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 02 : </span>
+                                        <span id='r21' class="quetext">NVTI’s vision, core values, and business performance were clearly explained to me</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 02 : </span><span class="quetext">NVTI की सोच, इनके प्रमुख मूल्यों और व्यावसायिक प्रदर्शन के बारे में मुझे साफ-साफ समझाया गया</span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r22" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r23'>Brand</span>
+                                            <span id='r24'>Work </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 03 : </span>
+                                        <span id='r31' class="quetext">NVTI delivers on the employee experience it promises</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 03 : </span><span class="quetext">NVTI कर्मचारियों से किये वायदों को पूरा करता है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r32" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r33'>Brand</span>
+                                            <span id='r34'>Work </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 04 : </span>
+                                        <span id='r41' class="quetext">NVTI is considered one of the best places to work for someone with my skills and experience</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 04 : </span><span class="quetext">मेरे जैसे कुशल और अनुभवी व्यक्ति के काम करने के लिए NVTI एक सबसे अच्छी जगह मानी जाती है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r42" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r43'>Brand</span>
+                                            <span id='r44'>Work </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 05 : </span>
+                                        <span id='r51' class="quetext">I am proud to be part of NVTI</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 05 : </span><span class="quetext">मुझे NVTI से जुड़ने का गर्व है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r52" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r53'>Brand</span>
+                                            <span id='r54'>Work </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 06 : </span>
+                                        <span class="quetext" id='r61'>If I have questions about anything at NVTI, I know how to get them answered</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 06 : </span><span class="quetext">अगर NVTI में किसी भी चीज के बारे में मेरे मन में कोई सवाल होता है, तो मुझे पता है कि उसका सही जवाब कहाँ मिल सकता है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r62" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r63'>Communication</span>
+                                            <span id='r64'>Enablement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 07 : </span>
+                                        <span class="quetext" id='r71'>I have a clear understanding of our HR Policies & Programs</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 07 : </span><span class="quetext">मुझे हमारे मानव संसाधन नीतियों और कार्यक्रमों की स्पष्ट समझ है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r72" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r73'>Communication</span>
+                                            <span id='r74'>Enablement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 08 : </span>
+                                        <span class="quetext" id='r81'>I receive sufficient information about NVTI's business outcomes (financial, people, customer related etc.)</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 08 : </span><span class="quetext">मुझे NVTI के व्यावसायिक परिणामों (वित्तीय, लोग, ग्राहक संबंधी आदि) के बारे में पर्याप्त जानकारी प्राप्त होती है। </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r82" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r83'>Communication</span>
+                                            <span id='r84'>Enablement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 09 : </span>
+                                        <span class="quetext" id='r91'>Information given about HR programs was clear and easy to follow</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 09 : </span><span class="quetext">मानव संसाधन कार्यक्रमों के बारे में दी गई जानकारी स्पष्ट और पालन करने में सरल थी </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r92" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r93'>Communication</span>
+                                            <span id='r94'>Enablement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 10 : </span>
+                                        <span class="quetext" id='r101'>My co-workers provide adequate support required for me to succeed</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 10 : </span><span class="quetext">मेरे सहकर्मी मुझे सफल होने के लिए आवश्यक पर्याप्त सहायता प्रदान करते हैं </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r102" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r103'>Co-Workers</span>
+                                            <span id='r104'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 11 : </span>
+                                        <span class="quetext" id='r111'>I felt welcomed by my team</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 11 : </span><span class="quetext">मुझे अपनी टीम द्वारा स्वागत महसूस हुआ </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r112" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r113'>Co-Workers</span>
+                                            <span id='r114'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 12 : </span>
+                                        <span class="quetext" id='r121'>My co-workers respect my thoughts and feelings</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 12 : </span><span class="quetext">मेरे सहकर्मी मेरे विचारों और भावनाओं का सम्मान करते हैं </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r122" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r123'>Co-Workers</span>
+                                            <span id='r124'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 13 : </span>
+                                        <span class="quetext" id='r131'>We have a work environment that is accepting of diverse backgrounds and ways of thinking</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 13 : </span><span class="quetext">हम जिस वातावरण में काम करते हैं उसमें अलग-अलग पृष्ठभूमियों और विचारों का खुले दिल से स्वागत किया जाता है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r132" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r133'>Diversity &amp; Inclusion</span>
+                                            <span id='r134'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 14 : </span>
+                                        <span class="quetext" id='r141'>My manager is available to answer my questions or concerns</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 14 : </span><span class="quetext">मेरे मैनेजर मेरे सवालों या समस्याओं के हल के लिए उपलब्ध रहते हैं </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r142" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r143'>Manager</span>
+                                            <span id='r144'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 15 : </span>
+                                        <span class="quetext" id='r151'>There are adequate channels of formal communication at NVTI</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 15 : </span><span class="quetext">NVTI में औपचारिक संचार के पर्याप्त माध्यम/प्रणाली हैं </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r152" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r153'>Communication</span>
+                                            <span id='r154'>Enablement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 16 : </span>
+                                        <span class="quetext" id='r161'>The technology (machines, equipment) provided by NVTI allows me to be as productive as possible</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 16 : </span><span class="quetext">NVTI द्वारा प्रदान की गई तकनीक (मशीनें, उपकरण) मुझे मेरे काम को सबसे अच्छे ढंग से पूरा करने में सहायक है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r162" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r163'>Enabling Infrastructure</span>
+                                            <span id='r164'>Enablement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 17 : </span>
+                                        <span class="quetext" id='r171'>It would take a lot to get me to leave NVTI</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 17 : </span><span class="quetext">मुझे NVTI छोड़ने के लिए बहुत सोचना पड़ेगा </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r172" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r173'>Engagement</span>
+                                            <span id='r174'>Engagement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 18 : </span>
+                                        <span class="quetext" id='r181'>I would not hesitate to recommend NVTI to a friend seeking employment</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 18 : </span><span class="quetext">मैं रोजगार चाहने वाले किसी दोस्त को NVTI की सिफारिश करने में संकोच नहीं करूंगा </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r182" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r183'>Engagement</span>
+                                            <span id='r184'>Engagement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 19 : </span>
+                                        <span class="quetext" id='r191'>NVTI inspires me to do my best work every day</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 19 : </span><span class="quetext">NVTI मुझे हर रोज़ इस बात की प्रेरणा मिलती है कि मैं अपना काम सर्वश्रेष्ठ तरीके से कर सकूँ </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r192" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r193'>Engagement</span>
+                                            <span id='r194'>Engagement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 20 : </span>
+                                        <span class="quetext" id='r201'>I rarely think about leaving NVTI to work somewhere else</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 20 : </span><span class="quetext">NVTI को छोड़कर कहीं और काम करने के बारे में मेरे मन में शायद ही कभी खयाल आता हो </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r202" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r203'>Engagement</span>
+                                            <span id='r204'>Engagement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 21 : </span>
+                                        <span class="quetext" id='r211'>Given the opportunity, I tell others great things about working here</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 21 : </span><span class="quetext">मौका मिलने पर, मैं दूसरों को यहां काम करने के बारे में बहुत अच्छी बातें बताता हूं </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r212" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r213'>Engagement</span>
+                                            <span id='r214'>Engagement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 22 : </span>
+                                        <span class="quetext" id='r221'>NVTI motivates me to contribute more than is normally required to complete my work</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 22 : </span><span class="quetext">NVTI मुझे अपना काम पूरा करने के लिए सामान्य से अधिक योगदान करने के लिए प्रेरित करता है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r222" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r223'>Engagement</span>
+                                            <span id='r224'>Engagement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 23 : </span>
+                                        <span class="quetext" id='r231'>I am encouraged to suggest improvements to better serve external customers</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 23 : </span><span class="quetext">मुझे बाहरी ग्राहकों को बेहतर सेवा देने के लिए सुधार सुझाने के लिए प्रोत्साहित किया जाता है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r232" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r233'>Customer Focus</span>
+                                            <span id='r234'>Enablement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 24 : </span>
+                                        <span class="quetext" id='r241'>We strive to include and fully use the talents and capabilities of all employees</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 24 : </span><span class="quetext">हम सभी कर्मचारियों की प्रतिभा और क्षमताओं को शामिल करने और उनका पूरा उपयोग करने का प्रयास करते हैं </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r242" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r243'>Diversity & Inclusion</span>
+                                            <span id='r244'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 25 : </span>
+                                        <span class="quetext" id='r251'>I understand how my work will be measured or evaluated</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 25 : </span><span class="quetext">मैं समझता/समझती हूं कि मेरे काम को कैसे मापा या मूल्यांकित किया जाएगा </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r252" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r253'>Performance & Career</span>
+                                            <span id='r254'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 26 : </span>
+                                        <span class="quetext" id='r261'>My manager provides the support I need to succeed</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 26 : </span><span class="quetext">मेरे मैनेजर मुझे मेरी सफलता के लिए आवश्यक सहायता प्रदान करते हैं </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r262" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r263'>Manager</span>
+                                            <span id='r264'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 27 : </span>
+                                        <span class="quetext" id='r271'>My manager develops a positive team atmosphere</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 27 : </span><span class="quetext">मेरा मैनेजर एक सकारात्मक टीम वातावरण विकसित करता है। </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r272" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r273'>Manager</span>
+                                            <span id='r274'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 28 : </span>
+                                        <span class="quetext" id='r281'>I felt welcomed by my manager</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 28 : </span><span class="quetext">मुझसे मिलकर मेरे मैनेजर खुश दिखे। </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r282" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r283'>Manager</span>
+                                            <span id='r284'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 29 : </span>
+                                        <span class="quetext" id='r291'>I am treated with respect at NVTI</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 29 : </span><span class="quetext">मेरे साथ NVTI में सम्मान के साथ व्यवहार किया जाता है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r292" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r293'>Respect</span>
+                                            <span id='r294'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 30 : </span>
+                                        <span class="quetext" id='r301'>I am treated like a valued member of NVTI</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 30 : </span><span class="quetext">NVTI के एक महत्वपूर्ण सदस्य के रूप में मेरी कद्र होती है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r302" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r303'>Respect</span>
+                                            <span id='r304'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 31 : </span>
+                                        <span class="quetext" id='r311'>The balance between my work and personal commitments is right for me</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 31 : </span><span class="quetext">मेरे काम और व्यक्तिगत प्रतिबद्धताओं के बीच संतुलन मेरे लिए सही है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r312" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r313'>Work/Life Balance</span>
+                                            <span id='r314'>Work</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 32 : </span>
+                                        <span class="quetext" id='r321'>Workplace safety and security are considered important at NVTI</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 32 : </span><span class="quetext">NVTI में कार्यस्थल की सुरक्षा और संरक्षा को महत्वपूर्ण माना जाता है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r322" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r323'>Safety</span>
+                                            <span id='r324'>Work </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 33 : </span>
+                                        <span class="quetext" id='r331'>Senior leadership is appropriately visible and accessible to employees</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 33 : </span><span class="quetext">कर्मचारी, उचित कारणों से सीनियर लीडरशिप से आसानी से संपर्क कर सकते हैं </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r332" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r333'>Senior Leadership</span>
+                                            <span id='r334'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 34 : </span>
+                                        <span class="quetext" id='r341'>Senior leadership makes me excited about the future of NVTI</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 34 : </span><span class="quetext">सीनियर लीडरशिप मुझे NVTI के भविष्य के बारे में उत्साहित करता है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r342" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r343'>Senior Leadership</span>
+                                            <span id='r344'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 35 : </span>
+                                        <span class="quetext" id='r351'>I have been given enough training to do my job well</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 35 : </span><span class="quetext">मुझे अपना काम अच्छी तरह से करने के लिए पर्याप्त प्रशिक्षण दिया गया है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r352" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r353'>Training &amp; Orientation</span>
+                                            <span id='r354'>Enablement</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 36 : </span>
+                                        <span class="quetext" id='r361'>Our work processes allow me to be as productive as possible</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 36 : </span><span class="quetext">हमारी कार्य प्रक्रियाएं मुझे यथासंभव उत्पादक होने देती हैं </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r362" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r363'>Enablement</span>
+                                            <span id='r364'>Manager & Leader</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 37 : </span>
+                                        <span class="quetext" id='r371'>I have a clear understanding of my job responsibilities and how they link to NVTI's goals</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 37 : </span><span class="quetext">मुझे अपने कार्य के उत्तरदायित्वो की स्पष्ट समझ है और वे NVTI के लक्ष्यों से कैसे संबंधित हैं </span>   
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r372" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r373'>Work Tasks</span>
+                                            <span id='r374'>Work </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 38 : </span>
+                                        <span class="quetext" id='r381'>My manager sets clear expectations and goals with me</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 38 : </span><span class="quetext">मेरा प्रबंधक मेरे साथ स्पष्ट अपेक्षाएं और लक्ष्य निर्धारित करता है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r382" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r383'>Manager</span>
+                                            <span id='r384'>People</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 39 : </span>
+                                        <span class="quetext" id='r391'>My job is what I expected it to be</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 39 : </span><span class="quetext">मेरा काम मेरी अपेक्षाओं के अनुरूप है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r392" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r393'>Work Tasks</span>
+                                            <span id='r394'>Work </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 40 : </span>
+                                        <span class="quetext" id='r401'>My work related stress is manageable for me</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 40 : </span><span class="quetext">मुझ पर काम का उतना ही दबाव होता है जिसे मैं सहज तरीके से पूरा कर सकूँ </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r402" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r403'>Work/Life Balance</span>
+                                            <span id='r404'>Work </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 41 : </span>
+                                        <span class="quetext" id='r411'>I regularly receive useful feedback from my manager </span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 41 : </span><span class="quetext">मुझे अपने प्रबंधक से नियमित रूप से उपयोगी फ़ीडबैक प्राप्त होते हैं </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r412" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r413'>Manager</span>
+                                            <span id='r414'>Work</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 42 : </span>
+                                        <span class="quetext" id='r421'>I know what career opportunities are available to me </span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 42 : </span><span class="quetext">मुझे पता है कि मेरे लिए करियर के कौन से अवसर उपलब्ध हैं </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r422" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r423'>Performance & Career</span>
+                                            <span id='r424'>Work</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 43 : </span>
+                                        <span class="quetext" id='r431'>I feel that my contributions are recognized at work </span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 43 : </span><span class="quetext">मुझे लगता है कि मेरे योगदान को काम पर पहचाना जाता है </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <select id="r432" onchange="this.className=this.options[this.selectedIndex].className" class="bg_0">
+                                            <option class="bg_0" value="0">Select an Option</option>
+                                            <option class="bg_6" value="6">Strongly Agree</option>
+                                            <option class="bg_5" value="5">Agree</option>
+                                            <option class="bg_4" value="4">Slightly Agree</option>
+                                            <option class="bg_3" value="3">Slightly Disagree</option>
+                                            <option class="bg_2" value="2">Disagree</option>
+                                            <option class="bg_1" value="1">Strongly Disagree</option>
+                                        </select>
+                                        <div class="hide">
+                                            <span id='r433'>Rewards & Recognition</span>
+                                            <span id='r434'>Work</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 44 : </span>
+                                        <span class="quetext" id='r441'>What did you like about your onboarding experience at NVTI?</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 44 : </span><span class="quetext">आपको NVTI में अपने ऑनबोर्डिंग अनुभव के बारे में क्या पसंद आया? </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <textarea id="r442" rows="2" cols="8" style="width:250px" maxlength="2000"></textarea>
+                                        <div class="hide">
+                                            <span id='r443'>Open Ended</span>
+                                            <span id='r444'>Open Ended</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Que 45 : </span>
+                                        <span class="quetext" id='r451'>What can we focus on to make your onboarding experience at NVTI better?</span>
+                                        <div class="clearfix"></div><span class="font-weight-bold quetext hindiQSN">Que 45 : </span><span class="quetext">NVTI में आपके ऑनबोर्डिंग अनुभव को बेहतर बनाने के लिए हम किस पहलू पर ध्यान केंद्रित कर सकते हैं? </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold quetext">Ans : </span>
+                                        <textarea id="r452" rows="2" cols="8" style="width:250px" maxlength="2000"></textarea>
+                                        <div class="hide">
+                                            <span id='r453'>Open Ended</span>
+                                            <span id='r454'>Open Ended</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" align="center">
+                                        <button id="btnSubmitOnboard1" type="submit" class="btn btn-success font-weight-bold aves-effect waves-themed" style="padding-left: 75px; padding-right: 75px; }">
+                                            Submit
+                                        </button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                }
+            }
+        }
+        else
+        {
+            <tr>
+                <td align="center" valign="middle">
+                    <div class="alert alert-danger">
+                        Invalid request , please contact administrator
+                        @if (ViewBag.Day5IsPending != null && ViewBag.Day5IsPending == 1)
+                        {
+                            <span><br /><br /> Your 5 Days Onboarding survey is not completed.</span>
+                        }
+                    </div>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#btnSubmitOnboard').click(function () {
+                GetOnboardSurveyData();
+            });
+            $('#btnSubmitOnboard1').click(function () {
+                GetOnboardSurveyData1();
+            });
+            $(function () {
+                runDatePicker();
+            });
+            var controls = {
+                leftArrow: '<i class="fas fa-angle-left" style="font-size: 1.25rem"></i>',
+                rightArrow: '<i class="fas fa-angle-right" style="font-size: 1.25rem"></i>'
+            }
+            var runDatePicker = function () {
+                $('#OBdoj').datepicker({
+                    todayHighlight: true,
+                    orientation: "bottom left",
+                    templates: controls,
+                    autoclose: true
+                });
+            }
+        });
+        function btn_start() {
+            var doj = $('#OBdoj').val();
+            if (doj == '' || doj == undefined) {
+                Swal.fire("Oops...", "Date of joining is mandatory!", "error");
+            } else {
+                var requestUrl = 'HR/IsUserValid';
+                $.ajax({
+                    url: requestUrl,
+                    type: "POST",
+                    data: { doj: doj },
+                    success: function (data) {
+                        if (data == "1") {
+                            window.location.reload();
+                        } else {
+                            Swal.fire("Denied!", "Incorrect Date of joining", "error").then(function () {
+
+                            })
+                        }
+                    },
+                    error: function () {
+
+                    }
+                });
+            }
+        }
+        function GetOnboardSurveyData() {
+            var queList = [];
+            var rowDetails = [];
+            var isValid = true;
+            for (var i = 1; i < 43; i++) {
+                var selectedAns = $('#r' + i + '2').val();
+                if (selectedAns == '0' || selectedAns == '') {
+                    isValid = false;
+                    break;
+                }
+            }
+            if (isValid) {
+                for (var i = 1; i < 43; i++) {
+                    var que = $('#r' + i + '1').text();
+                    var ans = $('#r' + i + '2').val();
+                    var dimensionCategory = $('#r' + i + '3').text();
+                    var experiencePillar = $('#r' + i + '4').text();
+                    rowDetails = [que, ans, dimensionCategory, experiencePillar, '1', '0'];
+                    queList.push(rowDetails);
+                }
+                var requestUrl = 'HR/SaveOnboardAns';
+                $.ajax({
+                    url: requestUrl,
+                    type: "POST",
+                    data: { queList: queList },
+                    success: function (data) {
+                        if (data == "1") {
+                            window.location.reload();
+                        } else {
+                            Swal.fire("Saved!", "Survey submitted successfully", "success").then(function () {
+                                window.location.replace("https://eConnect.nvtpower.com/");
+                            })
+                        }
+                    },
+                    error: function () {
+
+                    }
+                });
+            }
+            else {
+                Swal.fire("Error!", "All questions are mandatory", "error").then(function () {
+
+                });
+            }
+        }
+        function GetOnboardSurveyData1() {
+            var queList = [];
+            var rowDetails = [];
+            var isValid = true;
+            for (var i = 1; i < 46; i++) {
+                var selectedAns = $('#r' + i + '2').val();
+                if (selectedAns == '0' || selectedAns == '') {
+                    isValid = false;
+                    break;
+                }
+            }
+            if (isValid) {
+                for (var i = 1; i < 46; i++) {
+                    var que = $('#r' + i + '1').text();
+                    var ans = $('#r' + i + '2').val();
+                    var dimensionCategory = $('#r' + i + '3').text();
+                    var experiencePillar = $('#r' + i + '4').text();
+                    rowDetails = [que, ans, dimensionCategory, experiencePillar, '0', '1'];
+                    queList.push(rowDetails);
+                }
+                var requestUrl = 'HR/SaveOnboardAns';
+                $.ajax({
+                    url: requestUrl,
+                    type: "POST",
+                    data: { queList: queList },
+                    success: function (data) {
+                        if (data == "1") {
+                            window.location.reload();
+                        } else {
+                            Swal.fire("Saved!", "Survey submitted successfully", "success").then(function () {
+                                window.location.replace("https://eConnect.nvtpower.com/");
+                            })
+                        }
+                    },
+                    error: function () {
+
+                    }
+                });
+            }
+            else {
+                Swal.fire("Error!", "All questions are mandatory", "error").then(function () {
+
+                });
+            }
+        }
+    </script>
+}

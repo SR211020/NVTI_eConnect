@@ -1,0 +1,13 @@
+<aside class="page-sidebar">
+    <partial name="_Logo" />
+    <nav id="js-primary-nav" class="primary-nav" role="navigation">
+        <partial name="_NavFilter" />
+        <div class="info-card">
+            <a href="#" onclick="return false;" class="pull-trigger-btn" data-action="toggle" data-class="list-filter-active" data-target=".page-sidebar" data-focus="nav_filter_input">
+                <i class="fas fa-angle-down"></i>
+            </a>
+        </div>
+        <vc:navigation />
+        <partial name="_NavFilterMsg" />
+    </nav>
+</aside>

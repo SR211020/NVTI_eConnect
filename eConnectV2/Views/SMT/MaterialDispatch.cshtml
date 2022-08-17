@@ -1,0 +1,143 @@
+﻿@model eConnectV2.ViewModels.SMTViewModel
+@{
+    ViewData["Title"] = "SMT StoreAdmin";
+    ViewData["PageHeading"] = "SMT";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "SMT";
+    ViewBag.Category1 = "Material Dispatch";
+}
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+}
+<div class="row">
+    <div class="col-md-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+                <h2>
+                    Store Material Dispatch
+                </h2>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content">
+                    @using (Html.BeginForm("MaterialDispatch", "SMT", FormMethod.Post, new { id = "form", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+                    {
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Material Category</label>
+                                    <div class="col-sm-6">
+                                        <select class="select2 custom-select form-control w-100" asp-for="MaterialCategory" required asp-items="@(new SelectList(Model.MaterialCategoryList, "Value", "Text"))">
+                                            <option value="">Select</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Vendor</label>
+                                    <div class="col-sm-6">
+                                        <select class="select2 custom-select form-control w-100" asp-for="VendorName" required asp-items="@(new SelectList(Model.SMTVendorList, "Value", "Text"))">
+                                            <option value="">Select</option>
+                                        </select>
+                                        <input asp-for="VendorNameHdn" type="hidden" value="@Model.VendorNameHdn" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Part No.</label>
+                                    <div class="col-sm-6">
+                                        <input asp-for="PartNo" type="text" class="form-control" readonly required placeholder="Part number">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">QR Code Value</label>
+                                    <div class="col-sm-6">
+                                        <input asp-for="QRCode" autocomplete="off" type="text" class="form-control" required placeholder="Please scan QR Code">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group row">
+                                    <div class="offset-sm-2 col-sm-10 mt-3">
+                                        <button type="submit" name="submit" class="btn btn-primary btn-sm">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div id="Last50TranList">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <h3 class="text-secondary">Last 50 Transaction Logs</h3>
+                        <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                            <thead class="bg-primary-800">
+                                <tr>
+                                    <th>Part No</th>
+                                    <th>Material Category</th>
+                                    <th>QR Code</th>
+                                    <th>Action</th>
+                                    <th>Remarks</th>
+                                    <th>Action by</th>
+                                    <th>Transaction Date</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white">
+                                @foreach (var item in Model.SMTMaterialList)
+                                {
+                                    <tr>
+                                        <td class="text-center">
+                                            <span style="display:none;">@DateTime.Now.ToString("hh.mm.ss.ffffff")</span>
+                                            @item.PartNo
+                                        </td>
+                                        <td>
+                                            @item.MaterialCategory
+                                        </td>
+                                        @if (item.Action == "BLOCKED")
+                                        {
+                                            <td>
+                                                <span class="badge border border-info text-secondary"><del>@item.QRCode</del></span>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td class="font-weight-bold">
+                                                <span class="badge border border-info text-info">@item.QRCode</span>
+                                            </td>
+                                        }
+                                        <td>
+                                            @item.Action
+                                        </td>
+                                        <td>
+                                            @item.Remarks
+                                        </td>
+                                        <td>
+                                            @item.Employee
+                                        </td>
+                                        <td>
+                                            @item.TDate
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    <script>
+        dtPageSize = 5;
+    </script>
+    <script src="~/js/select.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/smt_materialvendor.js"></script>
+    <script src="~/js/datagrid/datatables/dths.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+}

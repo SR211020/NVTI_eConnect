@@ -1,0 +1,370 @@
+﻿@model eConnectV2.ViewModels.LegalViewModel
+@{
+    ViewData["Title"] = "ContractView";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/fa-solid.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+}
+
+<div id="panel-1" class="panel">
+    <div class="panel-container show">
+        @using (Html.BeginForm("ContractView", "Legal", FormMethod.Post, new { id = "form1", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate", onsubmit = "return validateDates()" }))
+        {
+            <div class="row">
+                <div class="col-md-12 row">
+                    <div class="col-md-1 container d-flex h-100 p-1 pl-3">
+                        <div class="row justify-content-center align-self-center">
+                            <a class="btn btn-sm btn-warning ml-3" href="@Url.Action("ContractAdd", "Legal")" title="Add Contract">
+                                <i class="fas fa-plus mr-1"></i>Add
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-10 p-1">
+                        <div class="row">
+                            <div class="col-md-12 row">
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold">Exe From:</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <input asp-for="Date1" autocomplete="off" class="form-control" type="text" placeholder="dd-mmm-yyyy" data-date-format="dd-M-yyyy" />
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text fs-xl">
+                                                        <i class="fas fa-calendar-alt"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold">Eff From:</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <input asp-for="Date3" autocomplete="off" class="form-control" type="text" placeholder="dd-mmm-yyyy" data-date-format="dd-M-yyyy" />
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text fs-xl">
+                                                        <i class="fas fa-calendar-alt"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold">Exp From:</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <input asp-for="Date5" autocomplete="off" class="form-control" type="text" placeholder="dd-mmm-yyyy" data-date-format="dd-M-yyyy" />
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text fs-xl">
+                                                        <i class="fas fa-calendar-alt"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 row">
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold">Exe To:</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <input asp-for="Date2" autocomplete="off" class="form-control" type="text" placeholder="dd-mmm-yyyy" data-date-format="dd-M-yyyy" />
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text fs-xl">
+                                                        <i class="fas fa-calendar-alt"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold">Eff To:</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <input asp-for="Date4" autocomplete="off" class="form-control" type="text" placeholder="dd-mmm-yyyy" data-date-format="dd-M-yyyy" />
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text fs-xl">
+                                                        <i class="fas fa-calendar-alt"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold">Exp To:</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <input asp-for="Date6" autocomplete="off" class="form-control" type="text" placeholder="dd-mmm-yyyy" data-date-format="dd-M-yyyy" />
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text fs-xl">
+                                                        <i class="fas fa-calendar-alt"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-1 container d-flex h-100">
+                        <div class="row justify-content-center align-self-center">
+                            <button type="submit" name="submit" class="btn btn-primary btn-sm">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row pt-2">
+                <div class="col-md-12">
+                    <div class="panel-content">
+                        <div class="table-responsive">
+                            <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                                <thead class="bg-primary-800">
+                                    <tr>
+                                        <th class="notexport" width="5%">Action</th>
+                                        <th class="notexport">Delete</th>
+                                        <th>Vendor</th>
+                                        <th>Department</th>
+                                        <th>Email</th>
+                                        <th>Plant</th>
+                                        <th>Contract Category</th>
+                                        <th>Contract Name</th>
+                                        <th>Service Description</th>
+                                        <th>Contract Nature</th>
+                                        <th>Contract Value</th>
+                                        <th>Currency</th>
+                                        <th>Master Contract</th>
+                                        <th>Contract Number</th>
+                                        <th>Execution Date</th>
+                                        <th>Effective Date</th>
+                                        <th>Expiry Date</th>
+                                        <th>Days Left</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.ContractList)
+                                    {
+                                        item.ContractName = item.ContractName == "0" ? "" : item.ContractName;
+                                        <tr>
+                                            <td class="text-center">
+                                                <a title='View Contract' href='@Url.Action("ContractAdd", "Legal", new { dno = item.DocNo, mode = "V" })'><i class="fa fa-eye mr-3"></i></a>
+                                                <a title='Edit Contract' href='@Url.Action("ContractAdd", "Legal", new { dno = item.DocNo, mode = "E" })'><i class="fa fa-edit mr-3"></i></a>
+                                            </td>
+                                            <td>
+                                                <a title='Delete' href='javascript:void(0)' class="text-danger" onclick='RemoveContract("@item.DocNo")'><i class='fas fa-trash-alt ml-3 text-danger'></i></a>
+                                            </td>
+                                            <td> @item.Vendor</td>
+                                            <td> @item.DeptName</td>
+                                            <td> @item.Email</td>
+                                            <td> @item.Plant</td>
+                                            <td> @item.ContractCategory</td>
+                                            <td> @item.ContractName</td>
+                                            <td> @item.ServiceDescription</td>
+                                            <td> @item.ContractNature</td>
+                                            <td> @item.ContractValue</td>
+                                            <td> @item.Currency</td>
+                                            <td>
+                                                @if (item.MasterContract == "N")
+                                                {
+                                                    <span>No</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>Yes</span>
+                                                }
+                                            </td>
+                                            <td> @item.ContractNumber</td>
+                                            <td> @item.ExeDate</td>
+                                            <td> @item.EffDate</td>
+                                            <td> @item.ExpDate</td>
+                                            <td class="text-center">
+                                                @if (!String.IsNullOrEmpty(item.DaysLeft.ToString()))
+                                                {
+                                                    if (Convert.ToInt32(item.DaysLeft) < 1)
+                                                    {
+                                                        <span class="text-danger">Expired</span>
+                                                    }
+                                                    else if (Convert.ToInt32(item.DaysLeft) < 30 && (Convert.ToInt32(item.DaysLeft) > 1))
+                                                    {
+                                                        <span class="text-warning">@item.DaysLeft</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-primary">@item.DaysLeft</span>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-primary">NA</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+@section ScriptsBlock {
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/datagrid/datatables/dths_excel.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(function () {
+                $('.select2').select2();
+                runDatePicker();
+            });
+            new $.fn.dataTable.FixedHeader($('#dt-hs'));
+            var controls = {
+                leftArrow: '<i class="fas fa-angle-left" style="font-size: 1.25rem"></i>',
+                rightArrow: '<i class="fas fa-angle-right" style="font-size: 1.25rem"></i>'
+            }
+            var runDatePicker = function () {
+                $('#Date1,#Date2,#Date3,#Date4,#Date5,#Date6').datepicker({
+                    todayHighlight: true,
+                    orientation: "bottom left",
+                    templates: controls,
+                    autoclose: true
+                });
+            }
+        });
+
+        function RemoveContract(docno) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (result) {
+                if (result.value) {
+                    var requestUrl = '/Legal/RemoveContract';
+                    $.ajax({
+                        url: requestUrl,
+                        type: "POST",
+                        data: { docno: docno },
+                        success: function (response) {
+                            if (response.flag == _errorStatus) {
+                                Swal.fire("Info!", response.msg, "error");
+                            } else {
+                                Swal.fire("Deleted!", response.msg, "success").then(function () {
+                                    window.location.reload();
+                                })
+                            }
+                        },
+                        error: function () {
+                            Swal.fire("Oops...", "Something went wrong!", "error");
+                        }
+                    });
+                }
+            });
+        }
+        function validateDates() {
+            var date1 = $('#Date1').val();
+            var date2 = $('#Date2').val();
+            var date3 = $('#Date3').val();
+            var date4 = $('#Date4').val();
+            var date5 = $('#Date5').val();
+            var date6 = $('#Date6').val();
+
+            if (date1 == '' && date2 == '' && date3 == '' && date4 == '' && date5 == '' && date6 == '') {
+                $('#Date1').focus();
+                Swal.fire("Oops...", "Please select a date range", "error");
+                return false;
+            }
+
+            if (date1 == '' && date2 != '') {
+                $('#Date1').focus();
+                /*Swal.fire("Info!", response.msg, "error");*/
+                Swal.fire("Oops...", "Please Enter Execution From", "error");
+                return false;
+            }
+            if (date1 != '' && date2 == '') {
+                $('#Date2').focus();
+                Swal.fire("Oops...", "Please Enter Execution To", "error");
+                return false;
+            }
+            if (date1 != '' && date2 != '') {
+
+                var d1 = process(date1)
+                var d2 = process(date2)
+                if (d1 > d2) {
+                    Swal.fire("Oops...", "Execution To date should be greater than Execution From", "error");
+                    return false;
+                }
+            }
+
+            if (date3 == '' && date4 != '') {
+                $('#Date3').focus();
+                Swal.fire("Oops...", "Please Enter Effective From", "error");
+                return false;
+            }
+            if (date3 != '' && date4 == '') {
+                $('#Date4').focus();
+                Swal.fire("Oops...", "Please Enter Effective To", "error");
+                return false;
+            }
+            if (date3 != '' && date4 != '') {
+                var d1 = process(date3)
+                var d2 = process(date4)
+                if (d1 > d2) {
+                    Swal.fire("Oops...", "Effective To date should be greater than Effective From", "error");
+                    return false;
+                }
+            }
+
+            if (date5 == '' && date6 != '') {
+                $('#Date5').focus();
+                Swal.fire("Oops...", "Please Enter Expiry From", "error");
+                return false;
+            }
+            if (date5 != '' && date6 == '') {
+                $('#Date6').focus();
+                Swal.fire("Oops...", "Please Enter Expiry To", "error");
+                return false;
+            }
+            if (date5 != '' && date6 != '') {
+                var d1 = process(date5)
+                var d2 = process(date6)
+                if (d1 > d2) {
+                    Swal.fire("Oops...", "Expiry To date should be greater than Expiry From", "error");
+                    return false;
+                }
+            }
+            return true;
+        }
+        function process(date) {
+            var parts = date.split("-");
+            var month = getMonth(parts[1]);
+            return new Date(parts[2], month - 1, parts[0]);
+        }
+        function getMonth(monthStr) {
+            return new Date(monthStr + '-1-01').getMonth() + 1
+        }
+    </script>
+}
+

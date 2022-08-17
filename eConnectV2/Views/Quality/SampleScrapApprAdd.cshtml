@@ -1,0 +1,340 @@
+﻿@model eConnectV2.ViewModels.QualityViewModel
+@{
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewData["Title"] = "Sample Scrap";
+    ViewData["HeaderTitle"] = "Sample Scrap for Approval";
+    var Mode = ViewBag.TagAttribute;
+}
+
+<div class="panel">
+    <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+        @if (ViewBag.Login == "Y")
+        {
+            @if (ViewBag.RUrl == "ScrapView")
+            {
+                <a title="Back" href="@Url.Action("SampleScrapView", "Quality")" style="color:#fff">
+                    <i class="fa fa-angle-double-left"></i> Back
+                </a>
+            }
+            else
+            {
+                <a title="Back" href="@Url.Action("SampleScrapReport", "Quality")" style="color:#fff">
+                    <i class="fa fa-angle-double-left"></i> Back
+                </a>
+            }
+        }
+        else
+        {
+            <a title="Back" href="@Url.Action("Index", "Account")" style="color:#fff">
+                <i class="fa fa-angle-double-left"></i> Back
+            </a>
+        }
+        <h2 class="justify-content-center">
+            <span class="fw-300 pr-1">Sample Scrap  </span> Approver
+        </h2>
+    </div>
+
+    <div class="panel-container show">
+        <div class="panel-content">
+            <div class="row">
+                <input asp-for="UserID" hidden />
+                <input asp-for="ApprID" hidden />
+                <input asp-for="ApprType" hidden />
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Doc No</label>
+                                <span class="col-sm-8 col-form-label text-info">@Model.RequestNo</span>
+                                <input asp-for="RequestNo" value="@Model.RequestNo" hidden />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Box ID</label>
+                                <div class="col-sm-8">
+                                    <input asp-for="BoxId" value="@Model.BoxId" class="form-control" disabled />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Test Complete Date</label>
+                                <div class="col-sm-8">
+                                    <input asp-for="Date1" class="form-control" type="text" autocomplete="off" placeholder="dd-mmm-yyyy" data-date-format="dd-M-yyyy" onchange="GetRetentionPeriod()" required disabled />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Plant</label>
+                                <div class="col-sm-8">
+                                    <select asp-for="Plant" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.PlantList, "Value", "Text"))" disabled required>
+                                        <option value="">-- Select --</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Customer Name</label>
+                                <div class="col-sm-8">
+                                    <select asp-for="Customer" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.CustomerList, "Value", "Text"))" disabled required>
+                                        <option value="">-- Select --</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Retention Period<span style="font-size:smaller; font-weight:100">(in days)</span></label>
+                                <div class="col-sm-8">
+                                    <input asp-for="Period" value="@Model.Period" class="form-control" type="number" autocomplete="off" onchange="GetRetentionPeriod()" disabled />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Division</label>
+                                <div class="col-sm-8">
+                                    <select asp-for="Division" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.DivisionList, "Value", "Text"))" disabled required>
+                                        <option value="">-- Select --</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Model Name</label>
+                                <div class="col-sm-8">
+                                    <input asp-for="ModelName" value="@Model.ModelName" class="form-control" type="text" autocomplete="off" disabled required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Sample Disposition Date</label>
+                                <div class="col-sm-8">
+                                    <input asp-for="Date2" value="@Model.Date2" class="form-control" disabled />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Sample Qty</label>
+                                <div class="col-sm-8">
+                                    <input asp-for="Quantity" value="@Model.Quantity" type="number" class="form-control" min="0" step=".01" autocomplete="off" disabled required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Storage Location</label>
+                                <div class="col-sm-8">
+                                    <input asp-for="Location" value="@Model.Location" class="form-control" type="text" autocomplete="off" disabled required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Due After<span style="font-size:smaller; font-weight:100">(days)</span></label>
+                                <div class="col-sm-8">
+                                    <input asp-for="DueDays" value="@Model.DueDays" class="form-control" disabled readonly />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="col-md-8">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label font-weight-bold">Product</label>
+                                <div class="col-sm-8">
+                                    <div class="form-check form-check-inline row">
+                                        <input id="r1" asp-for="Product" value="Battery" class="form-check-input rdbutton" type="radio" disabled />
+                                        <label for="r1" class="form-check-label text-success font-weight-bold mr-2">Battery</label>
+                                        <input id="r2" asp-for="Product" value="Cell" class="form-check-input rdbutton" type="radio" disabled>
+                                        <label for="r2" class="form-check-label text-info font-weight-bold mr-2">Cell</label>
+                                        <input id="r3" asp-for="Product" value="PCM" class="form-check-input rdbutton" type="radio" disabled>
+                                        <label for="r3" class="form-check-label text-info font-weight-bold mr-2">PCM</label>
+                                        <input id="r4" asp-for="Product" value="PB" class="form-check-input rdbutton" type="radio" disabled>
+                                        <label for="r4" class="form-check-label text-info font-weight-bold mr-2">Power Bank</label>
+                                        <input id="r5" asp-for="Product" value="Tape" class="form-check-input rdbutton" type="radio" disabled>
+                                        <label for="r5" class="form-check-label text-info font-weight-bold mr-2">Tape</label>
+                                        <input id="r6" asp-for="Product" value="Others" class="form-check-input rdbutton" type="radio" disabled>
+                                        <label for="r6" class="form-check-label text-info font-weight-bold mr-2">Others</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Description</label>
+                                <div class="col-sm-8">
+                                    <textarea asp-for="Description" value="@Model.Description" class="form-control" rows="3" disabled required></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="divStatus" class="row pt-2" style="display:none">
+                        <div class="col-md-8">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label font-weight-bold">Status<span class="text-danger ml-1">*</span></label>
+                                <div class="col-sm-10 form-check form-check-inline row">
+                                    <input id="rb1" asp-for="ApprStatus" value="APPROVE" class="form-check-input rdApprove" type="radio">
+                                    <label for="rb1" class="form-check-label text-success font-weight-bold mr-2 rdApprove">Approve</label>
+                                    <input id="rb2" asp-for="ApprStatus" value="REJECT" class="form-check-input rdForward" type="radio">
+                                    <label for="rb2" class="form-check-label text-danger font-weight-bold mr-2 rdForward">Reject</label>
+                                    <input id="rb3" asp-for="ApprStatus" value="REVIEWBACK" class="form-check-input rdForward" type="radio">
+                                    <label for="rb3" class="form-check-label text-warning font-weight-bold mr-2 rdForward">Review Back</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="divRemarks" class="row pt-2" style="display:none">
+                        <div class="col-md-8">
+                            <div class="row">
+                                <label class="col-sm-2 col-form-label font-weight-bold">Remarks</label>
+                                <div class="col-sm-10">
+                                    <textarea asp-for="Remarks" class="form-control" type="text" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="col-md-8">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label font-weight-bold"></label>
+                                <div class="col-sm-10">
+                                    <button id="btnSubmit" type="button" name="submit" value="Submit" class="btn btn-primary btn-sm" style="display:none" onclick="SaveRecord()">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.HistoryList != null && Model.HistoryList.Count > 0)
+{
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="row col-md-8">
+            <div class="table-responsive">
+                <h3 class="text-info font-weight-bold text-center">Scrap History</h3>
+                <br />
+                <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                    <thead class="bg-primary-800">
+                        <tr>
+                            <th width="5%" class="text-center">#</th>
+                            <th width="12%">User Type</th>
+                            <th width="20%">User Name</th>
+                            <th>Remarks</th>
+                            <th width="15%">Status</th>
+                            <th width="20%">TDate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.HistoryList)
+                        {
+                            <tr>
+                                <td class="text-center">@item.SrNo</td>
+                                <td>@item.UserType</td>
+                                <td>@item.EmpName</td>
+                                <td>@item.Remarks</td>
+                                <td>@item.StatusDescr</td>
+                                <td>@item.TDate</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+    }
+
+
+
+@section ScriptsBlock {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.select2').select2();
+            FillForm();
+        });
+
+        function FillForm() {
+            if ("@Mode" == "E") {
+                $("#divStatus").show();
+                $("#divRemarks").show();
+                $("#btnSubmit").show();
+            }
+            else {
+                $("#divStatus").hide();
+                $("#divRemarks").hide();
+                $("#btnSubmit").hide();
+            }
+        }
+        function SaveRecord() {
+            var requestUrl = 'Quality/SampleScrapApprAdd';
+            var docNo = $('#RequestNo').val();
+            var product = $('[name="Product"]:radio:checked').val();
+            var custName = $('#Customer').val();
+            var model = $('#ModelName').val();
+            var qty = $('#Quantity').val();
+            var boxId = $('#BoxId').val();
+            var reqId = $('#UserID').val();
+            var apprType = $('#ApprType').val();
+            var apprId = $('#ApprID').val();
+            var apprStatus = $('[name="ApprStatus"]:radio:checked').val();
+            var remarks = $('#Remarks').val();
+            var bool = 'true';
+
+            if ($('input[name=ApprStatus]:checked').length == 0)
+            {
+                bool = 'false';
+                Swal.fire("Info!", "Select Status", "error");
+            }
+            if (bool == 'true')
+            {
+                $.ajax({
+                    url: requestUrl,
+                    type: "POST",
+                    data:
+                    {
+                        iDocNo: docNo, strProduct: product, strCustName: custName, strModel: model, strQty: qty, strBoxId: boxId, strReqId: reqId,
+                        strApprType: apprType, strApprId: apprId, strApprStatus: apprStatus, strRemarks: remarks
+                    },
+                    success: function (data, status)
+                    {
+                        if (data == '2')
+                        {
+                            if ('@ViewBag.Login' == 'Y')
+                            {
+                                Swal.fire("Success", "Sample Scrap Request Status Updated Successfully", "success").then(function () { window.location.href = "/Quality/SampleScrapView"; })
+                            }
+                            else
+                            {
+                                Swal.fire("Success", "Sample Scrap Request Updated Successfully", "success").then(function () { window.location.href = "/Account/Index"; })
+                            }
+                        }
+                        else
+                        {
+                            Swal.fire("Info!", "Something went wrong", "error");
+                        }
+                    },
+                    error: function () {
+                        Swal.fire("Error!", "Encountered Error", "error");
+                    },
+                });
+            }
+        }
+    </script>
+}

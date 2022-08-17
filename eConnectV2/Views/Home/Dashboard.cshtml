@@ -1,0 +1,337 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section HeadBlock {
+    <link rel="stylesheet" type="text/css" href="~/css/js-year-calendar.min.css" />
+}
+<div class="row">
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-sm-4">
+                <a class="cursor-pointer" target="_blank" href="@Url.Action("HDIndex","IT")" style="text-decoration: none !important; ">
+                    <div class="p-3 bg-warning rounded overflow-hidden position-relative text-white mb-g">
+                        <div>
+                            <h3 class="display-4 d-block l-h-n m-0">
+                                <small class="m-0 l-h-n fw-500">IT Help Desk</small>
+                            </h3>
+                            <i class="fas fa-laptop position-absolute pos-right pos-bottom pb-2 pr-2" style="font-size: 2rem"></i>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-sm-4">
+                <a class="cursor-pointer" target="_blank" href="http://nvti.nvtinfo.com:85/portal/Sheets/Report/Rpt_NVTI_PO.aspx" style="text-decoration: none !important;">
+                    <div class="p-3 bg-secondary rounded overflow-hidden position-relative text-white mb-g">
+                        <div>
+                            <h3 class="display-4 d-block l-h-n m-0">
+                                <small class="m-0 l-h-n fw-500">PR-PO Status</small>
+                            </h3>
+                        </div>
+                        <i class="fas fa-search position-absolute pos-right pos-bottom pb-2 pr-2" style="font-size:2rem"></i>
+                    </div>
+                </a>
+            </div>
+            <div class="col-sm-4">
+                <a class="cursor-pointer" target="_blank" href="@Url.Action("MyAttendance","Attendance")" style="text-decoration: none !important;">
+                    <div class="p-3 rounded overflow-hidden position-relative text-white mb-g" style="background-color: blueviolet; text-decoration: none !important;">
+                        <div class="">
+                            <h3 class="display-4 d-block l-h-n m-0">
+                                <small class="m-0 l-h-n fw-500">My Attendance</small>
+                            </h3>
+                        </div>
+                        <i class="fas fa-calendar position-absolute pos-right pos-bottom pb-2 pr-2" style="font-size:2rem"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <a class="cursor-pointer" target="_blank" href="@Url.Action("Profile","Admin")" style="text-decoration: none !important;">
+                    <div class="p-3 bg-success-600 rounded overflow-hidden position-relative text-white mb-g">
+                        <div class="">
+                            <h3 class="display-4 d-block l-h-n m-0">
+                                <small class="m-0 l-h-n fw-500">My Profile</small>
+                            </h3>
+                        </div>
+                        <i class="fas fa-user position-absolute pos-right pos-bottom pb-2 pr-2" style="font-size:2rem"></i>
+                    </div>
+                </a>
+            </div>
+            <div class="col-sm-4">
+                <a class="cursor-pointer" target="_blank" href="@Url.Action("Computation","KPI")" style="text-decoration: none !important;">
+                    <div class="p-3 bg-danger rounded overflow-hidden position-relative text-white mb-g">
+                        <div class="">
+                            <h3 class="display-4 d-block l-h-n m-0">
+                                <small class="m-0 l-h-n fw-500">KPI</small>
+                            </h3>
+                        </div>
+                        <i class="fas fa-chart-line position-absolute pos-right pos-bottom pb-2 pr-2" style="font-size:2rem"></i>
+                    </div>
+                </a>
+            </div>
+            <div class="col-sm-4">
+                <a class="cursor-pointer" target="_blank" href="@Url.Action("AppUrl","Misc")" style="text-decoration: none !important;">
+                    <div class="p-3 bg-info rounded overflow-hidden position-relative text-white mb-g">
+                        <div class="">
+                            <h3 class="display-4 d-block l-h-n m-0">
+                                <small class="m-0 l-h-n fw-500">URL Info</small>
+                            </h3>
+                        </div>
+                        <i class="fas fa-info-circle position-absolute pos-right pos-bottom pb-2 pr-2" style="font-size:2rem"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <a class="cursor-pointer" target="_blank" href="@Url.Action("KaizenView","Kaizen")" style="text-decoration: none !important;">
+                    <div class="p-3 rounded overflow-hidden position-relative text-white mb-g" style="background-color: maroon">
+                        <div class="">
+                            <h3 class="display-4 d-block l-h-n m-0">
+                                <small class="m-0 l-h-n fw-500">Kaizen</small>
+                            </h3>
+                        </div>
+                        <i class="fas fa-cogs position-absolute pos-right pos-bottom pb-2 pr-2" style="font-size:2rem"></i>
+                    </div>
+                </a>
+            </div>
+            <div class="col-sm-4">
+                <a class="cursor-pointer" target="_blank" href="@Url.Action("FireMarshal","Attendance")" style="text-decoration: none !important;">
+                    <div class="p-3   rounded overflow-hidden position-relative text-white mb-g" style="background-color: coral">
+                        <div class="">
+                            <h3 class="display-4 d-block l-h-n m-0">
+                                <small class="m-0 l-h-n fw-500">Fire-Marshal</small>
+                            </h3>
+                        </div>
+                        <i class="fas fa-fire-extinguisher position-absolute pos-right pos-bottom pb-2 pr-2" style="font-size:2rem"></i>
+                    </div>
+                </a>
+            </div>
+            <div class="col-sm-4">
+                <a class="cursor-pointer" target="_blank" href="/BIS/UPPHAuto?cust=BBK" style="text-decoration: none !important;">
+                    <div class="p-3  rounded overflow-hidden position-relative text-white mb-g" style="background-color: darkgoldenrod">
+                        <div class="">
+                            <h3 class="display-4 d-block l-h-n m-0">
+                                <small class="m-0 l-h-n fw-500">
+                                    UPPH Dashboard
+                                </small>
+                            </h3>
+                        </div>
+                        <i class="fas fa-sitemap position-absolute pos-right pos-bottom pb-2 pr-2" style="font-size:2rem"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <a class="cursor-pointer" target="_blank" href="@Url.Action("SMTFPYAuto","BIS")" style="text-decoration: none !important;">
+                    <div class="p-3  rounded overflow-hidden position-relative text-white mb-g" style="background-color:darkseagreen">
+                        <div class="">
+                            <h3 class="display-4 d-block l-h-n m-0">
+                                <small class="m-0 l-h-n fw-500">
+                                    SMT FPY Dashboard
+                                </small>
+                            </h3>
+                        </div>
+                        <i class="fas fa-boxes-alt position-absolute pos-right pos-bottom pb-2 pr-2" style="font-size:2rem"></i>
+                    </div>
+                </a>
+            </div>
+            <div class="col-sm-4">
+                <a class="cursor-pointer" target="_blank" href="@Url.Action("DCNView","Quality")" style="text-decoration: none !important;">
+                    <div class="p-3 bg-primary-300 rounded overflow-hidden position-relative text-white mb-g">
+                        <div class="">
+                            <h3 class="display-4 d-block l-h-n m-0">
+                                <small class="m-0 l-h-n fw-500">DCN System</small>
+                            </h3>
+                        </div>
+                        <i class="fas fa-check-circle position-absolute pos-right pos-bottom pb-2 pr-2" style="font-size:2rem"></i>
+                    </div>
+                </a>
+            </div>
+            <div class="col-sm-4">
+                <a class="cursor-pointer" target="_blank" href="@Url.Action("DeviationView","Quality")" style="text-decoration: none !important;">
+                    <div class="p-3  rounded overflow-hidden position-relative text-white mb-g" style="background-color:black">
+                        <div class="">
+                            <h3 class="display-4 d-block l-h-n m-0">
+                                <small class="m-0 l-h-n fw-500">Deviation System</small>
+                            </h3>
+                        </div>
+                        <i class="fas fa-directions position-absolute pos-right pos-bottom pb-2 pr-2" style="font-size:2rem"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+        @*<div class="col-sm-8 alert border border-primary bg-primary-400 bg-fusion-gradient" role="alert">
+            Holiday
+            <hr />
+            <ul>
+                <li>Sat, Jan 01, 2022 &nbsp;&nbsp;&nbsp;&nbsp;  New Year<hr class="mt-0" /></li>
+                <li>Wed, Jan 26, 2022 &nbsp;&nbsp;&nbsp;  Republic Day<hr class="mt-0" /></li>
+                <li>Thu, Mar 17, 2022 &nbsp;&nbsp;&nbsp;  Holi<hr class="mt-0" /></li>
+                <li>Fri, Mar 18, 2022 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  Dhulandi<hr class="mt-0" /></li>
+                <li>Thu, Aug 11, 2022 &nbsp;&nbsp;&nbsp;  Raksha Bandhan<hr class="mt-0" /></li>
+                <li>Mon, Aug 15, 2022 &nbsp;&nbsp;&nbsp;  Independence Day<hr class="mt-0" /></li>
+                <li>Sun, Oct 02, 2022 &nbsp;&nbsp;&nbsp;&nbsp;  Gandhi Jayanti<hr class="mt-0" /></li>
+                <li>Wed, Oct 05, 2022 &nbsp;&nbsp;&nbsp;  Dussehra<hr class="mt-0" /></li>
+                <li>Mon, Oct 24, 2022 &nbsp;&nbsp;&nbsp;  Diwali<hr class="mt-0" /></li>
+                <li>Tue, Oct 25, 2022 &nbsp;&nbsp;&nbsp;&nbsp;  Goverdhan Pooja<hr class="mt-0" /></li>
+                <li>Wed, Oct 26, 2022 &nbsp;&nbsp;&nbsp;  Bhai Dooj<hr class="mt-0" /></li>
+            </ul>
+        </div>*@
+    </div>
+    <div class="col-md-6" >
+        <div id="calendar" class="bg-gray-200 border-secondary border"></div>
+    </div>
+    <div class="col-md-12">
+
+    </div>
+    <div class="col-md-12">
+
+    </div>
+    <div class="col-md-12">
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+
+    </div>
+    <div class="col-md-6">
+
+    </div>
+</div>
+@section ScriptsBlock {
+    <script src="~/js/js-year-calendar.min.js"></script>
+    <script>
+        let calendar = null;
+        $(function () {
+            var currentYear = new Date().getFullYear();
+            calendar = new Calendar('#calendar', {
+                mouseOnDay: function (e) {
+                    if (e.events.length > 0) {
+                        var content = '';
+
+                        for (var i in e.events) {
+                            content += '<div class="event-tooltip-content">'
+                                + '<div class="badge badge-primary text-wrap">' + e.events[i].name + '</div>'
+                                + '<div class="fw-500 event-location">' + e.events[i].location + '</div>'
+                                + '</div>';
+                        }
+
+                        $(e.element).popover({
+                            trigger: 'manual',
+                            container: 'body',
+                            html: true,
+                            content: content
+                        });
+
+                        $(e.element).popover('show');
+                    }
+                },
+                mouseOutDay: function (e) {
+                    if (e.events.length > 0) {
+                        $(e.element).popover('hide');
+                    }
+                },
+                dayContextMenu: function (e) {
+                    $(e.element).popover('hide');
+                },
+                dataSource: [
+                    {
+                        id: 0,
+                        name: 'New Year',
+                        location: 'Sat, Jan 1, 2022',
+                        startDate: new Date(currentYear, 0, 1),
+                        endDate: new Date(currentYear, 0, 1),
+                        color: 'Orange'
+                    },
+                    {
+                        id: 1,
+                        name: 'Republic Day',
+                        location: 'Wed, Jan 26, 2022',
+                        startDate: new Date(currentYear, 0, 26),
+                        endDate: new Date(currentYear, 0, 26),
+                        color: 'Orange'
+                    },
+                    {
+                        id: 2,
+                        name: 'Holi',
+                        location: 'Thu, Mar 17, 2022',
+                        startDate: new Date(currentYear, 2, 17),
+                        endDate: new Date(currentYear, 2, 17),
+                        color: 'Orange'
+                    },
+                    {
+                        id: 3,
+                        name: 'Dhulandi',
+                        location: 'Fri, Mar 18, 2022',
+                        startDate: new Date(currentYear, 2, 18),
+                        endDate: new Date(currentYear, 2, 18),
+                        color: 'Orange'
+                    },
+                    {
+                        id: 4,
+                        name: 'Raksha Bandhan',
+                        location: 'Thu, Aug 11, 2022',
+                        startDate: new Date(currentYear, 7, 11),
+                        endDate: new Date(currentYear, 7, 11),
+                        color: 'Orange'
+                    },
+                    {
+                        id: 5,
+                        name: 'Independence Day',
+                        location: 'Mon, Aug 15, 2022',
+                        startDate: new Date(currentYear, 7, 15),
+                        endDate: new Date(currentYear, 7, 15),
+                        color: 'Orange'
+                    },
+                    {
+                        id: 6,
+                        name: 'Gandhi Jayanti',
+                        location: 'Sun, Oct 2, 2022',
+                        startDate: new Date(currentYear, 9, 2),
+                        endDate: new Date(currentYear, 9, 2),
+                        color: 'Orange',
+                        
+                    },
+                    {
+                        id: 7,
+                        name: 'Dussehra',
+                        location: 'Wed, Oct 5, 2022',
+                        startDate: new Date(currentYear, 9, 5),
+                        endDate: new Date(currentYear, 9, 5),
+                        color: 'Orange'
+                    },
+                    {
+                        id: 8,
+                        name: 'Diwali',
+                        location: 'Mon, Oct 24, 2022',
+                        startDate: new Date(currentYear, 9, 24),
+                        endDate: new Date(currentYear, 9, 24),
+                        color: 'Orange'
+                    },
+                    {
+                        id: 9,
+                        name: 'Goverdhan Pooja',
+                        location: 'Tue, Oct 25, 2022',
+                        startDate: new Date(currentYear, 9, 25),
+                        endDate: new Date(currentYear, 9, 25),
+                        color: 'Orange'
+                    },
+                    {
+                        id: 10,
+                        name: 'Bhai Dooj',
+                        location: 'Wed, Oct 26, 2022',
+                        startDate: new Date(currentYear, 9, 26),
+                        endDate: new Date(currentYear, 9, 26),
+                        color: 'Orange'
+                    },
+
+                ]
+            });
+            calendar.setStyle('background');
+        });
+    </script>
+}

@@ -1,0 +1,362 @@
+﻿@model eConnectV2.ViewModels.DTViewModel
+@{
+    ViewData["Title"] = "NVTI-Digital Training";
+    ViewData["PageHeading"] = "Test Results";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "Digital Training";
+    ViewBag.Category1 = "Test Results";
+}
+
+<style>
+    .swal2-container {
+        z-index: 300000 !important;
+    }
+
+    .modal-lg {
+        max-width: 80%;
+    }
+</style>
+
+<div id="dataListOption" class="alert alert-link mb-0 pb-2">
+    <div class="icheck-primary d-inline">
+        <input type="radio" id="radioPrimary1" name="r1" value="PendingViva" checked="">
+        <label for="radioPrimary1" class="text-warning">
+            Pending Viva
+        </label>
+    </div>
+    <div class="icheck-danger d-inline ml-5">
+        <input type="radio" id="radioPrimary2" name="r1" value="Pass">
+        <label for="radioPrimary2" class="text-success">
+            Pass
+        </label>
+    </div>
+    <div class="icheck-danger d-inline ml-5">
+        <input type="radio" id="radioPrimary3" name="r1" value="Fail">
+        <label for="radioPrimary3" class="text-danger">
+            Fail
+        </label>
+    </div>
+    <div class="icheck-danger d-inline ml-5">
+        <input type="radio" id="radioPrimary4" name="r1" value="AllTestResults">
+        <label for="radioPrimary4" class="text-primary">
+            All Test Results
+        </label>
+    </div>
+
+    <input type="hidden" value="0" id="eId" />
+</div>
+
+<div id="dataList">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <div class="table-responsive">
+                            <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover nowrap">
+                                <thead class="bg-primary-800">
+                                    <tr>
+                                        <th class='notexport'>Action</th>
+                                        <th>Employee</th>
+                                        <th>Station - Grade</th>
+                                        <th>Score</th>
+                                        <th>Result</th>
+                                        <th>Conducted By</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white">
+                                    @{string resultClsName = ""; string resultTextClsName = "";}
+
+                                    @foreach (var item in Model.ManPowerList)
+                                    {
+                                        if (item.TestResult.ToLower() == "pass")
+                                        {
+                                            resultClsName = "#00ff01";
+                                            resultTextClsName = "text-dark";
+                                        }
+                                        else if (item.TestResult.ToLower() == "fail")
+                                        {
+                                            resultClsName = "#fe0000";
+                                            resultTextClsName = "text-white";
+                                        }
+                                        else if (item.TestResult.ToLower() == "pending viva")
+                                        {
+                                            resultClsName = "orange";
+                                            resultTextClsName = "text-white";
+                                        }
+                                        else
+                                        {
+                                            resultClsName = "";
+                                        }
+                                        <tr>
+                                            <td>
+                                                <a title="View Result" href="javascript:void(0);" onclick="TestDetails('@item.Id')"><i class="fas fa-file-alt ml-1 mr-1"></i>View Result</a>
+                                            </td>
+                                            <td>@item.EmpName</td>
+                                            <td>@item.Station - <b class="text-info">@item.Grade</b></td>
+                                            <td>@item.TestScore/@item.TestScoreOutof (<em class="text-info">@Convert.ToDecimal(item.Param1).ToString("G29")%</em>)</td>
+                                            <td style="background-color:@resultClsName" class="font-weight-bold  @resultTextClsName font-italic">@item.TestResult</td>
+                                            <td>@item.TestConductedByEmpName <em class="text-info">at</em> @item.TestDate</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="default-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content alert alert-primary p-1">
+            <div class="modal-header p-1">
+                <h3 class="modal-title text-primary"><strong>Result</strong></h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+            </div>
+            <div class="modal-body p-1">
+                <table class="w-100">
+                    <tr>
+                        <td class="font-weight-bold">Employee</td>
+                        <td>
+                            <div class="form-group row">
+                                <div class="col-md-10">
+                                    <input type="text" id="eEmpName" class="form-control" autocomplete="off" readonly>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="font-weight-bold">Score</td>
+                        <td>
+                            <div class="form-group row">
+                                <div class="col-md-10">
+                                    <input type="text" id="eScore" class="form-control" autocomplete="off" readonly>
+                                </div>
+                            </div>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold">Station</td>
+                        <td>
+                            <div class="form-group row">
+                                <div class="col-md-10">
+                                    <input type="text" id="eStation" class="form-control" autocomplete="off" readonly>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="font-weight-bold">Percentage</td>
+                        <td>
+                            <div class="form-group row">
+                                <div class="col-md-10">
+                                    <input type="text" id="ePercentage" class="form-control" autocomplete="off" readonly>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold">Grade</td>
+                        <td>
+                            <div class="form-group row">
+                                <div class="col-md-10">
+                                    <input type="text" id="eGrade" class="form-control" autocomplete="off" readonly>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="font-weight-bold">Conducted By</td>
+                        <td>
+                            <div class="form-group row">
+                                <div class="col-md-10">
+                                    <input type="text" id="eConductedBy" class="form-control" autocomplete="off" readonly>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="modaltbl">
+
+                    </div>
+                </div>
+                <div id="btnAction" class="col-md-12 text-center">
+                    <button onclick="QAAction('Pass')" type="button" class="btn btn-sm btn-success m-2 ml-4">Pass</button>
+                    <button onclick="QAAction('Fail')" type="button" class="btn btn-sm btn-danger m-2 ml-4">Fail</button>
+                </div>
+                <div id="msgDiv" class="col-md-12 hide">
+                    <div class="alert bg-fusion-400 border-0 fade show mt-4 mb-2">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-1">
+                                <table>
+                                    <tr>
+                                        <td>Result:</td>
+                                        <td>
+                                            <span id="sRPass" class="h3 text-success font-italic">Pass</span>
+                                            <span id="sRFail" class="h3 text-danger font-italic">Fail</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Checked By:</td>
+                                        <td><span id="sRmsg" class="h5 text-white font-italic border pl-2 pr-2"></span></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsBlock {
+    <script src="~/js/datagrid/datatables/dths_excel.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script>
+     $(document).ready(function () {
+         $(function () {
+             var action = '@ViewBag.SearchOption'
+             if (action == 'PendingViva') {
+                 $("#radioPrimary1").prop("checked", true);
+             }
+             if (action == 'Pass') {
+                 $("#radioPrimary2").prop("checked", true);
+             }
+             if (action == 'Fail') {
+                 $("#radioPrimary3").prop("checked", true);
+             }
+             if (action == 'AllTestResults') {
+                 $("#radioPrimary4").prop("checked", true);
+             }
+         });
+     });
+        $('input:radio[name="r1"]').change(function () {
+            if ($(this).is(':checked') && $(this).val() == 'PendingViva') {
+                GetTestResult(-1);
+            }
+            else if ($(this).is(':checked') && $(this).val() == 'Pass') {
+                GetTestResult(1);
+            }
+            else if ($(this).is(':checked') && $(this).val() == 'Fail') {
+                GetTestResult(0);
+            }
+            else {
+                GetTestResult(2);
+            }
+        });
+        function GetTestResult(type) {
+            var requestUrl = 'DigitalTraining/GetTestResult';
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                data: { type: type },
+                success: function () {
+                    location.replace(location.href);
+                },
+                error: function () {
+
+                }
+            });
+        }
+        function TestDetails(id) {
+            $('#default-example-modal-lg').modal('show');
+            $('#eId').val(id);
+            var requestUrl = 'DigitalTraining/GetTestDetails';
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                data: { id: id },
+                success: function (response) {
+                    $('#eEmpName').val(response.data[0].empName);
+                    $('#eScore').val(response.data[0].testScore + '/' + response.data[0].testScoreOutof);
+                    $('#eStation').val(response.data[0].station);
+                    $('#ePercentage').val(response.data[0].param1 + ' %' );
+                    $('#eGrade').val(response.data[0].grade);
+                    $('#eConductedBy').val(response.data[0].testConductedByEmpName);
+                    if (response.data[0].testResult == 'Pass' || response.data[0].testResult == 'Fail') {
+                        $('#btnAction').hide();
+                        $('#msgDiv').show();
+                        if (response.data[0].testResult == 'Pass') {
+                            $('#sRPass').show();
+                            $('#sRFail').hide();
+                        }
+                        if (response.data[0].testResult == 'Fail') {
+                            $('#sRPass').hide();
+                            $('#sRFail').show();
+                        }
+                        $('#sRmsg').text(response.data[0].approver1);
+                    }
+                    else {
+                        $('#btnAction').show();
+                        $('#msgDiv').hide();
+                        $('#sRPass').hide();
+                        $('#sRFail').hide();
+                    }
+                    var row = '<table id="tableModal" style="width: 100%;" class="border-dark border">';
+                    row = row + '<tr class="border-dark border bg-primary text-white"><td class="border-dark border">#</td><td class="border-dark border">Question</td><td class="border-dark border">Selected Ans</td><td class="border-dark border">Correct Answer</td></tr>';
+                    var count = 1;
+                    var classname = 'tomato';
+                    var textclassname = 'black';
+                    var crctAns = '';
+                    for (i = 0; i < response.data1.length; i++) {
+                        if (response.data1[i].isAnsCorrect == '1') {
+                            classname = 'lime';
+                            crctAns = '';
+                        }
+                        else {
+                            crctAns = response.data1[i].ansText;
+                            textclassname = 'white';
+                        }
+                        row = row + '<tr class="border-dark border"><td class="border-dark border">Que.' + count + '</td><td class="border-dark border">' + response.data1[i].que + '</td>';
+                        row = row + '<td class="border-dark border" style="background-color:' + classname + ';color:' + textclassname + '">' + response.data1[i].selectedAnsName + '</td><td class="border-dark border font-weight-bold  text-dark font-italic">' + crctAns + '</td></tr >';
+                        count = count + 1;
+                        classname = 'tomato';
+                        textclassname = 'black';
+                    }
+                    row = row + '</table>';
+                    $('#modaltbl').html(row);
+                },
+                error: function () {
+
+                }
+            });
+        }
+        function QAAction(action) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, do it!"
+            }).then(function (result) {
+                if (result.value) {
+                    var eId = $('#eId').val();
+                    var requestUrl = 'DigitalTraining/QAAction';
+                    $.ajax({
+                        url: requestUrl,
+                        type: "POST",
+                        data: { id: eId, action: action },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire("Saved!", response.responseMsg, "success").then(function () {
+                                    window.location.reload();
+                                })
+                            } else {
+                                Swal.fire("Oops...", "Something went wrong!", "error");
+                            }
+                        },
+                        error: function () {
+                            Swal.fire("Oops...", "Something went wrong!", "error");
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}

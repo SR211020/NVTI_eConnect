@@ -1,0 +1,67 @@
+﻿@model eConnectV2.ViewModels.MiscViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Image Slider</title>
+    <!-- Favicons -->
+    <meta name="description" content="NVTI - eConnect">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="msapplication-tap-highlight" content="no">
+    <link href="~/img/logo.png" rel="icon">
+    <link href="~/img/logo.png" rel="apple-touch-icon">
+    <link href="~/assets/css/style.css" rel="stylesheet">
+    <link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        .carousel-inner img {
+            width: 100%;
+            height: 900px;
+        }
+    </style>
+</head>
+<body>
+    <div id="demo" class="carousel slide carousel-fade" data-ride="carousel" data-interval="30000">
+        <div id="demo1" class="carousel-inner" role="listbox"></div>
+    </div>
+    <script src="~/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="~/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#demo').carousel();
+            GetSlider();
+        });
+        function GetSlider() {
+            $.ajax({
+                url: '/Misc/SliderImage',
+                type: "POST",
+                success: function (data) {
+                    $('#demo1').empty();
+                    var data1 = '';
+                    var i = 0;
+                    $.each(data, function (index, item) {
+                        i++;
+                        var active = i == 1 ? "active" : "";
+                        data1 += '<div class="carousel-item ';
+                        data1 += active;
+                        data1 += '">';
+                        data1 += '<img src="';
+                        data1 += item.docName;
+                        data1 += '">';
+                        data1 += '</div>';
+                    });
+                    $("#demo1").html(data1);
+                },
+                error: function () {
+                }
+            });
+        }
+    </script>
+</body>
+</html>

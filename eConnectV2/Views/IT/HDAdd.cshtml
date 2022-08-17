@@ -1,0 +1,511 @@
+﻿@model eConnectV2.ViewModels.ITViewModel
+@{
+    ViewData["PageHeading"] = "Help Desk";
+    ViewData["Title"] = "Help Desk ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var Mode = ViewBag.TagAttribute;
+}
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+}
+
+<div class="panel">
+    <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+        <a id="btn_backtoList" style="color:#fff" href="@Url.Action("HDView", "IT")" title="Back">
+            <i class="fa fa-angle-double-left"></i> Back
+        </a>
+        <h2 class="justify-content-center">
+            <span class="fw-300 pr-1">Help Desk  </span> Add
+        </h2>
+    </div>
+    <div class="panel-container show">
+        @using (Html.BeginForm("HDAdd", "IT", FormMethod.Post, new { id = "form", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+        {
+            <div class="panel-content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Request No</label>
+                                    <span class="col-sm-8 col-form-label text-info">@Model.RequestNo</span>
+                                    <input asp-for="RequestNo" value="@Model.RequestNo" hidden />
+                                    <input asp-for="Plant" value="@Model.Plant" hidden />
+                                    <input asp-for="ITHOD" value="@Model.ITHOD" hidden />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Status</label>
+                                    <span class="col-sm-6 col-form-label text-info">@Model.StatusDescr</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Priority</label>
+                                    <div class="col-sm-8">
+                                        <div class="form-check form-check-inline row">
+                                            <input id="P1" asp-for="Priority" class="form-check-input rdbutton" type="radio" value="Low" checked>
+                                            <label for="P1" class="form-check-label text-success font-weight-bold mr-2">Low</label>
+                                            <input id="P2" asp-for="Priority" class="form-check-input rdbutton" type="radio" value="Medium">
+                                            <label for="P2" class="form-check-label text-info font-weight-bold mr-2">Medium</label>
+                                            <input id="P3" asp-for="Priority" class="form-check-input rdbutton" type="radio" value="High">
+                                            <label for="P3" class="form-check-label text-danger font-weight-bold mr-2">High</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Request Date</label>
+                                    <span class="col-sm-8 col-form-label text-info font-weight-normal">@Model.TDate</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div id="div_Email" class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Email</label>
+                                    <span class="col-sm-8 col-form-label text-info font-weight-normal">@Model.Email</span>
+                                    <input asp-for="Email" hidden />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Request Type<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <select asp-for="Type" class="select2 custom-select form-control w-100" onchange="ShowData()" required>
+                                            <option value="">-- Select --</option>
+                                            <option value="New Request">New/Change Request</option>
+                                            <option value="Incident">Issue/Incident</option>
+                                            @if (Model.DeptCode == "DP0010" && Model.Status == 0)
+                                            {
+                                                <option value="Task">Task</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Requestor</label>
+                                    <div id="div_EmpName1" class="col-sm-8">
+                                        <span class="text-info font-weight-normal pt-2">@Model.EmpCode - @Model.EmpName</span>
+                                        <input asp-for="EmpCode" value="@Model.EmpCode" hidden />
+                                        <input asp-for="EmpName" value="@Model.EmpName" hidden />
+                                    </div>
+                                    <div id="div_EmpName2" class="col-sm-8" style="display:none">
+                                        <input asp-for="EmpName2" class="form-control" type="text" autocomplete="off" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Contact No<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input asp-for="ContactNo" value="@Model.ContactNo" class="form-control" type="text" autocomplete="off" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Problem Catg<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <select asp-for="ProbCatg" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.CategoryList, "Value", "Text"))" onchange="BindHelpDeskSubCatg()" required>
+                                            <option value="">-- Select --</option>
+
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Department</label>
+                                    <div id="div_Dept1" class="col-sm-8">
+                                        <span class="col-form-label text-info">@Model.DeptName</span>
+                                        <input asp-for="DeptCode" value="@Model.DeptCode" hidden />
+                                        <input asp-for="DeptName" value="@Model.DeptName" hidden />
+                                    </div>
+                                    <div id="div_Dept2" class="col-sm-8" style="display:none">
+                                        <select asp-for="DeptCode2" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.DepartmentList, "Value", "Text"))" required>
+                                            <option value="">-- Select --</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Ext No</label>
+                                    <div class="col-sm-8">
+                                        <input asp-for="ExtNo" value="@Model.ExtNo" class="form-control" type="text" autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Sub Category<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <select asp-for="SubCatg" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.SubCategoryList, "Value", "Text"))" required>
+                                            <option value="">-- Select --</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">File Upload</label>
+                                    <div class="col-sm-8">
+                                        <div class="custom-file">
+                                            @if (Mode == "E")
+                                            {
+                                                <input asp-for="DocName" type="file" class="custom-file-input" onchange="UploadFile()" />
+                                                <label class="custom-file-label">Choose file</label>
+                                                <span id="FileErrorMsg" class="text-danger"></span>
+                                            }
+                                            @if (Model.DocName != "")
+                                            {
+                                                <div class="col-sm-6">
+                                                    <a title='Download' href='@Url.Action("DownloadHelpDeskFile", "IT", new { fileName = @Model.DocName })'>@Model.DocName</a>
+                                                    <input asp-for="DocNameEdit" value="@Model.DocName" hidden />
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                @if (Model.RequestNo > 0)
+                                                {
+                                                    <div class="col-sm-6 pt-2">
+                                                        <label class="font-weight-bold">NA</label>
+                                                    </div>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="div_HOD" class="col-md-4" style="display:none">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Select Approver<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-8">
+                                        <select asp-for="DeptHOD" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.EmployeeList, "Value", "Text"))">
+                                            <option value="">-- Select --</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="div_StartTime" class="pt-2" style="display:none">
+                            <div class="row pt-2">
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold">Start Time<span class="text-danger ml-1 view">*</span></label>
+                                        <div class="col-sm-4">
+                                            <input asp-for="Date1" class="form-control datepickertext" type="text" placeholder="dd-mmm-yyyy" required data-date-format="dd-M-yyyy" autocomplete="off" />
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <input asp-for="Param1" class="form-control" type="time" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label font-weight-bold">End Time<span class="text-danger ml-1 view">*</span></label>
+                                        <div class="col-sm-4">
+                                            <input asp-for="Date2" class="form-control datepickertext" type="text" placeholder="dd-mmm-yyyy" required data-date-format="dd-M-yyyy" autocomplete="off" />
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <input asp-for="Param2" class="form-control" type="time" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-2">
+                            <div class="col-md-8">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label font-weight-bold">Subject<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-10">
+                                        <input asp-for="Subject" class="form-control" type="text" required autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-2">
+                            <div class="col-md-8">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label font-weight-bold">Problem Description<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-10">
+                                        <textarea asp-for="Descr1" class="form-control" type="text" rows="5" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="div_Solution" class="row pt-2" style="display:none">
+                            <div class="col-md-8">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label font-weight-bold">Solution<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-10">
+                                        <textarea asp-for="Solution" class="form-control-alternate" type="text" rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="div_Remarks" class="row pt-2" style="display:none">
+                            <div class="col-md-8">
+                                <div class="form-group row">
+                                    <div class="col-sm-2">
+                                        <b>Remarks</b>
+                                        <br />(if any)
+                                    </div>
+                                    <div class="col-sm-10">
+                                        <textarea asp-for="Remarks" class="form-control" type="text" rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-2">
+                            <div class="col-md-8">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label font-weight-bold"></label>
+                                    <div class="col-sm-10">
+                                        <button id="btnSubmit" type="submit" name="submit" class="btn btn-primary btn-sm">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@if (Model.HistoryList != null && Model.HistoryList.Count > 0)
+{
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="row col-md-8">
+            <div class="table-responsive">
+                <h3 class="text-info font-weight-bold text-center">Request History</h3>
+                <br />
+                <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                    <thead class="bg-primary-800">
+                        <tr>
+                            <th width="5%" class="text-center">#</th>
+                            <th width="12%">User Type</th>
+                            <th width="20%">User Name</th>
+                            <th>Remarks</th>
+                            <th width="15%">Status</th>
+                            <th width="20%">TDate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.HistoryList)
+                        {
+                            <tr>
+                                <td class="text-center">@item.SrNo</td>
+                                <td>@item.UserType</td>
+                                <td>@item.EmpName</td>
+                                <td>@item.Remarks</td>
+                                <td>@item.StatusDescr</td>
+                                <td>@item.TDate</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+}
+
+@section ScriptsBlock {
+    @*<script src="~/js/select.js"></script>*@
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script>
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!CheckValidValue()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+
+        $(document).ready(function () {
+            $('.select2').select2();
+            runDatePicker();
+            FillForm();
+        });
+
+        var controls = {
+            leftArrow: '<i class="fal fa-angle-left" style="font-size: 1.25rem"></i>',
+            rightArrow: '<i class="fal fa-angle-right" style="font-size: 1.25rem"></i>'
+        }
+        var runDatePicker = function () {
+            $('#Date1, #Date2').datepicker({
+                todayHighlight: true,
+                orientation: "bottom left",
+                templates: controls,
+                autoclose: true
+            });
+        }
+        function BindHelpDeskSubCatg() {
+            $("#SubCatg").empty();
+            var catg = $("#ProbCatg :selected").val();
+            $.ajax({
+                url: '/IT/BindHelpDeskSubCatg',
+                type: "POST",
+                data: { catg: catg },
+                success: function (data, status) {
+                    $.each(data, function (index, item) {
+                        $("#SubCatg").append($("<option></option>").val(item.value).html(item.text));
+                    });
+                },
+                error: function () {
+                },
+            });
+        }
+
+        function UploadFile() {
+            var doc = document.getElementById("DocName");
+            var fileMsg = document.getElementById('FileErrorMsg');
+            fileMsg.textContent = '';
+            if (doc.files[0].size > 200000) {
+                fileMsg.textContent = 'File Size must be under 200 KB';
+                doc.value = "";
+                return;
+            }
+            var ext = $('#DocName').val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['txt', 'doc', 'docx', 'xls', 'xlsx', 'pdf', 'jpg', 'jpeg', 'png']) == -1) {
+                fileMsg.textContent = 'Invalid Extension';
+                $('#DocName').val('');
+            }
+        }
+
+        function ShowData() {
+            var reqType = $("#Type option:selected").val();
+            $('#div_EmpName2').hide();
+            $('#div_Dept2').hide();
+            $('#div_StartTime').hide();
+            $('#div_Solution').hide();
+            $('#div_HOD').hide();
+            $('#div_Remarks').hide();
+
+            if (reqType == "New Request") {
+
+                $('#div_EmpName1').show();
+                $('#div_Email').show();
+                $('#div_Dept1').show();
+                $('#div_HOD').show();
+                $('#div_Remarks').show();
+               //$("#ProbCatg").append($("<option>UserId Creation</option>").val(item.value).html(item.text));
+            }
+            else if (reqType == "Incident") {
+                $('#div_EmpName1').show();
+                $('#div_Email').show();
+                $('#div_Dept1').show();
+                $('#div_Remarks').show();
+            }
+            else if (reqType == "Task") {
+                $('#div_EmpName1').hide();
+                $('#div_Email').hide();
+                $('#div_Dept1').hide();
+                $('#div_EmpName2').show();
+                $('#div_Dept2').show();
+                $('#div_StartTime').show();
+                $('#div_Solution').show();
+            }
+            else {
+                $('#div_EmpName2').hide();
+                $('#div_Dept2').hide();
+                $('#div_StartTime').hide();
+                $('#div_Solution').hide();
+                $('#div_HOD').hide();
+                $('#div_Remarks').hide();
+            }
+        }
+
+        function CheckValidValue() {
+            var reqType = $("#Type option:selected").val();
+            if (reqType == "New Request") {
+                if ($('#DeptHOD').val() == '') {
+                    Swal.fire("Info!", "Select Approver", "error");
+                    return false;
+                }
+            }
+            if (reqType == "Task") {
+                if ($('#Solution').val() == '') {
+                    Swal.fire("Info!", "Enter Solution", "error");
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function FillForm() {
+        if ("@Mode" == "E") {
+            $("#btnSubmit").show();
+
+            if ("@Model.Type" == 'New Request') {
+                $('#div_HOD').show();
+                $('#div_Remarks').show();
+            }
+            else if ("@Model.Type" == "Incident") {
+                $('#div_Remarks').show();
+            }
+            else if ("@Model.Type" == "Task") {
+                $('#div_EmpName1').hide();
+                $('#div_Email').hide();
+                $('#div_Dept1').hide();
+                $('#div_EmpName2').show();
+                $('#div_Dept2').show();
+                $('#div_StartTime').show();
+                $('#div_Solution').show();
+
+                @* If it is a task then Not allowed to change Request Type *@
+                $(".rdbutton").prop("disabled", true);
+                $("#DeptCode2").prop("disabled", true);
+                $("#EmpName2").prop("disabled", true);
+                $("#ContactNo").prop("disabled", true);
+                $("#ExtNo").prop("disabled", true);
+                $("#Type").prop("disabled", true);
+                $("#ProbCatg").prop("disabled", true);
+                $("#SubCatg").prop("disabled", true);
+                $("#DocName").prop("disabled", true);
+                $("#Date1").prop("disabled", true);
+                $("#Param1").prop("disabled", true);
+                $("#Date2").prop("disabled", true);
+                $("#Param2").prop("disabled", true);
+                $("#Subject").prop("disabled", true);
+                $("#Descr1").prop("disabled", true);
+                $("#Solution").prop("disabled", true);
+                $("#btnSubmit").hide();
+            }
+        }
+        else {
+            $("#btnSubmit").hide();
+        }
+    }
+
+    </script>
+}

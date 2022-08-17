@@ -1,0 +1,411 @@
+﻿@model eConnectV2.ViewModels.QualityViewModel
+@{
+    ViewData["PageHeading"] = "DCN Add";
+    ViewData["Title"] = "DCN Add";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var Mode = ViewBag.TagAttribute;
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+}
+
+<div class="panel">
+    <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+        <a id="btn_backtoList" style="color:#fff" href="@Url.Action("DCNView", "Quality")" title="Back">
+            <i class="fa fa-angle-double-left"></i> Back
+        </a>
+        <h2 class="justify-content-center">
+            <span class="fw-300 pr-1">Add  </span> DCN
+        </h2>
+    </div>
+    <div class="panel-container show">
+        
+            @using (Html.BeginForm("DCNAdd", "Quality", FormMethod.Post, new { id = "myform", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+            {
+        <div class="panel-content">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Request No</label>
+                            <span class="col-sm-8 col-form-label text-info">@Model.RequestNo</span>
+                            <input asp-for="RequestNo" value="@Model.RequestNo" hidden />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Requestor</label>
+                            <span class="col-sm-8 text-info font-weight-normal pt-2">@Model.EmpCode - @Model.EmpName</span>
+                            <input asp-for="EmpCode" value="@Model.EmpCode" hidden />
+                            <input asp-for="EmpName" value="@Model.EmpName" hidden />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 font-weight-bold">Request Type<span class="text-danger ml-1 view">*</span></label>
+                            <div class="col-sm-8">
+                                <div class="form-check form-check-inline row">
+                                    <input id="type1" asp-for="Type" class="form-check-input rdbutton" type="radio" value="Create" checked="checked">
+                                    <label for="type1" class="form-check-label text-success font-weight-bold mr-2">Create</label>
+                                    <input id="type2" asp-for="Type" class="form-check-input rdbutton" type="radio" value="Revise/Change">
+                                    <label for="type2" class="form-check-label text-info font-weight-bold mr-2">Revise/Change</label>
+                                    <input id="type3" asp-for="Type" class="form-check-input rdbutton" type="radio" value="Obsolete">
+                                    <label for="type3" class="form-check-label text-danger font-weight-bold mr-2">Obsolete</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Request Date</label>
+                            <span class="col-sm-8 col-form-label text-info font-weight-normal">@Model.TDate</span>
+                            <input asp-for="TDate" value="@Model.TDate" hidden />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Department</label>
+                            <span class="col-sm-8 col-form-label text-info">@Model.DeptName</span>
+                            <input asp-for="DeptCode" value="@Model.DeptCode" hidden />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Reason<span class="text-danger ml-1 view">*</span></label>
+                            <div class="col-sm-8">
+                                <div class="form-check form-check-inline row">
+                                    <input id="Reason1" asp-for="Reason" class="form-check-input rdbutton" type="radio" value="CorrectiveAction" checked="checked">
+                                    <label for="Reason1" class="form-check-label text-warning font-weight-bold mr-2">Corrective Action</label>
+                                    <input id="Reason2" asp-for="Reason" class="form-check-input rdbutton" type="radio" value="Improvement/Change">
+                                    <label for="Reason2" class="form-check-label text-secondary font-weight-bold mr-2">Improvement/Change</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Effective Date<span class="text-danger ml-1 view">*</span></label>
+                            <div class="col-sm-7">
+                                <input asp-for="Date1" class="form-control" type="text" autocomplete="off" placeholder="dd-mmm-yyyy" data-date-format="dd-M-yyyy" required />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">HOD<span class="text-danger ml-1 view">*</span></label>
+                            <div class="col-sm-7">
+                                <select asp-for="DeptHOD" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.EmployeeList, "Value", "Text"))" required>
+                                    <option value="">-- Select --</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">File Upload</label>
+                            <div class="col-sm-8">
+                                <div class="custom-file">
+                                    @if (Mode == "E")
+                                    {
+                                        <input asp-for="File_Name" type="file" class="custom-file-input" onchange="UploadFile()" />
+                                        <label class="custom-file-label">Choose file</label>
+                                        <span id="FileErrorMsg" class="text-danger"></span>
+                                    }
+                                    @if (Model.File_Name != "")
+                                    {
+                                        <div class="col-sm-6 pt-2">
+                                            <a title='Download' href='@Url.Action("DownloadDCNFile", "Quality", new { fileName = @Model.File_Name })'>@Model.File_Name</a>
+                                            <input asp-for="Param1" value="@Model.File_Name" hidden />
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        @if (Model.RequestNo > 0)
+                                        {
+                                            <div class="col-sm-6 pt-2">
+                                                <label class="font-weight-bold">NA</label>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-3">
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold">Doc No<span class="text-danger ml-1 view">*</span></label>
+                            <div class="col-sm-8">
+                                <textarea asp-for="DocNo" class="form-control" type="text" rows="3"  autocomplete="off" required> </textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label font-weight-bold">Doc Name<span class="text-danger ml-1 view">*</span></label>
+                            <div class="col-sm-8">
+                                <textarea asp-for="DocName" class="form-control" type="text" rows="3"  autocomplete="off" required> </textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-md-8 row">
+                        <label class="col-sm-2 col-form-label font-weight-bold">Changes Done<span class="text-danger ml-1 view">*</span></label>
+                        <div class="col-sm-10">
+                            <textarea asp-for="DocChanges" class="form-control" type="text" rows="3"  autocomplete="off" required> </textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-md-12 row">
+                        <label class="col-sm-4 col-form-label font-weight-bold">SIPOC, OP, &/or Format of originating department as well as any other department should be evaluated for change(s) arising because of above change.</label>
+                        <div class="col-sm-8">
+                            <div class="form-check form-check-inline row">
+                                <input id="Change1" asp-for="ChangeRequireIn" class="form-check-input rdbutton" type="radio" value="None" checked="checked" onchange="ShowData(this)">
+                                <label for="Change1" class="form-check-label text-info font-weight-bold mr-2">None</label>
+                                <input id="Change2" asp-for="ChangeRequireIn" class="form-check-input rdbutton" type="radio" value="QSM" onchange="ShowData(this)">
+                                <label for="Change2" class="form-check-label text-success font-weight-bold mr-2">QSM</label>
+                                <input id="Change3" asp-for="ChangeRequireIn" class="form-check-input rdbutton" type="radio" value="QPM" onchange="ShowData(this)">
+                                <label for="Change3" class="form-check-label text-info font-weight-bold mr-2">QPM</label>
+                                <input id="Change4" asp-for="ChangeRequireIn" class="form-check-input rdbutton" type="radio" value="OP" onchange="ShowData(this)">
+                                <label for="Change4" class="form-check-label text-success font-weight-bold mr-2">OP</label>
+                                <input id="Change5" asp-for="ChangeRequireIn" class="form-check-input rdbutton" type="radio" value="Format" onchange="ShowData(this)">
+                                <label for="Change5" class="form-check-label text-info font-weight-bold mr-2">Format</label>
+                                <input id="Change6" asp-for="ChangeRequireIn" class="form-check-input rdbutton" type="radio" value="Other" onchange="ShowData(this)">
+                                <label for="Change6" class="form-check-label text-info font-weight-bold mr-2">Any other document</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="divChangeRequireIn" class="row pt-2" style="display:none">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label font-weight-bold">Doc No<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-10">
+                                        <textarea asp-for="ChangeDocNo" class="form-control-alternate" type="text" rows="3" autocomplete="off"> </textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-2">
+                            <div class="col-md-8">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label font-weight-bold">Doc Name<span class="text-danger ml-1 view">*</span></label>
+                                    <div class="col-sm-10">
+                                        <textarea asp-for="ChangeDocName" class="form-control-alternate" type="text" rows="3" autocomplete="off"> </textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-md-8">
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label font-weight-bold"></label>
+                            <div class="col-sm-10">
+                                <button id="btnSubmit" type="submit" class="btn btn-primary btn-sm">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    </div>
+</div>
+@if (Model.HistoryList != null && Model.HistoryList.Count > 0)
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-center">
+                <div class="col-md-10">
+                    <h3 class="text-info font-weight-bold text-center">Approval History</h3>
+                    <div class="table-responsive">
+                        <table class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                            <thead class="bg-primary-800">
+                                <tr>
+                                    <th width="5%" class="text-center">#</th>
+                                    <th width="12%">User Type</th>
+                                    <th width="20%">User Name</th>
+                                    <th>Remarks</th>
+                                    <th width="15%">Status</th>
+                                    <th width="20%">TDate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.HistoryList)
+                                {
+                                    <tr>
+                                        <td class="text-center">
+                                            @item.SrNo
+                                        </td>
+                                        <td>
+                                            @item.UserType
+                                        </td>
+                                        <td>
+                                            @item.UserID - @item.EmpName
+                                        </td>
+                                        <td>
+                                            @item.Remarks
+                                        </td>
+                                        <td>
+                                            @item.StatusDescr
+                                        </td>
+                                        <td>
+                                            @item.TDate
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@section ScriptsBlock {
+    @*<script src="~/js/select.js"></script>*@
+    @*<script src="~/js/defaultformvalidate.js"></script>*@
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script>
+
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!CheckValidValue()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        //if (!CheckWeightage()) {
+                        //    event.preventDefault();
+                        //    event.stopPropagation();
+                        //}
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+
+
+        //var changeRequireIn_Selected = '';
+
+        $(document).ready(function () {
+            $('.select2').select2();
+            FillForm();
+            runDatePicker();
+        });
+
+        var controls = {
+            leftArrow: '<i class="fal fa-angle-left" style="font-size: 1.25rem"></i>',
+            rightArrow: '<i class="fal fa-angle-right" style="font-size: 1.25rem"></i>'
+        }
+        var runDatePicker = function () {
+            $('#Date1').datepicker({
+                todayHighlight: true,
+                orientation: "bottom left",
+                templates: controls,
+                autoclose: true,
+                startDate: '-0d',
+                changeMonth: true
+            });
+        }
+
+        //function ChangeReqIn_Change(radio) {
+        //    changeRequireIn_Selected = radio.value;
+        //    if (changeRequireIn_Selected == 'None') {
+        //        $('#divChangeRequireIn').hide();
+        //        $('#ChangeDocNo').val('');
+        //        $('#ChangeDocName').val('');
+        //    }
+        //    else {
+        //        $('#divChangeRequireIn').show();
+        //    }
+        //};
+
+
+        function ShowData(radio) {
+            if (radio.value == "QSM" || radio.value == "QPM" || radio.value == "OP" || radio.value == "Format" || radio.value == "Other" ) {
+                $('#divChangeRequireIn').show();
+            }
+            else {
+                $('#divChangeRequireIn').hide();
+            }
+        }
+
+        function FillForm()
+        {
+            if ("@Model.ChangeRequireIn" == 'None' || "@Model.ChangeRequireIn" == '')
+            {
+                $('#divChangeRequireIn').hide();
+            }
+            else
+            {
+                $('#divChangeRequireIn').show();
+            }
+            if ("@Mode" == "V")
+            {
+                $(".rdbutton").prop("disabled", true);
+                $("#Date1").prop("disabled", true);
+                $("#DeptHOD").prop("disabled", true);
+                $("#DocNo").prop("disabled", true);
+                $("#DocName").prop("disabled", true);
+                $("#DocChanges").prop("disabled", true);
+                $("#ChangeDocNo").prop("disabled", true);
+                $("#ChangeDocName").prop("disabled", true);
+                $("#btnSubmit").hide();
+            }
+        };
+
+        function UploadFile() {
+            var doc = document.getElementById("File_Name");
+            var fileMsg = document.getElementById('FileErrorMsg');
+            fileMsg.textContent = '';
+            if (doc.files[0].size > 200000) {
+                fileMsg.textContent = 'File Size must be under 200 KB';
+                doc.value = "";
+                return;
+            }
+            var ext = $('#File_Name').val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['txt', 'doc', 'docx', 'xls', 'xlsx', 'pdf', 'jpg', 'jpeg', 'png']) == -1) {
+                fileMsg.textContent = 'Invalid Extension - Only .pdf format allowed';
+                $('#File_Name').val('');
+            }
+        }
+     
+                function CheckValidValue() {
+                    var value = $('[name="ChangeRequireIn"]:radio:checked').val();
+                    if (value == "QSM" || value == "QPM" || value == "OP" || value == "Format" || value == "Other" ) {
+                        if ($('#ChangeDocNo').val() == '') {
+                            Swal.fire("Info!", "Enter DocNo Details", "error");
+                            return false;
+                        }
+                        if ($('#ChangeDocName').val() == '') {
+                            Swal.fire("Info!", "Enter DocName Details", "error");
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+
+    </script>
+}

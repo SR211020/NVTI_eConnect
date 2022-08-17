@@ -1,0 +1,381 @@
+﻿@model eConnectV2.ViewModels.BISViewModel
+@{
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewData["Title"] = "UPPH Dashboard - Manual";
+    ViewData["HeaderTitle"] = "UPPH Dashboard (" + @Model.Plant + ")";
+    ViewData["URL"] = Url.Action("Dashboard", "Home");
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+}
+<div class="panel">
+    <div class="row ml-1 pt-2">
+        <table style="width:99%">
+            <tr>
+                <td align="left" valign="top" style="width:16%">
+                    <select asp-for="LineNo" class="select2 custom-select w-100" required asp-items="@(new SelectList(Model.LineNoList, "Value", "Text"))">
+                        <option value="">-- Select --</option>
+                    </select>
+                    <span id="Plant" hidden>@Model.Plant</span>
+                    <input asp-for="FromTime" type="hidden" value="" />
+                    <input asp-for="ToTime" type="hidden" value="" />
+                    <input asp-for="Variance1" type="hidden" value="" />
+                    <input asp-for="Variance2" type="hidden" value="" />
+                    <input asp-for="Variance3" type="hidden" value="" />
+                    <input asp-for="Variance4" type="hidden" value="" />
+                    <input asp-for="Variance5" type="hidden" value="" />
+                    <input asp-for="Variance6" type="hidden" value="" />
+                    <input asp-for="Variance7" type="hidden" value="" />
+                    <input asp-for="Variance8" type="hidden" value="" />
+                </td>
+                <td align="left" valign="top" style="width:16%; padding-left:1%">
+                    <div class="input-group">
+                        <input asp-for="UpphDate" autocomplete="off" class="form-control datepickertext" type="text" placeholder="dd-mmm-yyyy" required data-date-format="dd-M-yyyy" />
+                        <div class="input-group-append">
+                            <span class="input-group-text fs-xl">
+                                <i class="fal fa-calendar-alt"></i>
+                            </span>
+                        </div>
+                    </div>
+                </td>
+                <td align="left" valign="top" style="width:16%; padding-left:1%">
+                    <div class="alert alert-primary alert-dismissible fade show fs-xxl p-0 pl-2">
+                        <strong>
+                            Plan
+                            <span id="Plan" class="bg-warning float-right p-0 pl-2 pr-2">0</span>
+                        </strong>
+                    </div>
+                </td>
+                <td align="left" valign="top" style="width:17%; padding-left:1%">
+                    <div class="alert alert-primary alert-dismissible fade show fs-xxl p-0 pl-2">
+                        <strong>
+                            Std HCs
+                            <span id="StdHC" class="bg-warning float-right p-0 pl-2 pr-2">0</span>
+                        </strong>
+                    </div>
+                </td>
+                <td align="left" valign="top" style="width:17%; padding-left:1%">
+                    <div class="alert alert-primary alert-dismissible fade show fs-xxl p-0 pl-2">
+                        <strong>
+                            UPH Tgt
+                            <span id="UphTarget" class="bg-warning float-right p-0 pl-2 pr-2">0</span>
+                        </strong>
+                    </div>
+                </td>
+                <td align="left" valign="top" style="padding-left:1%">
+                    <button type="button" class="btn btn-block btn-warning waves-effect waves-themed fs-xxl p-0">
+                        <strong>
+                            Difference
+                            <span id="Difference" class="bg-warning float-right p-0 pl-2 pr-2">0</span>
+                        </strong>
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td align="left" valign="top">
+                    <button type="button" class="btn btn-block btn-secondary waves-effect waves-themed fs-xxl p-0">
+                        <span id="ModelName" class="text-white font-weight-bolder"></span>
+                    </button>
+                </td>
+                <td align="left" valign="top" style="padding-left:1%">
+                    <select asp-for="Shift" class="select2 custom-select form-control w-100" required asp-items="@(new SelectList(Model.ShiftList, "Value", "Text"))">
+                    </select>
+                </td>
+                <td align="left" valign="top" style="padding-left:1%">
+                    <div class="alert alert-primary alert-dismissible fade show fs-xxl p-0 pl-2">
+                        <strong>
+                            Actual
+                            <span id="Actual" class="bg-warning float-right p-0 pl-2 pr-2">0</span>
+                        </strong>
+                    </div>
+                </td>
+                <td align="left" valign="top" style="padding-left:1%">
+                    <div class="alert alert-primary alert-dismissible fade show fs-xxl p-0 pl-2">
+                        <strong>
+                            Actual HCs
+                            <span id="ActualHC" class="bg-warning float-right p-0 pl-2 pr-2">0</span>
+                        </strong>
+                    </div>
+                </td>
+                <td align="left" valign="top" style="padding-left:1%">
+                    <div class="alert alert-primary alert-dismissible fade show fs-xxl p-0 pl-2">
+                        <strong>
+                            UPPH Tgt
+                            <span id="UpphTarget" class="bg-warning float-right p-0 pl-2 pr-2">0</span>
+                        </strong>
+                    </div>
+                </td>
+                <td align="left" valign="top" style="padding-left:1%">
+                    <a href="javascript:void(0)" class="btn btn-block btn-default waves-effect waves-themed fs-xxl p-0" onclick="GetData()">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh
+                    </a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="panel">
+    <div class="row">
+        <div class="col-md-12">
+            <table id="tbl_UPPH" border="1" style="width:100%; border-color:#E9E9E9;color:#000">
+                <thead class="thead-themed">
+                    <tr class="bd-highlight tbl_heading">
+                        <th class="text-center">Time</th>
+                        <th class="text-center">OCV</th>
+                        <th class="text-center">Linking</th>
+                        <th class="text-center">Pack Size</th>
+                        <th class="text-center">FT</th>
+                        <th class="text-center">Packing</th>
+                        <th class="text-center">UPH</th>
+                        <th class="text-center">UPPH</th>
+                    </tr>
+                </thead>
+                <tbody class='text-nowrap'>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock
+{
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script>
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        //// Bind Controls ////
+        $(document).ready(function () {
+            $(function () {
+                $('.select2').select2();
+                runDatePicker();
+            });
+            var controls = {
+                leftArrow: '<i class="fal fa-angle-left" style="font-size: 1.25rem"></i>',
+                rightArrow: '<i class="fal fa-angle-right" style="font-size: 1.25rem"></i>'
+            }
+            const dt = new Date();
+            var runDatePicker = function () {
+                $('#UpphDate').datepicker({
+                    todayHighlight: true,
+                    orientation: "bottom left",
+                    templates: controls,
+                    autoclose: true
+                });
+            }
+            $('#UpphDate').val(String("0" + dt.getDate()).slice(-2) + '-' + monthNames[dt.getMonth()] + '-' + dt.getFullYear());
+
+            FillLines();
+            $('#LineNo').on('select2:select', function (e) {
+                $("#ModelName").text(e.params.data.id);
+                BindPlanByLineAndShift(e.params.data.text, $("#Shift option:selected").text());
+            });
+            $('#Shift').on('select2:select', function (e) {
+                $("#ModelName").text($('#LineNo').val());
+                BindPlanByLineAndShift($("#LineNo option:selected").text(), e.params.data.text);
+            });
+        });
+
+        //// Fill Line No ////
+        function FillLines() {
+            var requestUrl = 'BIS/FillLineForUPPH';
+            $.post(requestUrl,
+                {
+                    plant: $('#Plant').text(),
+                    division: 'PACK'
+                },
+                function (data) {
+                    $.each(data.lineNoList, function (index, item) {
+                        $("#LineNo").append($("<option></option>").val(item.value).html(item.text));
+                    });
+                });
+        }
+
+        //// Fill Model By Line No ////
+        function BindPlanByLineAndShift(LineNo, Shift) {
+            var requestUrl = 'BIS/GetPlan';
+            $.post(requestUrl,
+                {
+                    plant: $('#Plant').text(),
+                    lineNo: LineNo,
+                    shift: Shift
+                },
+                function (model) {
+                    $("#StdHC").text(model.stdHC);
+                    $("#ActualHC").text(model.actualHC);
+                    $("#UpphTarget").text(model.upphTarget);
+                    $("#UphTarget").text(model.uphTarget);
+                    $("#Plan").text(model.plan);
+                    $("#FromTime").val(model.fromTime);
+                    $("#ToTime").val(model.toTime);
+                    $("#Variance1").val(model.variance1);
+                    $("#Variance2").val(model.variance2);
+                    $("#Variance3").val(model.variance3);
+                    $("#Variance4").val(model.variance4);
+                    $("#Variance5").val(model.variance5);
+                    $("#Variance6").val(model.variance6);
+                    $("#Variance7").val(model.variance7);
+                    $("#Variance8").val(model.variance8);
+                });
+        }
+
+        //// Invoke Refresh to get UPPH Data ////
+        function GetData() {
+            if ($('#LineNo').val() == 0) {
+                Swal.fire("Select Line No", "", "error");
+            }
+            else if ($('#ModelName').text() == "") {
+                Swal.fire("Select Model", "", "error");
+            }
+            else if ($('#ActualHC').text() == "" || $('#ActualHC').text() == 0) {
+                Swal.fire("Actual Head Count is null", "", "error");
+            }
+            else {
+                FillUPPHData();
+            }
+        }
+
+        //// Fill UPPH Data ////
+        function FillUPPHData() {
+            var lineNoVal = $("#LineNo option:selected").text();
+            var shiftVal = $("#Shift option:selected").text()
+            var actualHCVal = $('#ActualHC').text();
+
+            if (lineNoVal != null && shiftVal != null && actualHCVal != null) {
+                var requestUrl = 'BIS/GetBatteryUPPHHourly';
+                $.post(requestUrl,
+                    {
+                        plant: $('#Plant').text(),
+                        lineNo: lineNoVal,
+                        upphDate: $('#UpphDate').val(),
+                        shift: shiftVal,
+                        fromTime: $('#FromTime').val(),
+                        toTime: $("#ToTime").val()
+                    },
+
+                    function (data) {
+                        $('#tbl_UPPH tbody').empty();
+                        var row = "";
+                        var count = 0;
+                        var cellCountTotal = 0;
+                        var mappingCountTotal = 0;
+                        var packSizeCountTotal = 0;
+                        var ftCountTotal = 0;
+                        var packingCountTotal = 0;
+                        var startDt = "";
+                        var endDt = "";
+
+                        $.each(data, function (index, item) {
+                            count = count + 1;
+                            if (count == 1) {
+                                startDt = new Date(item.fromTime);
+                            }
+                            endDt = new Date(item.toTime);
+
+                            cellCountTotal += item.cellCount;
+                            mappingCountTotal += item.mappingCount;
+                            packSizeCountTotal += item.packSizeCount;
+                            ftCountTotal += item.ftCount;
+                            packingCountTotal += item.packingCount;
+
+                            row += "<tr class='tbl_heading'>";
+                            row += "<td class='text-center'>" + (item.fromTime).split(" ")[1] + "  -  " + (item.toTime).split(" ")[1] + "</td>";
+                            row += "<td class='text-center'>" + item.cellCount + "</td>";
+                            row += "<td class='text-center'>" + item.mappingCount + "</td>";
+                            row += "<td class='text-center'>" + item.packSizeCount + "</td>";
+                            row += "<td class='text-center'>" + item.ftCount + "</td>";
+                            row += "<td class='text-center'>" + item.packingCount + "</td>";
+                            row += "<td class='text-center'>" + item.packingCount + "</td>";
+                            row += "<td class='text-center'>" + parseFloat(item.packingCount / actualHCVal).toFixed(2) + "</td>";
+                            row += "</tr>";
+                        });
+                        if (count == 0) {
+                            row += "<tr class='no-records-found text-left text-info'><td colspan='19'>No record found</td></tr>";
+                        }
+                        else {
+                            row += "<tr class='bd-highlight tbl_footer'>";
+                            row += "<td class='text-center'>Total</td>";
+                            row += "<td class='text-center'>" + cellCountTotal + "</td>";
+                            row += "<td class='text-center'>" + mappingCountTotal + "</td>";
+                            row += "<td class='text-center'>" + packSizeCountTotal + "</td>";
+                            row += "<td class='text-center'>" + ftCountTotal + "</td>";
+                            row += "<td class='text-center'>" + packingCountTotal + "</td>";
+
+                            var timeVariance = 0;
+
+                            if (count == 1) {
+                                timeVariance = $("#Variance1").val();
+                            }
+                            else if (count == 2) {
+                                timeVariance = parseFloat($("#Variance1").val()) + parseFloat($("#Variance2").val());
+                            }
+                            else if (count == 3) {
+                                timeVariance = parseFloat($("#Variance1").val()) + parseFloat($("#Variance2").val()) + parseFloat($("#Variance3").val());
+                            }
+                            else if (count == 4) {
+                                timeVariance = parseFloat($("#Variance1").val()) + parseFloat($("#Variance2").val()) + parseFloat($("#Variance3").val()) + parseFloat($("#Variance4").val());
+                            }
+                            else if (count == 5) {
+                                timeVariance = parseFloat($("#Variance1").val()) + parseFloat($("#Variance2").val()) + parseFloat($("#Variance3").val()) + parseFloat($("#Variance4").val()) + parseFloat($("#Variance5").val());
+                            }
+                            else if (count == 6) {
+                                timeVariance = parseFloat($("#Variance1").val()) + parseFloat($("#Variance2").val()) + parseFloat($("#Variance3").val()) + parseFloat($("#Variance4").val())
+                                    + parseFloat($("#Variance5").val()) + parseFloat($("#Variance6").val());
+                            }
+                            else if (count == 7) {
+                                timeVariance = parseFloat($("#Variance1").val()) + parseFloat($("#Variance2").val()) + parseFloat($("#Variance3").val()) + parseFloat($("#Variance4").val())
+                                    + parseFloat($("#Variance5").val()) + parseFloat($("#Variance6").val()) + parseFloat($("#Variance7").val());
+                            }
+                            else if (count >= 8) {
+                                timeVariance = parseFloat($("#Variance1").val()) + parseFloat($("#Variance2").val()) + parseFloat($("#Variance3").val()) + parseFloat($("#Variance4").val())
+                                    + parseFloat($("#Variance5").val()) + parseFloat($("#Variance6").val()) + parseFloat($("#Variance7").val()) + parseFloat($("#Variance8").val());
+                            }
+
+                            var totalHours = parseFloat(((endDt - startDt) / 60000 - timeVariance) / 60).toFixed(3);
+
+                            if (Math.round(packingCountTotal / totalHours, 0) >= $("#UphTarget").text()) {
+                                row += "<td align='center' style='color: green; font - weight: bolder'>" + Math.round(packingCountTotal / totalHours, 0) + "</td>";
+                            }
+                            else {
+                                row += "<td align='center' style='color: red; font - weight: bolder'>" + Math.round(packingCountTotal / totalHours, 0) + "</td>";
+                            }
+                            if (parseFloat(packingCountTotal / actualHCVal / totalHours) >= $("#UpphTarget").text()) {
+                                row += "<td align='center' style='color: green; font - weight: bolder'>" + parseFloat((packingCountTotal / actualHCVal / totalHours)).toFixed(2) + "</td>";
+                            }
+                            else {
+                                row += "<td align='center' style='color: red; font - weight: bolder'>" + parseFloat((packingCountTotal / actualHCVal / totalHours)).toFixed(2) + "</td>";
+                            }
+                            row += "</tr>";
+                        }
+                        $("#tbl_UPPH tbody").html(row);
+                        $("#Actual").text(packingCountTotal);
+                        $("#Difference").text(cellCountTotal - packingCountTotal);
+                    });
+            }
+        }
+    </script>
+    <style>
+        .tbl_heading {
+            font-size: 36px;
+            font-weight: 500;
+        }
+
+        .tbl_footer {
+            font-size: 38px;
+            font-weight: 900;
+        }
+
+        .select2-selection__rendered {
+            font-size: 18px;
+            line-height: 1.3;
+            font-weight: bolder;
+        }
+
+        .datepickertext {
+            font-size: 18px;
+            line-height: 1.3;
+            font-weight: bolder;
+        }
+    </style>
+}

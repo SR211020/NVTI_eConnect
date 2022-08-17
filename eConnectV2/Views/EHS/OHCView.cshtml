@@ -1,0 +1,625 @@
+﻿@model eConnectV2.ViewModels.EHSViewModel
+@{
+    ViewData["Title"] = "OHC View";
+    ViewData["PageHeading"] = "OHC List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section HeadBlock {
+    <link href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css" rel="stylesheet" />
+    <link rel="stylesheet" media="screen, print" href="~/css/statistics/c3/c3.css">
+    <link href="~/css/statistics/c3/c3.css" rel="stylesheet" />
+    <link rel="stylesheet" media="screen, print" href="~/css/statistics/chartjs/chartjs.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/statistics/chartist/chartist.css">
+    <link href="~/css/statistics/chartjs/chartjs.css" rel="stylesheet" />
+
+}
+
+<div class="alert bg-primary-200 text-white" role="alert">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="col-md-12 align-self-center">
+                    <a class="btn btn-warning pt-1" title="Add" onclick="window.location='@Url.Action("OHCAdd","EHS")'" style="height:25px">
+                        <i class="fas fa-plus mr-1"></i>Add
+                    </a>
+                </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label font-weight-bold">From Date</label>
+                <div class="col-sm-6">
+                    <input asp-for="Date1" onchange="FillData();" autocomplete="off" class="form-control datepickertext" type="text" required data-date-format="dd-M-yyyy" />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label font-weight-bold">To Date</label>
+                <div class="col-sm-6">
+                    <input asp-for="Date2" onchange="FillData();" autocomplete="off" class="form-control datepickertext" type="text" required data-date-format="dd-M-yyyy" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="div_Chart1">
+    <div class="col-md-6" >
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr bg-gray-100">
+                <table class="w-100">
+                    <tr>
+                        <td>
+                            <h2 class="pl-3">
+                                Day Wise Details
+                            </h2>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content bg-gray pt-4 pb-5">
+                    <div id="DayWiseChart">
+                        <canvas style="width:100%; height:300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr bg-gray-100">
+                <table class="w-100">
+                    <tr>
+                        <td>
+                            <h2 class="pl-3">
+                                Patient Condition Wise Details
+                            </h2>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content bg-gray pt-4 pb-5">
+                    <div id="ConditionWiseChart">
+                        <canvas style="width:100%; height:300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="div_Chart2">
+    <div class="col-md-6">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr bg-gray-100">
+                <table class="w-100">
+                    <tr>
+                        <td>
+                            <h2 class="pl-3">
+                                Injury Wise Chart
+                            </h2>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="panel-container show">
+                <br />
+                <div id="InjuryWiseChart" style="width:100%; height:300px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div id="panel-1-1" class="panel">
+            <div class="panel-hdr bg-gray-100">
+                <table class="w-100">
+                    <tr>
+                        <td>
+                            <h2 class="pl-3">
+                                Department Wise Chart
+                            </h2>
+                        </td>
+
+                    </tr>
+                </table>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content bg-gray">
+                    <div id="DeptWiseChart">
+                        <canvas style="width:100%; height:300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div id="panel-3" class="panel p-2">
+    <div class="panel-container show">
+        <div class="row">
+            <div class="col-md-12 row">
+                <div class="col-md-2 align-self-center">
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel-content">
+                    <div class="table-responsive">
+                        <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                            <thead class="bg-primary-800">
+                                <tr>
+                                    <th class="notexport text-center" width="5%">Action</th>
+                                    <th class="text-center">Reg. No</th>
+                                    <th>Emp Code</th>
+                                    <th>Emp Name</th>
+                                    <th>Department</th>
+                                    <th>Aadhar No</th>
+                                    <th>Patient Condition</th>
+                                    <th>Injury</th>
+                                    <th>Injury Type</th>
+                                    <th>Injury Type Other</th>
+                                    <th>Nurshing Staff</th>
+                                    <th>Medicine</th>
+                                    <th>Rest Given</th>
+                                    <th>Refer</th>
+                                    <th>Reporting Date</th>
+                                    <th>In Time</th>
+                                    <th>Out Time</th>
+                                    <th>Treatment</th>
+                                    <th>Remark</th>
+                                    <th>User Id</th>
+                                    <th>TDate</th>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section ScriptsBlock {
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/rowdelete.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/js/statistics/chartjs/chartjs.bundle.js"></script>
+    <script src="~/js/statistics/c3/c3.js"></script>
+    <script src="~/js/statistics/d3/d3.js"></script>
+    <script src="~/js/statistics/chartist/chartist.js"></script>
+
+    <script>
+        var colors = [color.success._500, color.danger._500, color.info._500, color.primary._500, color.warning._500];
+        var colors1 = [color.primary._500, color.warning._500, color.danger._500];
+        var colors2 = [color.primary._500, color.danger._500, color.warning._500, color.success._500];
+        var colors3 = [color.success._500, color.danger._500, color.info._500, color.warning._500];
+        var colors4 = [color.warning._600, color.info._500, color.primary._100, color.success._500, color.danger._500, color.danger._200];
+
+        var DayWiseData = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.DayWiseData))');
+        var ConditionWiseData = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.ConditionWiseData))');
+        var InjuryWiseData = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.InjuryWiseData))');
+        var DeptWiseData = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.DeptWiseData))');
+
+        $(document).ready(function () {
+            $('.select2').select2();
+            runDatePicker();
+            DayWiseChart(DayWiseData);
+            ConditionWiseChart(ConditionWiseData);
+            InjuryWiseChart(InjuryWiseData);
+            DeptWiseChart(DeptWiseData);
+            FillData();
+            if ('@Model.UserID' != "NI00628") {
+                 $('#div_Chart1').show();
+                 $('#div_Chart2').show();
+                }
+            else {
+                 $('#div_Chart1').hide();
+                 $('#div_Chart2').hide();
+            }
+
+        });
+
+        function FillData() {
+            GetDayWiseData();
+            GetConditionWiseData();
+            GetInjuryWiseData();
+            GetDeptWiseData();
+            FillListData();
+        }
+
+        var controls = {
+            leftArrow: '<i class="fal fa-angle-left" style="font-size: 1.25rem"></i>',
+            rightArrow: '<i class="fal fa-angle-right" style="font-size: 1.25rem"></i>'
+        }
+
+        var runDatePicker = function () {
+            $('#Date1,#Date2').datepicker({
+                todayHighlight: true,
+                orientation: "bottom left",
+                templates: controls,
+                autoclose: true
+            });
+        }
+
+        function GetDayWiseData() {
+            var date1 = $('#Date1').val();
+            var date2 = $('#Date2').val();
+            var requestUrl = 'EHS/GetDayWiseData';
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                data: {date1: date1, date2: date2 },
+                success: function (response) {
+                    DayWiseChart(response);
+                },
+                DayWiseChart: function () {
+                }
+            });
+        }
+        var DayWiseChart = function (data) {
+            var x_list = [];
+            var y_list = [];
+            var total = 0;
+            if (data != null) {
+                for (i = 0; i < data.length; i++) {
+                    x_list.push(data[i].dataDate);
+                    y_list.push(data[i].total);
+                    total = total + parseInt(data[i].total);
+                }
+            }
+            var config = {
+                type: 'line',
+                data: {
+                    labels: x_list,
+                    datasets: [{
+                        label: "Patients",
+                        borderColor: '#8064a2',
+                        pointBackgroundColor: "#c00000",
+                        pointBorderColor: 'rgba(0, 0, 0, 0)',
+                        pointBorderWidth: 3,
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        data: y_list,
+                        fill: true,
+
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: false,
+                        text: '',
+                        position:'top'
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 13
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Patient Count'
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 12
+                            }
+                        }]
+                    },
+                    "hover": {
+                        "animationDuration": 0
+                    },
+                    "animation": {
+                        "duration": 1,
+                        "onComplete": function () {
+                            var chartInstance = this.chart, ctx = chartInstance.ctx;
+                            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'bottom';
+                            this.data.datasets.forEach(function (dataset, i) {
+                                var meta = chartInstance.controller.getDatasetMeta(i); meta.data.forEach(function (bar, index) {
+                                    var data = dataset.data[index];
+                                    ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                                });
+                            });
+                        }
+                    }
+                }
+            };
+            new Chart($("#DayWiseChart > canvas").get(0).getContext("2d"), config);
+        }
+
+        function GetConditionWiseData() {
+            var date1 = $('#Date1').val();
+            var date2 = $('#Date2').val();
+            var requestUrl = 'EHS/GetConditionWiseData';
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                data: {date1: date1, date2: date2 },
+                success: function (response) {
+                    ConditionWiseChart(response);
+                },
+                ConditionWiseChart: function () {
+                }
+            });
+        }
+        var ConditionWiseChart = function (data) {
+            var mild = 0, mild1 = 0;
+            var moderate = 0, moderate1 = 0;
+            var severe = 0, severe1 = 0;
+            var total = 0;
+            if (data != null) {
+                for (i = 0; i < data.length; i++) {
+                    if (data[i].type.toLowerCase() == 'mild') { mild1 = mild = data[i].total; }
+                    if (data[i].type.toLowerCase() == 'moderate') { moderate1 = moderate = data[i].total; }
+                    if (data[i].type.toLowerCase() == 'severe') { severe1 = severe = data[i].total; }
+                }
+                total = parseInt(mild) + parseInt(moderate) + parseInt(severe);
+            }
+            var donutChart = c3.generate({
+                bindto: "#ConditionWiseChart",
+                data: {
+                    columns: [
+                        ['Mild : ' + mild1, mild],
+                        ['Moderate : ' + moderate1, moderate],
+                        ["Severe : " + severe1, severe],
+                    ],
+                    type: 'donut'
+                },
+                donut: {
+                    title: "Total : " + total
+                },
+                color: {
+                    pattern: colors
+                },
+                legend: {
+                    position: 'right'
+                }
+            });
+        }
+
+        function GetInjuryWiseData() {
+            var date1 = $('#Date1').val();
+            var date2 = $('#Date2').val();
+            var requestUrl = 'EHS/GetInjuryWiseData';
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                data: { date1: date1, date2: date2 },
+                success: function (response) {
+                    InjuryWiseChart(response);
+                },
+                InjuryWiseChart: function () {
+                }
+            });
+        }
+        var InjuryWiseChart = function (data) {
+            var Injury = new Array();
+            if (data != null) {
+                for (i = 0; i < data.length; i++) {
+                    Injury[i] = new Array(data[i].type + ' : ' + data[i].total, data[i].total);
+                }
+            }
+            c3.generate({
+                bindto: "#InjuryWiseChart",
+                data: {
+                    columns: Injury,
+                    type: 'pie'
+                },
+                color: {
+                    pattern: colors4
+                },
+                legend: {
+                    position: 'right'
+                }
+            });
+        }
+
+        function GetDeptWiseData() {
+            document.getElementById("DeptWiseChart").innerHTML = '&nbsp;';
+            document.getElementById("DeptWiseChart").innerHTML = '<canvas style="width:100%; height:300px;"></canvas>';
+            var date1 = $('#Date1').val();
+            var date2 = $('#Date2').val();
+            var requestUrl = 'EHS/GetDeptWiseData';
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                data: {date1: date1, date2: date2 },
+                success: function (response) {
+                    DeptWiseChart(response);
+                },
+                DeptWiseChart: function () {
+                }
+            });
+        }
+        var DeptWiseChart = function (data) {
+            var dept_list = [];
+            var count_list = [];
+            var total = 0;
+            if (data != null) {
+                for (i = 0; i < data.length; i++) {
+                    dept_list.push(data[i].deptName);
+                    count_list.push(data[i].total);
+                    total = total + parseInt(data[i].total);
+                }
+            }
+            var barChartData = {
+                labels: dept_list,
+                    datasets: [{
+                        label: "Patients",
+                        backgroundColor: "#036fbc",
+                        borderColor: "#0f5282",
+                        borderWidth: 1,
+                        data: count_list
+                }
+                    ]
+            };
+            var config = {
+                type: 'bar',
+                data: barChartData,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                         display: true,
+                        text: 'Total Patients : ' + total,
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: false,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 13
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 13
+                            }
+                        }]
+                    },
+                    "hover": {
+                        "animationDuration": 0
+                    },
+                    "animation": {
+                        "duration": 1,
+                        "onComplete": function () {
+                            var chartInstance = this.chart, ctx = chartInstance.ctx;
+                            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'bottom';
+                            this.data.datasets.forEach(function (dataset, i) {
+                                var meta = chartInstance.controller.getDatasetMeta(i); meta.data.forEach(function (bar, index) {
+                                    var data = dataset.data[index];
+                                    ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                                });
+                            });
+                        }
+                    }
+                }
+            }
+            new Chart($("#DeptWiseChart > canvas").get(0).getContext("2d"), config);
+        }
+
+        function FillListData() {
+            var date1 = $("#Date1").val();
+            var date2 = $("#Date2").val();
+            var data1 = '';
+            $.ajax({
+                url: '/EHS/FillOHCViewList',
+                type: "POST",
+                data: { date1: date1, date2: date2 },
+                success: function (data, status) {
+                    $("#dt-hs tbody").empty();
+                    $("#dt-hs").DataTable().destroy();
+                    $.each(data, function (index, item){
+                        data1 += '<tr>';
+                        data1 += '<td class="text-center bg-primary-gradient" align="center">';
+                        data1 += '<a title="View" href="EHS/OHCAdd?Dno=' + item.param1 + '&Utp=' + item.param2 + '">';
+                        data1 += '<i class="fa fa-eye text-info mr-1" ></i ></a>';
+                        data1 += '</td>';
+                        data1 += '<td>' + item.requestNo + '</td>';
+                        data1 += '<td>' + item.empCode + '</td>';
+                        data1 += '<td>' + item.empName + '</td>';
+                        data1 += '<td>' + item.deptName + '</td>';
+                        data1 += '<td>' + item.aadharNo + '</td>';
+                        data1 += '<td>' + item.condition + '</td>';
+                        data1 += '<td>' + item.injury + '</td>';
+                        data1 += '<td>' + item.injuryType + '</td>';
+                        data1 += '<td>' + item.injuryTypeOther + '</td>';
+                        data1 += '<td>' + item.nurshingStaff + '</td>';
+                        data1 += '<td>' + item.quantity + '</td>';
+                        data1 += '<td>' + item.restGiven + '</td>';
+                        data1 += '<td>' + item.refer + '</td>';
+                        data1 += '<td>' + item.date1 + '</td>';
+                        data1 += '<td>' + item.time1 + '</td>';
+                        data1 += '<td>' + item.time2 + '</td>';
+                        data1 += '<td>' + item.treatment + '</td>';
+                        data1 += '<td>' + item.remarks + '</td>';
+                        data1 += '<td>' + item.userID + '</td>';
+                        data1 += '<td>' + item.tDate + '</td>';
+                        data1 += '</tr >';
+                    });
+                    $("#dt-hs tbody").html(data1);
+                    $('#dt-hs').dataTable({
+                        responsive: false,
+                        order: [[1, 'desc']],
+                        "columnDefs": [
+                            { "orderable": false, "targets": [0] },
+                        ],
+                        lengthChange: false,
+                        "pageLength": 20,
+                        dom:
+                            "<'row'<'col-sm-12 col-md-3 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-3 d-flex align-items-center justify-content-center'i><'col-sm-12 col-md-3 d-flex align-items-center justify-content-end'lB><'col-sm-12 col-md-3 d-flex align-items-center justify-content-end'p>>" +
+                            "<'row'<'col-sm-12'tr>>" +
+                            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                        buttons: [
+                            {
+                                extend: 'excelHtml5',
+                                text: 'Download',
+                                title: null,
+                                titleAttr: 'Download',
+                                className: 'btn-outline-dark btn-xs mr-1',
+                                exportOptions: {
+                                    columns: ':not(.notexport)'
+                                }
+                            },
+                        ]
+                    });
+                },
+                error: function () {
+                },
+            });
+        }
+    </script>
+}

@@ -1,0 +1,45 @@
+﻿@model eConnectV2.ViewModels.MiscViewModel
+@{
+    ViewData["PageHeading"] = "Application URL";
+    ViewData["Title"] = "Application URL";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="panel p-2">
+    <div class="panel-container show">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                    <thead class="bg-primary-800">
+                        <tr>
+                            <th>System Name</th>
+                            <th>Primary URL</th>
+                            <th>Secondary URL</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.RecordList != null && Model.RecordList.Count > 0)
+                        {
+                            @foreach (var item in Model.RecordList)
+                            {
+                                <tr>
+                                    <td>@item.Param1</td>
+                                    <td style="font-size:12px"><a href="@item.Param2" class="text-info">@item.Param2</a></td>
+                                    <td style="font-size:12px"><a href="@item.Param3" class="text-info">@item.Param3</a></td>
+                                    <td>@item.Remarks</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section ScriptsBlock {
+    <script src="~/js/rowdelete.js"></script>
+    <script src="~/js/datagrid/datatables/dths_excel.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+}

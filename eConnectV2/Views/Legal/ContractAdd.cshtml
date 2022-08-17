@@ -1,0 +1,429 @@
+﻿@model eConnectV2.ViewModels.LegalViewModel
+@{
+    ViewData["Title"] = "Add Contract";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "Legal";
+    ViewBag.Category1 = "Add Contract";
+    var Mode = ViewBag.TagAttribute;
+}
+@section HeadBlock {
+    <link href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css" rel="stylesheet" />
+}
+
+<div class="panel">
+    <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+        <div class="col-sm-2 panel-toolbar">
+            <a id="btn_backtoList" style="color:#fff" href="@Url.Action("ContractView", "Legal")" title="Back">
+                <i class="fa fa-angle-double-left"></i> Back
+            </a>
+        </div>
+        <div class="col-sm-8" style="text-align:center">
+            <span class="fw-300 font-weight-bold">Contract </span> Details
+        </div>
+    </div>
+    <div class="panel-container show">
+        @using (Html.BeginForm("ContractAdd", "Legal", FormMethod.Post, new { id = "form", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+        {
+            <div class="panel-content">
+                <div class="row pt-3">
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Request No</label>
+                            <div class="col-sm-8 align-self-center">
+                                <span class="col-sm-8 col-form-label text-info">@Model.DocNo</span>
+                                <input asp-for="DocNo" value="@Model.DocNo" hidden />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Contract Name<span class="text-danger ml-1 view">*</span></label>
+                            <div class="col-sm-8">
+                                <input asp-for="ContractName" type="text" class="form-control" required placeholder="Please enter Contract Name">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Contract No<span class="text-danger ml-1 view">*</span></label>
+                            <div class="col-sm-8">
+                                <input asp-for="ContractNumber" type="text" class="form-control" required placeholder="Please enter Contract Number">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Contract Value<span class="text-danger ml-1 view">*</span></label>
+                            <div class="col-sm-8">
+                                <input asp-for="ContractValue" type="text" class="form-control" required placeholder="Please enter Contract Value">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Currency<span class="text-danger ml-1 view">*</span></label>
+                            <div class="col-sm-8">
+                                <select asp-for="Currency" required class="select2 custom-select form-control w-100">
+                                    <option value="">Select</option>
+                                    <option value="INR">INR</option>
+                                    <option value="USD">USD</option>
+                                    <option value="YEN">YEN</option>
+                                    <option value="YUAN">YUAN</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Category<span class="text-danger ml-1 view">*</span></label>
+                            <div class="col-sm-8">
+                                <select asp-for="ContractCategory" required asp-items="@(new SelectList(Model.DDLCategoryList, "Value", "Text"))" class="select2 custom-select form-control w-100">
+                                    <option value="">Select</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Contract Nature<span class="text-danger ml-1 view">*</span></label>
+                            <div class="col-sm-8">
+                                <select asp-for="ContractNature" class="select2 custom-select form-control w-100" required>
+                                    <option value="">Select</option>
+                                    <option value="Normal">Normal</option>
+                                    <option value="Perpetual">Perpetual</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Vendor<span class="text-danger ml-1 view">*</span></label>
+                            <div class="col-sm-8">
+                                <input asp-for="Vendor" required class="form-control" autocomplete="off" type="text" placeholder="Please enter Vendor">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Location<span class="text-danger ml-1 view">*</span></label>
+                            <div class="col-sm-8">
+                                <select asp-for="Plant" required class="select2 custom-select form-control w-100">
+                                    <option value="">Select</option>
+                                    <option value="Bawal">Bawal</option>
+                                    <option value="Manesar">Manesar</option>
+                                    <option value="Bawal & Manesar">Bawal & Manesar</option>
+                                    <option value="Housing">Housing</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Department<span class="text-danger ml-1 view">*</span></label>
+                            <div class="col-sm-8">
+                                <select asp-for="DeptCode" required asp-items="@(new SelectList(Model.DDLDeptList, "Value", "Text"))" class="select2 custom-select form-control w-100">
+                                    <option value="">Select</option>
+                                </select>
+                                <input asp-for="DeptName" type="hidden" value="@Model.DeptName" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Email<span class="text-danger ml-1 view">*</span></label>
+                            <div class="col-sm-8">
+                                <input asp-for="Email" type="email" class="form-control" required placeholder="Please enter Email">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Execution Date<span class="text-danger ml-1 view">*</span></label>
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <input asp-for="ExeDate" autocomplete="off" class="form-control" type="text" placeholder="dd-mmm-yyyy" required data-date-format="dd-M-yyyy" />
+                                    <div class="input-group-append">
+                                        <span class="input-group-text fs-xl">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Effective Date<span class="text-danger ml-1 view">*</span></label>
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <input asp-for="EffDate" autocomplete="off" class="form-control" type="text" placeholder="dd-mmm-yyyy" required data-date-format="dd-M-yyyy" />
+                                    <div class="input-group-append">
+                                        <span class="input-group-text fs-xl">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="DivExp" class="form-group row">
+                            <label class="col-sm-4 col-form-label">Expiry Date<span class="text-danger ml-1 view">*</span></label>
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <input asp-for="ExpDate" autocomplete="off" class="form-control" type="text" placeholder="dd-mmm-yyyy" required data-date-format="dd-M-yyyy" />
+                                    <div class="input-group-append">
+                                        <span class="input-group-text fs-xl">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Master Contract<span class="text-danger ml-1 view">*</span></label>
+                            <div class="col-sm-8">
+                                <div class="form-check form-check-inline row pt-1">
+                                    <input asp-for="MasterContract" class="form-check-input rdbutton" type="radio" value="N" checked>
+                                    <label class="form-check-label mr-2">No</label>
+                                    <input asp-for="MasterContract" class="form-check-input rdbutton" type="radio" value="Y">
+                                    <label class="form-check-label mr-2">Yes</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Upload Draft<span class="text-danger ml-1 view">*</span></label>
+                            <div class="col-sm-8">
+                                <div class="custom-file">
+                                    @if (Mode == "E" || Mode == null)
+                                    {
+                                        <input id="customFile" required asp-for="DocDraft" type="file" class="custom-file-input" onchange="GetFileSize()">
+                                        <label class="custom-file-label" for="customFile">Choose file</label>
+                                        <span id="FileSizeAdd" class="text-danger" style="display:none">Only .docx extension is allowed !</span>
+                                    }
+                                    @if (Model.DocNo > 0)
+                                    {
+                                        @if (Model.DocDraft != "")
+                                        {
+                                            <div class="col-sm-8 pt-2">
+                                                <a title='Preview' target="_blank" href='@Url.Action("DownloadLegalDoc", "Legal", new { fileName = @Model.DocDraft })'>@Model.DocDraft</a>
+                                                <input asp-for="Param1" value="@Model.DocDraft" hidden />
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="col-sm-8 pt-2">
+                                                <label class="font-weight-bold">NA</label>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Upload Signed</label>
+                            <div class="col-sm-8">
+                                <div class="custom-file">
+                                    @if (Mode == "E" || Mode == null)
+                                    {
+                                        <input id="customFile2" asp-for="DocSigned" type="file" class="custom-file-input" onchange="GetFileSize1()">
+                                        <label class="custom-file-label" for="customFile2">Choose file</label>
+                                        <span id="FileSizeAdd1" class="text-danger" style="display:none">Only .pdf extension is allowed !</span>
+                                    }
+                                    @if (Model.DocNo > 0)
+                                    {
+                                        @if (Model.DocDraft != "")
+                                        {
+                                            <div class="col-sm-7 pt-2">
+                                                <a title='Preview' target="_blank" href='@Url.Action("DownloadLegalSigned", "Legal", new { fileName = @Model.DocSigned })'>@Model.DocSigned</a>
+                                                <input asp-for="Param2" value="@Model.DocSigned" hidden />
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="col-sm-8 pt-2">
+                                                <label class="font-weight-bold">NA</label>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Remark<span class="text-danger ml-1 view">*</span></label>
+                            <div class="col-sm-8">
+                                <input asp-for="Remark" type="text" class="form-control" required placeholder="Please enter Remark">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Service Description<span class="text-danger ml-1 view">*</span></label>
+                            <div class="col-sm-8">
+                                <textarea asp-for="ServiceDescription" autocomplete="off" type="text" class="form-control" required placeholder="Please enter description" rows="4" cols="50"> </textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-2">
+                    <div id="divButtons" class="col-md-12 row">
+                        <div class="col-md-4"></div>
+                        <div class=" col-md-4">
+                            <div class="row p-1">
+                                <div class="offset-lg-2 col-lg-10">
+                                    <button id="Post" type="submit" name="submit" value="Post" class="btn btn-primary btn-sm ml-3">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4"></div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div id="divHistory" class="col-sm-12">
+    <div class="panel-content">
+        <div class="row justify-content-center">
+            <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped">
+                <thead class="bg-info-700">
+                    <tr class='notexport text-nowrap'>
+                        <th>Service Description</th>
+                        <th>Plant</th>
+                        <th>Execution Date</th>
+                        <th>Effective Date</th>
+                        <th>Expiry Date &nbsp;&nbsp;</th>
+                        <th>Draft File</th>
+                        <th>Signed Doc</th>
+                        <th>Remark</th>
+                        <th>Transaction Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.ContractHistory)
+                    {
+                        <tr>
+                            <td> @item.ServiceDescription</td>
+                            <td> @item.Plant</td>
+                            <td> @item.ExeDate</td>
+                            <td> @item.EffDate</td>
+                            <td> @item.ExpDate</td>
+                            <td>
+                                @if (!String.IsNullOrEmpty(item.DocDraft))
+                                {
+                                    <a title='Preview' target="_blank" href='@Url.Action("DownloadLegalDoc", "Legal", new { fileName = @Model.DocDraft })'>@Model.DocDraft</a>
+                                }
+                                else
+                                {
+                                    <a>NA</a>
+                                }
+                            </td>
+                            <td>
+                                @if (!String.IsNullOrEmpty(item.DocSigned))
+                                {
+                                    <a title='Preview' target="_blank" href='@Url.Action("DownloadLegalSigned", "Legal", new { fileName = @Model.DocSigned })'>@Model.DocSigned</a>
+                                }
+                                else
+                                {
+                                    <a>NA</a>
+                                }
+                            </td>
+                            <td> @item.Remark</td>
+                            <td> @item.Date1</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#divHistory').hide();
+
+            if ("@Model.ContractNature" == 'Perpetual') {
+                $('#DivExp').hide();
+                $('#ExpDate').attr('required', false);
+            }
+            else {
+                $('#DivExp').show();
+                $('#ExpDate').attr('required', true);
+            }
+
+            FillForm();
+            FillHist();
+
+            $(function () {
+                $('.select2').select2();
+                runDatePicker();
+            });
+            var controls = {
+                leftArrow: '<i class="fas fa-angle-left" style="font-size: 1.25rem"></i>',
+                rightArrow: '<i class="fas fa-angle-right" style="font-size: 1.25rem"></i>'
+            }
+            var runDatePicker = function () {
+                $('#ExeDate,#EffDate,#ExpDate').datepicker({
+                    todayHighlight: true,
+                    orientation: "bottom left",
+                    templates: controls,
+                    autoclose: true
+                });
+            }
+        });
+
+        $('#ContractNature').on('select2:select', function (e) {
+            if (e.params.data.id == 'Perpetual') {
+                $('#DivExp').hide();
+                $('#ExpDate').attr('required', false);
+            }
+            else {
+                $('#DivExp').show();
+                $('#ExpDate').attr('required', true);
+            }
+        });
+
+        function GetFileSize() {
+            var ext = $('#customFile').val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['doc', 'docx']) == -1) {
+                $("#FileSizeAdd").show();
+                $('#customFile').val('');
+            }
+            else {
+                $("#FileSizeAdd").hide();
+            }
+        }
+
+        function GetFileSize1() {
+            var ext = $('#customFile2').val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['pdf']) == -1) {
+                $("#FileSizeAdd1").show();
+                $('#customFile2').val('');
+            }
+            else {
+                $("#FileSizeAdd1").hide();
+            }
+        }
+
+        function FillHist() {
+            if ("@Mode" == "V" || "@Mode" == "E") {
+                $('#divHistory').show();
+            }
+            else {
+                $('#divHistory').hide();
+            }
+        }
+        function FillForm() {
+            if ("@Mode" == "V") {
+                $("#ContractName").prop("disabled", true);
+                $("#ContractNumber").prop("disabled", true);
+                $("#ContractValue").prop("disabled", true);
+                $("#Currency").prop("disabled", true);
+                $("#ContractCategory").prop("disabled", true);
+                $("#ContractNature").prop("disabled", true);
+                $("#Vendor").prop("disabled", true);
+                $("#Plant").prop("disabled", true);
+                $("#DeptCode").prop("disabled", true);
+                $("#Email").prop("disabled", true);
+                $("#ExeDate").prop("disabled", true);
+                $("#EffDate").prop("disabled", true);
+                $("#ExpDate").prop("disabled", true);
+                $(".rdbutton").prop("disabled", true);
+                $("#Remark").prop("disabled", true);
+                $("#ServiceDescription").prop("disabled", true);
+                $("#divButtons").hide();
+                $(".view").hide();
+                $('#divHistory').show();
+            }
+        };
+
+        $('#Post').click(function () {
+            if ($('#customFile').val() == '' && ($('#Param1').val() == '' || $('#Param1').val() == undefined)) {
+                $('#customFile').attr('required', true);
+            }
+            else {
+                $('#customFile').attr('required', false);
+            }
+        });
+    </script>
+}

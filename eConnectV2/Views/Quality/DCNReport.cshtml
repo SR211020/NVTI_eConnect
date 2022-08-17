@@ -1,0 +1,185 @@
+﻿@model eConnectV2.ViewModels.QualityViewModel
+@{
+    ViewData["Title"] = "DCN Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+}
+
+<div class="panel p-2">
+    <div class="panel-content show">
+        <div class="row">
+            <div class="col-sm-12 row">
+                <div class="col-md-4">
+                </div>
+                <div class="col-md-4 row">
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label font-weight-bold">From</label>
+                            <div class="col-sm-9">
+                                <input asp-for="Date1" onchange="FillData();" autocomplete="off" class="form-control datepickertext" type="text" required data-date-format="dd-M-yyyy" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label font-weight-bold">To</label>
+                            <div class="col-sm-9">
+                                <input asp-for="Date2" onchange="FillData();" autocomplete="off" class="form-control datepickertext" type="text" required data-date-format="dd-M-yyyy" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                        <thead class="bg-primary-800">
+                            <tr>
+                                <th class="notexport" width="5%" style="text-align:center">Action</th>
+                                <th width="5%">Req No</th>
+                                <th>Status</th>
+                                <th>Requestor</th>
+                                <th>Department</th>
+                                <th>Req Type</th>
+                                <th>Reason</th>
+                                <th>Effective Date</th>
+                                <th>Doc No</th>
+                                <th>Doc Name</th>
+                                <th>UserID</th>
+                                <th>TDate</th>
+                                @*Hidden Parameters for Report*@
+                                <th hidden>Doc Changes</th>
+                                <th hidden>Change Required in</th>
+                                <th hidden>Doc Change No</th>
+                                <th hidden>Doc Change Name</th>
+                                <th hidden>Dept HOD</th>
+                                <th hidden>HOD Approve Date</th>
+                                <th hidden>DCC Incharge</th>
+                                <th hidden>DCC Approve Date</th>
+                                <th hidden>DCC Doc No</th>
+                                <th hidden>DCC Doc Name</th>
+                                <th hidden>DCC Done Date</th>
+                                <th hidden>DCC Req Type</th>
+                                <th hidden>Is Doc Destroyed</th>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    @*<script src="~/js/datagrid/datatables/dths_excel.js"></script>*@
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/rowdelete.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2();
+            runDatePicker();
+            FillData();
+        });
+
+        var controls = {
+            leftArrow: '<i class="fal fa-angle-left" style="font-size: 1.25rem"></i>',
+            rightArrow: '<i class="fal fa-angle-right" style="font-size: 1.25rem"></i>'
+        }
+        var runDatePicker = function () {
+            $('#Date1, #Date2').datepicker({
+                todayHighlight: true,
+                orientation: "bottom left",
+                templates: controls,
+                autoclose: true
+            });
+        }
+
+        function FillData() {
+            var date1 = $("#Date1").val();
+            var date2 = $("#Date2").val();
+            var data1 = '';
+            $.ajax({
+                url: '/Quality/FillDCNReport',
+                type: "POST",
+                data: { date1: date1, date2: date2 },
+                success: function (data, status) {
+                    $("#dt-hs tbody").empty();
+                    $("#dt-hs").DataTable().destroy();
+                    $.each(data, function (index, item) {
+                        data1 += '<tr>';
+                        data1 += '<td class="text-center bg-primary-gradient" align="center">';
+                        data1 += '<a title="View" href="Quality/DCNApprAdd?Dno=' + item.param1 + '&Utp=' + item.param2+'"><i class="fa fa-eye text-info mr-1" ></i ></a>';
+                        data1 += '</td>';
+                        data1 += '<td>' + item.requestNo + '</td>';
+                        data1 += '<td>' + item.statusDescr + '</td>';
+                        data1 += '<td>' + item.empCode + ' - ' + item.empName + '</td>';
+                        data1 += '<td>' + item.deptName + '</td>';
+                        data1 += '<td>' + item.type + '</td>';
+                        data1 += '<td>' + item.reason + '</td>';
+                        data1 += '<td>' + item.date1 + '</td>';
+                        data1 += '<td>' + item.docNo + '</td>';
+                        data1 += '<td>' + item.docName + '</td>';
+                        data1 += '<td>' + item.userID + '</td>';
+                        data1 += '<td>' + item.tDate + '</td>';
+                        ///////////Hidden Fields for Download////////////
+                        data1 += '<td hidden>' + item.docChanges + '</td>';
+                        data1 += '<td hidden>' + item.changeRequireIn + '</td>';
+                        data1 += '<td hidden>' + item.changeDocNo + '</td>';
+                        data1 += '<td hidden>' + item.changeDocName + '</td>';
+                        data1 += '<td hidden>' + item.deptHOD + '</td>';
+                        data1 += '<td hidden>' + item.date2 + '</td>';
+                        data1 += '<td hidden>' + item.dcc + '</td>';
+                        data1 += '<td hidden>' + item.date3 + '</td>';
+                        data1 += '<td hidden>' + item.dccDocNo + '</td>';
+                        data1 += '<td hidden>' + item.dccDocName + '</td>';
+                        data1 += '<td hidden>' + item.date4 + '</td>';
+                        data1 += '<td hidden>' + item.dccReqType + '</td>';
+                        data1 += '<td hidden>' + item.dccStatus + '</td>';
+                        data1 += '</tr >';
+                    });
+                    $("#dt-hs tbody").html(data1);
+                    $('#dt-hs').dataTable({
+                        responsive: false,
+                        order: [[1, 'desc']],
+                        "columnDefs": [
+                            { "orderable": false, "targets": [0] },
+                        ],
+                        lengthChange: false,
+                        "pageLength": 20,
+                        dom:
+                            "<'row'<'col-sm-12 col-md-3 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-3 d-flex align-items-center justify-content-center'i><'col-sm-12 col-md-3 d-flex align-items-center justify-content-end'lB><'col-sm-12 col-md-3 d-flex align-items-center justify-content-end'p>>" +
+                            "<'row'<'col-sm-12'tr>>" +
+                            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                        buttons: [
+                            {
+                                extend: 'excelHtml5',
+                                text: 'Download',
+                                title: null,
+                                titleAttr: 'Download',
+                                className: 'btn-outline-dark btn-xs mr-1',
+                                exportOptions: {
+                                    columns: ':not(.notexport)'
+                                }
+                            },
+                        ]
+                    });
+                },
+                error: function () {
+                },
+            });
+        }
+    </script>
+}
+

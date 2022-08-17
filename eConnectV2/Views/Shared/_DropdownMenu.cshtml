@@ -1,0 +1,36 @@
+<div class="dropdown-header bg-trans-gradient d-flex flex-row py-2 rounded-top">
+    <div class="d-flex flex-row align-items-center mt-1 mb-1 color-white">
+        <span id="profileImage" class="mr-2">
+            @*<img src="~/img/avatar-m.png" class="rounded-circle profile-image">*@
+        </span>
+        <div class="info-card-text">
+            <div class="fs-lg text-truncate text-truncate-xl">@(User.Identity.GetEmpName())</div>
+            <span class="text-truncate text-truncate-xl opacity-80">@(User.Identity.GetDesignation())</span>
+            <span class="text-truncate text-truncate-xl opacity-80">@(User.Identity.GetDeptName())</span>
+        </div>
+    </div>
+</div>
+<div class="dropdown-divider m-0"></div>
+<div class="dropdown-divider m-0"></div>
+<a href="#" class="dropdown-item">
+    <span data-i18n="drpdwn.page-home">Home</span>
+</a>
+<a href="@Url.Action("Profile", "Admin")" class="dropdown-item">
+    <span data-i18n="drpdwn.page-home">My Profile</span>
+</a>
+<a href="@Url.Action("MyAttendance", "Attendance")" class="dropdown-item">
+    <span data-i18n="drpdwn.page-home">My Attendance</span>
+</a>
+<a href="#" class="dropdown-item" data-action="app-fullscreen">
+    <span data-i18n="drpdwn.fullscreen">Fullscreen</span>
+    <i class="float-right text-muted fw-n">F11</i>
+</a>
+<a href="#" class="dropdown-item" data-action="app-print">
+    <span data-i18n="drpdwn.print">Print</span>
+    <i class="float-right text-muted fw-n">Ctrl + P</i>
+</a>
+<div class="dropdown-divider m-0"></div>
+<a class="dropdown-item fw-500 pt-3 pb-3" href="@Url.Action("Logout","Account")">
+    <span data-i18n="drpdwn.page-logout">Logout</span>
+</a>
+

@@ -1,0 +1,339 @@
+﻿@model eConnectV2.ViewModels.AttendanceViewModel
+@{
+    ViewData["Title"] = "IT Dashboard";
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewData["URL"] = Url.Action("Dashboard", "Home");
+    ViewData["HeaderTitle"] = "IT Dashboard";
+    var catgHOD = "N";
+    var catgInfra = "N";
+    var catgApplication = "N";
+    var catgSAP = "N";
+}
+
+@section HeadBlock {
+    <meta http-equiv="refresh" content="1800"> @*1800 Seconds*@
+    <style>
+        h2 {
+            text-align: center;
+            color: #0000FF;
+            font-weight: bold;
+            font-family: Verdana;
+        }
+
+        p {
+            font-size: 12px;
+            text-align: center;
+            font-weight: bold;
+            margin: 0;
+            color: #000;
+            width: 100%;
+        }
+
+        .card {
+            border-radius: 2%;
+        }
+
+        .emp_img {
+            width: 150px;
+            height: 130px;
+        }
+
+        .column {
+            float: left;
+            width: 25%;
+        }
+    </style>
+    <style type="text/css">
+        .HappyBday {
+            cursor: pointer;
+            -webkit-animation: background 1s cubic-bezier(1,0,0,1) infinite;
+            animation: background 0.8s cubic-bezier(1,0,0,1) infinite;
+            height: 40px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 0;
+            color: #000;
+            width: 150px;
+            padding-top: 10px;
+        }
+
+        @@-webkit-keyframes background {
+            20% {
+                color: #83db14;
+                font-size: 12px;
+            }
+
+            40% {
+                color: #09778f;
+                font-size: 14px;
+            }
+
+            60% {
+                color: #ff0000;
+                font-size: 12px;
+            }
+
+            80% {
+                color: #09778f;
+                font-size: 14px;
+            }
+        }
+    </style>
+}
+
+@if (Model.EmployeeList != null && Model.EmployeeList.Count > 0)
+{
+    catgHOD = "N";
+    catgInfra = "N";
+    catgApplication = "N";
+    catgSAP = "N";
+    @foreach (var item in Model.EmployeeList)
+    {
+        @if (item.Category == "HOD")
+        {
+            catgHOD = "Y";
+        }
+        @if (item.Category == "INFRA")
+        {
+            catgInfra = "Y";
+        }
+        @if (item.Category == "APPLICATION")
+        {
+            catgApplication = "Y";
+        }
+        @if (item.Category == "SAP")
+        {
+            catgSAP = "Y";
+        }
+    }
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="alert alert-info alert-dismissible fade show">
+                        <div class="d-flex align-items-center">
+                            <div class="alert-icon width-8">
+                                <span class="icon-stack icon-stack-xl">
+                                    <i class="fas fa-eye"></i>
+                                </span>
+                            </div>
+                            <div class="flex-1 pl-1">
+                                <span class="h1">
+                                    Our Vision
+                                </span>
+                                <br>
+                                <span class="h3">
+                                    Make work life simpler, more pleasant and more productive
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <span class="font-weight-bolder text-info float-left" style="font-size:22px"><i class="fas fa-phone-alt"></i> 97654 90317 (Battery)</span>
+                    <br /><br /><br />
+                    <span class="font-weight-bolder text-info float-left" style="font-size:22px"><i class="fas fa-phone-alt"></i> 74199 90930 (SMT)</span>
+                </div>
+                <div class="col-md-5">
+                    <div class="alert alert-success alert-dismissible fade show">
+                        <div class="d-flex align-items-center">
+                            <div class="alert-icon width-8">
+                                <span class="icon-stack icon-stack-xl">
+                                    <i class="fas fa-bullseye-arrow"></i>
+                                </span>
+                            </div>
+                            <div class="flex-1 pl-1">
+                                <span class="h1">
+                                    Our Mission
+                                </span>
+                                <br>
+                                <span class="h3">
+                                    “To Grow, To Deliver, To Stay !!”
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-5">
+                    @if (catgInfra == "Y")
+                    {
+                        <div class="card well">
+                            <h2 class="pt-2">
+                                Infra / Helpdesk Team
+                            </h2>
+                            <div class="card-body row p-1 pl-3">
+                                @foreach (var item in Model.EmployeeList)
+                                {
+                                    @if (item.Category == "INFRA")
+                                    {
+                                        <div class="column border-dark p-2">
+                                            @if (item.ImageName == "")
+                                            {
+                                                <img class="shadow img-thumbnail emp_img" style="display:block; margin:auto" src="~/img/DefaultProfile.jpg" />
+                                            }
+                                            else
+                                            {
+                                                <img class="shadow img-thumbnail emp_img" style="display:block; margin:auto" src="@item.ImageName" />
+                                            }
+                                            <p>@item.EmpName</p>
+                                            <p>@item.ContactNo</p>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="col-md-2">
+                    @if (catgHOD == "Y")
+                    {
+                        <div class="card well">
+                            <h2 class="mt-2">
+                                HOD
+                            </h2>
+                            <div class="card-body row">
+                                @foreach (var item in Model.EmployeeList)
+                                {
+                                    @if (item.Category == "HOD")
+                                    {
+                                        <table width="100%">
+                                            <tr>
+                                                <td style="text-align:center">
+                                                    @if (item.ImageName == "")
+                                                    {
+                                                        <img class="shadow img-thumbnail emp_img" src="~/img/DefaultProfile.jpg" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <img class="shadow img-thumbnail emp_img" src="@item.ImageName" />
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th style="text-align: center; font-size: 13px; font-weight: bold; margin: 0; color: #000; width: 100px; padding-top:10px">
+                                                    @item.EmpName
+                                                    <br />
+                                                    @item.ContactNo
+                                                </th>
+                                            </tr>
+                                        </table>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    }
+                    <br />
+                    <table width="100%">
+                        <tr>
+                            <td style="text-align:center">
+                                <div id="divBday" class="pt-5"></div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-5">
+                    @if (catgApplication == "Y")
+                    {
+                        <div class="card well">
+                            <h2 class="pt-2">
+                                Software Development / Application Team
+                            </h2>
+                            <div class="card-body row p-1 pl-3">
+                                @foreach (var item in Model.EmployeeList)
+                                {
+                                    @if (item.Category == "APPLICATION")
+                                    {
+                                        <div class="column border-dark p-2">
+                                            @if (item.ImageName == "")
+                                            {
+                                                <img class="shadow img-thumbnail emp_img" style="display:block; margin:auto" src="~/img/DefaultProfile.jpg" />
+                                            }
+                                            else
+                                            {
+                                                <img class="shadow img-thumbnail emp_img" style="display:block; margin:auto" src="@item.ImageName" />
+                                            }
+                                            <p>@item.EmpName</p>
+                                            <p>@item.ContactNo</p>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    }
+                    <br />
+                    @if (catgSAP == "Y")
+                    {
+                        <div class="card well">
+                            <h2 class="pt-2">
+                                SAP Team
+                            </h2>
+                            <div class="card-body row p-1 pl-3">
+                                @foreach (var item in Model.EmployeeList)
+                                {
+                                    @if (item.Category == "SAP")
+                                    {
+                                        <div class="border-dark p-2 pl-6">
+                                            @if (item.ImageName == "")
+                                            {
+                                                <img class="shadow img-thumbnail emp_img" src="~/img/DefaultProfile.jpg" />
+                                            }
+                                            else
+                                            {
+                                                <img class="shadow img-thumbnail emp_img" src="@item.ImageName" />
+                                            }
+                                            <p>@item.EmpName</p>
+                                            <p>@item.ContactNo</p>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section ScriptsBlock {
+    <script>
+        $(document).ready(function () {
+            ITBirthday();
+        });
+
+        function ITBirthday() {
+            $.ajax({
+                url: '/Attendance/ITBirthday',
+                type: "POST",
+                success: function (data) {
+                    $('#divBday').empty();
+                    var data1 = '';
+                    $.each(data, function (index, item) {
+                        if (item.imageName != '') {
+                            data1 += '<img src="' + item.imageName + '" class="img-thumbnail emp_img pt-2 ml-2" />';
+                        }
+                        else {
+                            data1 += '<img src="/img/DefaultProfile.jpg" class="img-thumbnail emp_img pt-2 ml-2" />';
+                        }
+                        data1 += '<div class="bday-text pt-2 pl-2">';
+                        data1 += '<span class="HappyBday">';
+                        data1 += 'Happy Birthday' + '</br>';
+                        data1 += item.empName;
+                        data1 += '</span></div>';
+
+                    });
+                    $("#divBday").html(data1);
+                },
+                error: function () {
+                }
+            });
+        }
+
+    </script>
+}

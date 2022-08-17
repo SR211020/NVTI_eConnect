@@ -1,0 +1,47 @@
+<header class="page-header" role="banner">
+    <partial name="_Logo" />
+    <div class="hidden-md-down dropdown-icon-menu position-relative">
+        <a href="#" class="header-btn btn js-waves-off" data-action="toggle" data-class="nav-function-hidden" title="Hide Navigation">
+            <i class="ni ni-menu"></i>
+        </a>
+        <ul>
+            <li>
+                <a href="#" class="btn js-waves-off" data-action="toggle" data-class="nav-function-minify" title="Minify Navigation">
+                    <i class="ni ni-minify-nav"></i>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="btn js-waves-off" data-action="toggle" data-class="nav-function-fixed" title="Lock Navigation">
+                    <i class="ni ni-lock-nav"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="hidden-lg-up">
+        <a href="#" class="header-btn btn press-scale-down" data-action="toggle" data-class="mobile-nav-on">
+            <i class="ni ni-menu"></i>
+        </a>
+    </div>
+    <div>
+        @if (ViewBag.PageHeading?.Length > 0)
+        {
+            <span class="text-primary h3">@ViewData["PageHeading"]</span>
+        }
+        <partial name="_PageBreadcrumb" />
+    </div>
+    <div class="ml-auto d-flex">
+        <span class="text-primary font-weight-bold">Welcome, @(User.Identity.GetEmpName()) (@(User.Identity.GetADId())) <br /> <span class="js-get-date float-right text-muted font-italic"></span></span>
+    </div>
+    <div class="ml-2 d-flex">
+        <div>
+            <a href="#" data-toggle="dropdown" title="@(User.Identity.GetEmpName())" class="header-icon d-flex align-items-center justify-content-center ml-2">
+                <div id="profileFavicon">
+
+                </div>
+            </a>
+            <div class="dropdown-menu dropdown-menu-animated dropdown-xl">
+                <partial name="_DropdownMenu" />
+            </div>
+        </div>
+    </div>
+</header>

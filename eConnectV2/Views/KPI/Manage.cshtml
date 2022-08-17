@@ -1,0 +1,984 @@
+﻿@model eConnectV2.ViewModels.KPIViewModel
+@{
+    ViewData["Title"] = "KPI - Manage KPI";
+    ViewData["PageHeading"] = "KPI";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "KPI";
+    ViewBag.Category1 = "Manage";
+    int rowCount = 0;
+    string txt_id = "";
+    decimal t_apr = 0, t_may = 0, t_jun = 0, t_jul = 0, t_aug = 0, t_sep = 0, t_oct = 0, t_nov = 0, t_dec = 0, t_jan = 0, t_feb = 0, t_mar = 0, t_total = 0;
+    bool IsRecordFound = Model.KpiList.Count > 0 ? true : false;
+    string categoryName;
+    string sign;
+}
+
+@section HeadBlock {
+    <style>
+        .c_text {
+            height: 20px;
+            width: 45px;
+            border: 1px solid #E5E5E5;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            line-height: 1.5;
+            font-weight: 400;
+            background-clip: padding-box;
+            margin-left: 2px;
+            background-color: white;
+        }
+
+        .c_text_readonly {
+            height: 20px;
+            width: 45px;
+            border: 1px solid #E5E5E5;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            line-height: 1.5;
+            font-weight: 400;
+            padding: 2px;
+            background-clip: padding-box;
+            background-color: #e9ecef;
+        }
+
+        .swal2-container {
+            z-index: 300000 !important;
+        }
+    </style>
+    <script src="~/js-alt/jquery.js"></script>
+    <script src="~/js/inputFilter.js"></script>
+}
+
+<div class="panel">
+    <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+        <h2>
+            <span class="fw-300 pr-1">Manage </span> KPI
+        </h2>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content">
+            @using (Html.BeginForm("Manage", "KPI", FormMethod.Post, new { id = "myform", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+            {
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold" for="FinYearCode">Fin. Year<span class="text-danger ml-1"></span> : </label>
+                            <div class="col-sm-6">
+                                <select class="select2 custom-select form-control w-100" asp-for="FinYearCode" required asp-items="@(new SelectList(Model.FinYearList, "Value", "Text"))">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label font-weight-bold" for="DeptName">Department<span class="text-danger ml-1"></span> : </label>
+                            <div class="col-sm-9">
+                                @if (Model.KpiType == KPIController.KpiUser)
+                                {
+                                    <input asp-for="DeptName" class="form-control" value="@User.Identity.GetDeptName()" readonly />
+                                    <input asp-for="DeptCode" type="hidden" value="@User.Identity.GetDeptCode()" />
+                                }
+                                else
+                                {
+                                    @if (Model.HodDepartmentList.Count > 1)
+                                    {
+                                        <select class="select2 custom-select form-control w-100" asp-for="DeptCode" required asp-items="@(new SelectList(Model.HodDepartmentList, "Value", "Text"))">
+                                        </select>
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="DeptName" class="form-control" value="@Model.DeptName" readonly />
+                                        <input asp-for="DeptCode" type="hidden" value="@Model.DeptCode" />
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label font-weight-bold" for="MenuId">Employee<span class="text-danger ml-1">*</span> : </label>
+                            <div class="col-sm-9">
+                                @if (Model.KpiType == KPIController.KpiUser)
+                                {
+                                    <input asp-for="EmpName" class="form-control" value="@User.Identity.GetEmpName()" readonly />
+                                    <input asp-for="EmpCode" type="hidden" value="@User.Identity.GetEmpCode()" />
+                                }
+                                else
+                                {
+                                    <select class="select2 custom-select form-control w-100" asp-for="EmpCode" required asp-items="@(new SelectList(Model.EmployeeList, "Value", "Text"))">
+                                    </select>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group row">
+                            <div class="col-sm-6">
+                                <button id="btn_search" class="btn btn-sm btn-primary waves-effect waves-themed" type="submit">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div id="KPIList">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="dt-hs" class="table table-bordered table-sm table-hover nowrap" style="table-layout:fixed;">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Department</th>
+                            <th>Fin Year</th>
+                            <th>KPI</th>
+                            <th>Responsible</th>
+                            <th>Category </th>
+                            <th>Weightage</th>
+                            <th style="width:45px;">APR</th>
+                            <th style="width:45px;">MAY</th>
+                            <th style="width:45px;">JUN</th>
+                            <th style="width:45px;">JUL</th>
+                            <th style="width:45px;">AUG</th>
+                            <th style="width:45px;">SEP</th>
+                            <th style="width:45px;">OCT</th>
+                            <th style="width:45px;">NOV</th>
+                            <th style="width:45px;">DEC</th>
+                            <th style="width:45px;">JAN</th>
+                            <th style="width:45px;">FEB</th>
+                            <th style="width:45px;">MAR</th>
+                        </tr>
+                    </thead>
+                    <tbody class='bg-white text-nowrap'>
+                        @foreach (var item in Model.KpiList)
+                        {
+                            if (item.CategoryCode == "1")
+                            {
+                                categoryName = "Lower is better";
+                            }
+                            else if (item.CategoryCode == "2")
+                            {
+                                categoryName = "Higher is better";
+                            }
+                            else if (item.CategoryCode == "3")
+                            {
+                                categoryName = "0 for all Target";
+                            }
+                            else if (item.CategoryCode == "4")
+                            {
+                                categoryName = "1 for all Target";
+                            }
+                            else if (item.CategoryCode == "5")
+                            {
+                                categoryName = "100% for all Target";
+                            }
+                            else if (item.CategoryCode == "6")
+                            {
+                                categoryName = "In terms of cost";
+                            }
+                            else
+                            {
+                                categoryName = "";
+                            }
+                            rowCount = rowCount + 1;
+                            t_apr = t_apr + (string.IsNullOrEmpty(item.APR_CALC) ? 0 : Convert.ToDecimal(item.APR_CALC));
+                            t_may = t_may + (string.IsNullOrEmpty(item.MAY_CALC) ? 0 : Convert.ToDecimal(item.MAY_CALC));
+                            t_jun = t_jun + (string.IsNullOrEmpty(item.JUN_CALC) ? 0 : Convert.ToDecimal(item.JUN_CALC));
+                            t_jul = t_jul + (string.IsNullOrEmpty(item.JUL_CALC) ? 0 : Convert.ToDecimal(item.JUL_CALC));
+                            t_aug = t_aug + (string.IsNullOrEmpty(item.AUG_CALC) ? 0 : Convert.ToDecimal(item.AUG_CALC));
+                            t_sep = t_sep + (string.IsNullOrEmpty(item.SEP_CALC) ? 0 : Convert.ToDecimal(item.SEP_CALC));
+                            t_oct = t_oct + (string.IsNullOrEmpty(item.OCT_CALC) ? 0 : Convert.ToDecimal(item.OCT_CALC));
+                            t_nov = t_nov + (string.IsNullOrEmpty(item.NOV_CALC) ? 0 : Convert.ToDecimal(item.NOV_CALC));
+                            t_dec = t_dec + (string.IsNullOrEmpty(item.DEC_CALC) ? 0 : Convert.ToDecimal(item.DEC_CALC));
+                            t_jan = t_jan + (string.IsNullOrEmpty(item.JAN_CALC) ? 0 : Convert.ToDecimal(item.JAN_CALC));
+                            t_feb = t_feb + (string.IsNullOrEmpty(item.FEB_CALC) ? 0 : Convert.ToDecimal(item.FEB_CALC));
+                            t_mar = t_mar + (string.IsNullOrEmpty(item.MAR_CALC) ? 0 : Convert.ToDecimal(item.MAR_CALC));
+                            t_total = t_total + (string.IsNullOrEmpty(item.Weightage) ? 0 : Convert.ToDecimal(item.Weightage));
+                            <tr>
+                                <td>@rowCount</td>
+                                <td>@item.EmpName</td>
+                                <td>@item.DeptName</td>
+                                <td>@item.FinYearName</td>
+                                <td>
+                                    <span title="@item.KpiName">
+                                        @item.KpiName.Substring(0, (item.KpiName.Length > 50 ? 50 : item.KpiName.Length))
+                                        @{
+                                            if (item.KpiName.Length > 50)
+                                            {
+                                                <span>...</span>
+                                            }
+                                        }
+                                    </span>
+                                    @if (!string.IsNullOrEmpty(item.DocUId))
+                                    {
+                                        <a title="Download" href="@Url.Action("Download", "KPI", new { filename = item.DocUId })"><i class="fas fa-file-alt ml-2 text-primary"></i></a>
+                                    }
+                                </td>
+                                <td>@item.RespDeptName</td>
+                                <td>@categoryName</td>
+                                <td class="text-center">@item.Weightage  %</td>
+                                <td>
+                                    @item.APR_CALC
+                                </td>
+                                <td>
+                                    @item.MAY_CALC
+                                </td>
+                                <td>
+                                    @item.JUN_CALC
+                                </td>
+                                <td>
+                                    @item.JUL_CALC
+                                </td>
+                                <td>
+                                    @item.AUG_CALC
+                                </td>
+                                <td>
+                                    @item.SEP_CALC
+                                </td>
+                                <td>
+                                    @item.OCT_CALC
+                                </td>
+                                <td>
+                                    @item.NOV_CALC
+                                </td>
+                                <td>
+                                    @item.DEC_CALC
+                                </td>
+                                <td>
+                                    @item.JAN_CALC
+                                </td>
+                                <td>
+                                    @item.FEB_CALC
+                                </td>
+                                <td>
+                                    @item.MAR_CALC
+                                </td>
+                            </tr>
+                        }
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="text-primary font-weight-bold">Total </td>
+                            <td class="text-primary font-weight-bold">@(t_total.ToString() == "100.000" ? "100" : t_total.ToString())</td>
+                            <td>
+                                <span class="c_text_readonly">
+                                    @{
+                                                                    if (t_apr > 0)
+                                        {
+                                            @t_apr;
+                                        }
+                                    }
+                                </span>
+                            </td>
+                            <td>
+                                <span class="c_text_readonly">
+                                    @{
+                                        if (t_may > 0)
+                                        {
+                                            @t_may;
+                                        }
+                                    }
+                                </span>
+                            </td>
+                            <td>
+                                <span class="c_text_readonly">
+                                    @{
+                                        if (t_jun > 0)
+                                        {
+                                            @t_jun;
+                                        }
+                                    }
+                                </span>
+                            </td>
+                            <td>
+                                <span class="c_text_readonly">
+                                    @{
+                                        if (t_jul > 0)
+                                        {
+                                            @t_jul;
+                                        }
+                                    }
+                                </span>
+                            </td>
+                            <td>
+                                <span class="c_text_readonly">
+                                    @{
+                                        if (t_aug > 0)
+                                        {
+                                            @t_aug;
+                                        }
+                                    }
+                                </span>
+                            </td>
+                            <td>
+                                <span class="c_text_readonly">
+                                    @{
+                                        if (t_sep > 0)
+                                        {
+                                            @t_sep;
+                                        }
+                                    }
+                                </span>
+                            </td>
+                            <td>
+                                <span class="c_text_readonly">
+                                    @{
+                                        if (t_oct > 0)
+                                        {
+                                            @t_oct;
+                                        }
+                                    }
+                                </span>
+                            </td>
+                            <td>
+                                <span class="c_text_readonly">
+                                    @{
+                                        if (t_nov > 0)
+                                        {
+                                            @t_nov;
+                                        }
+                                    }
+                                </span>
+                            </td>
+                            <td>
+                                <span class="c_text_readonly">
+                                    @{
+                                        if (t_dec > 0)
+                                        {
+                                            @t_dec;
+                                        }
+                                    }
+                                </span>
+                            </td>
+                            <td>
+                                <span class="c_text_readonly">
+                                    @{
+                                        if (t_jan > 0)
+                                        {
+                                            @t_jan;
+                                        }
+                                    }
+                                </span>
+                            </td>
+                            <td>
+                                <span class="c_text_readonly">
+                                    @{
+                                        if (t_feb > 0)
+                                        {
+                                            @t_feb;
+                                        }
+                                    }
+                                </span>
+                            </td>
+                            <td>
+                                <span class="c_text_readonly">
+                                    @{
+                                        if (t_mar > 0)
+                                        {
+                                            @t_mar;
+                                        }
+                                    }
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.KpiList.Count > 0)
+{
+    <div id="inputKPIList">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table id="dt-hs1" class="table table-bordered table-sm table-hover nowrap" style="table-layout:fixed;width:100%">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Department</th>
+                                <th>Fin Year</th>
+                                <th>KPI</th>
+                                <th>Responsible</th>
+                                <th>Category </th>
+                                <th>Weightage</th>
+                                <th style="min-width:150px">APR</th>
+                                <th style="min-width:150px">MAY</th>
+                                <th style="min-width:150px">JUN</th>
+                                <th style="min-width:150px">JUL</th>
+                                <th style="min-width:150px">AUG</th>
+                                <th style="min-width:150px">SEP</th>
+                                <th style="min-width:150px">OCT</th>
+                                <th style="min-width:150px">NOV</th>
+                                <th style="min-width:150px">DEC</th>
+                                <th style="min-width:150px">JAN</th>
+                                <th style="min-width:150px">FEB</th>
+                                <th style="min-width:150px">MAR</th>
+                            </tr>
+                        </thead>
+                        <tbody class='bg-white text-nowrap'>
+                            @{rowCount = 0; }
+                            @foreach (var item in Model.KpiList)
+                            {
+                                rowCount = rowCount + 1;
+                                if (item.CategoryCode == "1")
+                                {
+                                    categoryName = "Lower is better";
+                                    sign = ">";
+                                }
+                                else if (item.CategoryCode == "2")
+                                {
+                                    categoryName = "Higher is better";
+                                    sign = "<";
+                                }
+                                else if (item.CategoryCode == "3")
+                                {
+                                    categoryName = "0 for all Target";
+                                    sign = "-";
+                                }
+                                else if (item.CategoryCode == "4")
+                                {
+                                    categoryName = "1 for all Target";
+                                    sign = "-";
+                                }
+                                else if (item.CategoryCode == "5")
+                                {
+                                    categoryName = "100% for all Target";
+                                    sign = "-";
+                                }
+                                else if (item.CategoryCode == "6")
+                                {
+                                    categoryName = "In terms of cost";
+                                    sign = "-";
+                                }
+                                else
+                                {
+                                    categoryName = "";
+                                    sign = " ";
+                                }
+                                <tr>
+                                    <td>@rowCount</td>
+                                    <td>@item.EmpName</td>
+                                    <td>@item.DeptName</td>
+                                    <td>@item.FinYearName</td>
+                                    <td>
+                                        <span title="@item.KpiName">
+                                            @item.KpiName.Substring(0, (item.KpiName.Length > 50 ? 50 : item.KpiName.Length))
+                                            @{
+                                                if (item.KpiName.Length > 50)
+                                                {
+                                                    <span>...</span>
+                                                }
+                                            }
+                                        </span>
+                                        @if (!string.IsNullOrEmpty(item.DocUId))
+                                        {
+                                            <a title="Download" href="@Url.Action("Download", "KPI", new { filename = item.DocUId })"><i class="fas fa-file-alt ml-2 text-primary"></i></a>
+                                        }
+                                    </td>
+                                    <td>@item.RespDeptName</td>
+                                    <td>@categoryName</td>
+                                    <td class="text-center">@item.Weightage  %</td>
+                                    @{
+                                        if (String.IsNullOrEmpty(item.APR_IN))
+                                        {
+                                            txt_id = "r" + rowCount + "c4";
+                                            <td>
+                                                <script type="text/javascript">
+                                                                    $(document).ready(function () {
+                                                                setInputFilter(document.getElementById("@txt_id"), function (value) {
+                                                                    return /^-?\d*[.,]?\d{0,3}$/.test(value);
+                                                                });
+                                                            });
+                                                </script>
+                                                <a href="javascript:void(0)" data-toggle="modal" onclick="EditTarget('@item.KpiNo','@item.SrNo','@item.APR_BT','@item.APR_BS','@item.APR_CH','04')" data-target="#default-example-modal-lg"><i class="fas fa-edit" title="Change target"></i></a>
+                                                <span class='text-danger' title="Bottom target">@double.Parse(item.APR_BT).ToString()</span> @sign <span class='text-warning' title="Basic target">@double.Parse(item.APR_BS).ToString()</span> @sign <span class='text-success' title="Challenge target">@double.Parse(item.APR_CH).ToString()</span>
+                                                <input id="@txt_id" type="text" class="c_text" data-id="@item.KpiNo" data-id1="@item.SrNo" value="@item.APR_IN" data-id2="@item.APR_BT" data-id3="@item.APR_BS" data-id4="@item.APR_CH" data-id5="@item.CategoryCode" data-id6="@item.Weightage">
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                <span class='text-danger' title="Bottom target">@double.Parse(item.APR_BT).ToString()</span> @sign <span class='text-warning' title="Basic target">@double.Parse(item.APR_BS).ToString()</span> @sign <span class='text-success' title="Challenge target">@double.Parse(item.APR_CH).ToString()</span>
+                                                <span class="c_text_readonly">@item.APR_IN</span>
+                                            </td>
+                                        }
+                                        if (String.IsNullOrEmpty(item.MAY_IN))
+                                        {
+                                            txt_id = "r" + rowCount + "c5";
+                                            <td>
+                                                <script type="text/javascript">
+                                                                    $(document).ready(function () {
+                                                                        setInputFilter(document.getElementById("@txt_id"), function (value) {
+                                                                            return /^-?\d*[.,]?\d{0,3}$/.test(value);
+                                                                        });
+                                                                    });
+                                                </script>
+                                                <a href="javascript:void(0)" data-toggle="modal" onclick="EditTarget('@item.KpiNo','@item.SrNo','@item.MAY_BT','@item.MAY_BS','@item.MAY_CH','05')" data-target="#default-example-modal-lg"><i class="fas fa-edit" title="Change target"></i></a>
+                                                <span class='text-danger' title="Bottom target">@double.Parse(item.MAY_BT).ToString()</span> @sign <span class='text-warning' title="Basic target">@double.Parse(item.MAY_BS).ToString()</span> @sign <span class='text-success' title="Challenge target">@double.Parse(item.MAY_CH).ToString()</span>
+                                                <input id="@txt_id" type="text" class="c_text" data-id="@item.KpiNo" data-id1="@item.SrNo" value="@item.MAY_IN" data-id2="@item.MAY_BT" data-id3="@item.MAY_BS" data-id4="@item.MAY_CH" data-id5="@item.CategoryCode" data-id6="@item.Weightage">
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                <span class='text-danger' title="Bottom target">@double.Parse(item.MAY_BT).ToString()</span> @sign <span class='text-warning' title="Basic target">@double.Parse(item.MAY_BS).ToString()</span> @sign <span class='text-success' title="Challenge target">@double.Parse(item.MAY_CH).ToString()</span>
+                                                <span class="c_text_readonly">@item.MAY_IN</span>
+                                            </td>
+                                        }
+                                        if (String.IsNullOrEmpty(item.JUN_IN))
+                                        {
+                                            txt_id = "r" + rowCount + "c6";
+                                            <td>
+                                                <script type="text/javascript">
+                                                                    $(document).ready(function () {
+                                                                        setInputFilter(document.getElementById("@txt_id"), function (value) {
+                                                                            return /^-?\d*[.,]?\d{0,3}$/.test(value);
+                                                                        });
+                                                                    });
+                                                </script>
+                                                <a href="javascript:void(0)" data-toggle="modal" onclick="EditTarget('@item.KpiNo','@item.SrNo','@item.JUN_BT','@item.JUN_BS','@item.JUN_CH','06')" data-target="#default-example-modal-lg"><i class="fas fa-edit" title="Change target"></i></a>
+                                                <span class='text-danger' title="Bottom target">@double.Parse(item.JUN_BT).ToString()</span> @sign <span class='text-warning' title="Basic target">@double.Parse(item.JUN_BS).ToString()</span> @sign <span class='text-success' title="Challenge target">@double.Parse(item.JUN_CH).ToString()</span>
+                                                <input id="@txt_id" type="text" class="c_text" data-id="@item.KpiNo" data-id1="@item.SrNo" value="@item.JUN_IN" data-id2="@item.JUN_BT" data-id3="@item.JUN_BS" data-id4="@item.JUN_CH" data-id5="@item.CategoryCode" data-id6="@item.Weightage">
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                <span class='text-danger' title="Bottom target">@double.Parse(item.JUN_BT).ToString()</span> @sign <span class='text-warning' title="Basic target">@double.Parse(item.JUN_BS).ToString()</span> @sign <span class='text-success' title="Challenge target">@double.Parse(item.JUN_CH).ToString()</span>
+                                                <span class="c_text_readonly">@item.JUN_IN</span>
+                                            </td>
+                                        }
+                                        if (String.IsNullOrEmpty(item.JUL_IN))
+                                        {
+                                            txt_id = "r" + rowCount + "c7";
+                                            <td>
+                                                <script type="text/javascript">
+                                                                    $(document).ready(function () {
+                                                                        setInputFilter(document.getElementById("@txt_id"), function (value) {
+                                                                            return /^-?\d*[.,]?\d{0,3}$/.test(value);
+                                                                        });
+                                                                    });
+                                                </script>
+                                                <a href="javascript:void(0)" data-toggle="modal" onclick="EditTarget('@item.KpiNo','@item.SrNo','@item.JUL_BT','@item.JUL_BS','@item.JUL_CH','07')" data-target="#default-example-modal-lg"><i class="fas fa-edit" title="Change target"></i></a>
+                                                <span class='text-danger' title="Bottom target">@double.Parse(item.JUL_BT).ToString()</span> @sign <span class='text-warning' title="Basic target">@double.Parse(item.JUL_BS).ToString()</span> @sign <span class='text-success' title="Challenge target">@double.Parse(item.JUL_CH).ToString()</span>
+                                                <input id="@txt_id" type="text" class="c_text" data-id="@item.KpiNo" data-id1="@item.SrNo" value="@item.JUL_IN" data-id2="@item.JUL_BT" data-id3="@item.JUL_BS" data-id4="@item.JUL_CH" data-id5="@item.CategoryCode" data-id6="@item.Weightage">
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                <span class='text-danger' title="Bottom target">@double.Parse(item.JUL_BT).ToString()</span> @sign <span class='text-warning' title="Basic target">@double.Parse(item.JUL_BS).ToString()</span> @sign <span class='text-success' title="Challenge target">@double.Parse(item.JUL_CH).ToString()</span>
+                                                <span class="c_text_readonly">@item.JUL_IN</span>
+                                            </td>
+                                        }
+                                        if (String.IsNullOrEmpty(item.AUG_IN))
+                                        {
+                                            txt_id = "r" + rowCount + "c8";
+                                            <td>
+                                                <script type="text/javascript">
+                                                                    $(document).ready(function () {
+                                                                        setInputFilter(document.getElementById("@txt_id"), function (value) {
+                                                                            return /^-?\d*[.,]?\d{0,3}$/.test(value);
+                                                                        });
+                                                                    });
+                                                </script>
+                                                <a href="javascript:void(0)" data-toggle="modal" onclick="EditTarget('@item.KpiNo','@item.SrNo','@item.AUG_BT','@item.AUG_BS','@item.AUG_CH','08')" data-target="#default-example-modal-lg"><i class="fas fa-edit" title="Change target"></i></a>
+                                                <span class='text-danger' title="Bottom target">@double.Parse(item.AUG_BT).ToString()</span> @sign <span class='text-warning' title="Basic target">@double.Parse(item.AUG_BS).ToString()</span> @sign <span class='text-success' title="Challenge target">@double.Parse(item.AUG_CH).ToString()</span>
+                                                <input id="@txt_id" type="text" class="c_text" data-id="@item.KpiNo" data-id1="@item.SrNo" value="@item.AUG_IN" data-id2="@item.AUG_BT" data-id3="@item.AUG_BS" data-id4="@item.AUG_CH" data-id5="@item.CategoryCode" data-id6="@item.Weightage">
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                <span class='text-danger' title="Bottom target">@double.Parse(item.AUG_BT).ToString()</span> @sign <span class='text-warning' title="Basic target">@double.Parse(item.AUG_BS).ToString()</span> @sign <span class='text-success' title="Challenge target">@double.Parse(item.AUG_CH).ToString()</span>
+                                                <span class="c_text_readonly">@item.AUG_IN</span>
+                                            </td>
+                                        }
+                                        if (String.IsNullOrEmpty(item.SEP_IN))
+                                        {
+                                            txt_id = "r" + rowCount + "c9";
+                                            <td>
+                                                <script type="text/javascript">
+                                                                    $(document).ready(function () {
+                                                                        setInputFilter(document.getElementById("@txt_id"), function (value) {
+                                                                            return /^-?\d*[.,]?\d{0,3}$/.test(value);
+                                                                        });
+                                                                    });
+                                                </script>
+                                                <a href="javascript:void(0)" data-toggle="modal" onclick="EditTarget('@item.KpiNo','@item.SrNo','@item.SEP_BT','@item.SEP_BS','@item.SEP_CH','09')" data-target="#default-example-modal-lg"><i class="fas fa-edit" title="Change target"></i></a>
+                                                <span class='text-danger' title="Bottom target">@double.Parse(item.SEP_BT).ToString()</span> @sign <span class='text-warning' title="Basic target">@double.Parse(item.SEP_BS).ToString()</span> @sign <span class='text-success' title="Challenge target">@double.Parse(item.SEP_CH).ToString()</span>
+                                                <input id="@txt_id" type="text" class="c_text" data-id="@item.KpiNo" data-id1="@item.SrNo" value="@item.SEP_IN" data-id2="@item.SEP_BT" data-id3="@item.SEP_BS" data-id4="@item.SEP_CH" data-id5="@item.CategoryCode" data-id6="@item.Weightage">
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                <span class='text-danger' title="Bottom target">@double.Parse(item.SEP_BT).ToString()</span> @sign <span class='text-warning' title="Basic target">@double.Parse(item.SEP_BS).ToString()</span> @sign <span class='text-success' title="Challenge target">@double.Parse(item.SEP_CH).ToString()</span>
+                                                <span class="c_text_readonly">@item.SEP_IN</span>
+                                            </td>
+                                        }
+                                        if (String.IsNullOrEmpty(item.OCT_IN))
+                                        {
+                                            txt_id = "r" + rowCount + "c10";
+                                            <td>
+                                                <script type="text/javascript">
+                                                                    $(document).ready(function () {
+                                                                        setInputFilter(document.getElementById("@txt_id"), function (value) {
+                                                                            return /^-?\d*[.,]?\d{0,3}$/.test(value);
+                                                                        });
+                                                                    });
+                                                </script>
+                                                <a href="javascript:void(0)" data-toggle="modal" onclick="EditTarget('@item.KpiNo','@item.SrNo','@item.OCT_BT','@item.OCT_BS','@item.OCT_CH','10')" data-target="#default-example-modal-lg"><i class="fas fa-edit" title="Change target"></i></a>
+                                                <span class='text-danger' title="Bottom target">@double.Parse(item.OCT_BT).ToString()</span> @sign <span class='text-warning' title="Basic target">@double.Parse(item.OCT_BS).ToString()</span> @sign <span class='text-success' title="Challenge target">@double.Parse(item.OCT_CH).ToString()</span>
+                                                <input id="@txt_id" type="text" class="c_text" data-id="@item.KpiNo" data-id1="@item.SrNo" value="@item.OCT_IN" data-id2="@item.OCT_BT" data-id3="@item.OCT_BS" data-id4="@item.OCT_CH" data-id5="@item.CategoryCode" data-id6="@item.Weightage">
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                <span class='text-danger' title="Bottom target">@double.Parse(item.OCT_BT).ToString()</span> @sign <span class='text-warning' title="Basic target">@double.Parse(item.OCT_BS).ToString()</span> @sign <span class='text-success' title="Challenge target">@double.Parse(item.OCT_CH).ToString()</span>
+                                                <span class="c_text_readonly">@item.OCT_IN</span>
+                                            </td>
+                                        }
+                                        if (String.IsNullOrEmpty(item.NOV_IN))
+                                        {
+                                            txt_id = "r" + rowCount + "c11";
+                                            <td>
+                                                <script type="text/javascript">
+                                                                    $(document).ready(function () {
+                                                                        setInputFilter(document.getElementById("@txt_id"), function (value) {
+                                                                            return /^-?\d*[.,]?\d{0,3}$/.test(value);
+                                                                        });
+                                                                    });
+                                                </script>
+                                                <a href="javascript:void(0)" data-toggle="modal" onclick="EditTarget('@item.KpiNo','@item.SrNo','@item.NOV_BT','@item.NOV_BS','@item.NOV_CH','11')" data-target="#default-example-modal-lg"><i class="fas fa-edit" title="Change target"></i></a>
+                                                <span class='text-danger' title="Bottom target">@double.Parse(item.NOV_BT).ToString()</span> @sign <span class='text-warning' title="Basic target">@double.Parse(item.NOV_BS).ToString()</span> @sign <span class='text-success' title="Challenge target">@double.Parse(item.NOV_CH).ToString()</span>
+                                                <input id="@txt_id" type="text" class="c_text" data-id="@item.KpiNo" data-id1="@item.SrNo" value="@item.NOV_IN" data-id2="@item.NOV_BT" data-id3="@item.NOV_BS" data-id4="@item.NOV_CH" data-id5="@item.CategoryCode" data-id6="@item.Weightage">
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                <span class='text-danger' title="Bottom target">@double.Parse(item.NOV_BT).ToString()</span> @sign <span class='text-warning' title="Basic target">@double.Parse(item.NOV_BS).ToString()</span> @sign <span class='text-success' title="Challenge target">@double.Parse(item.NOV_CH).ToString()</span>
+                                                <span class="c_text_readonly">@item.NOV_IN</span>
+                                            </td>
+                                        }
+                                        if (String.IsNullOrEmpty(item.DEC_IN))
+                                        {
+                                            txt_id = "r" + rowCount + "c12";
+                                            <td>
+                                                <script type="text/javascript">
+                                                                    $(document).ready(function () {
+                                                                        setInputFilter(document.getElementById("@txt_id"), function (value) {
+                                                                            return /^-?\d*[.,]?\d{0,3}$/.test(value);
+                                                                        });
+                                                                    });
+                                                </script>
+                                                <a href="javascript:void(0)" data-toggle="modal" onclick="EditTarget('@item.KpiNo','@item.SrNo','@item.DEC_BT','@item.DEC_BS','@item.DEC_CH','12')" data-target="#default-example-modal-lg"><i class="fas fa-edit" title="Change target"></i></a>
+                                                <span class='text-danger' title="Bottom target">@double.Parse(item.DEC_BT).ToString()</span> @sign <span class='text-warning' title="Basic target">@double.Parse(item.DEC_BS).ToString()</span> @sign <span class='text-success' title="Challenge target">@double.Parse(item.DEC_CH).ToString()</span>
+                                                <input id="@txt_id" type="text" class="c_text" data-id="@item.KpiNo" data-id1="@item.SrNo" value="@item.DEC_IN" data-id2="@item.DEC_BT" data-id3="@item.DEC_BS" data-id4="@item.DEC_CH" data-id5="@item.CategoryCode" data-id6="@item.Weightage">
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                <span class='text-danger' title="Bottom target">@double.Parse(item.DEC_BT).ToString()</span> @sign <span class='text-warning' title="Basic target">@double.Parse(item.DEC_BS).ToString()</span> @sign <span class='text-success' title="Challenge target">@double.Parse(item.DEC_CH).ToString()</span>
+                                                <span class="c_text_readonly">@item.DEC_IN</span>
+                                            </td>
+                                        }
+                                        if (String.IsNullOrEmpty(item.JAN_IN))
+                                        {
+                                            txt_id = "r" + rowCount + "c1";
+                                            <td>
+                                                <script type="text/javascript">
+                                                                    $(document).ready(function () {
+                                                                        setInputFilter(document.getElementById("@txt_id"), function (value) {
+                                                                            return /^-?\d*[.,]?\d{0,3}$/.test(value);
+                                                                        });
+                                                                    });
+                                                </script>
+                                                <a href="javascript:void(0)" data-toggle="modal" onclick="EditTarget('@item.KpiNo','@item.SrNo','@item.JAN_BT','@item.JAN_BS','@item.JAN_CH','01')" data-target="#default-example-modal-lg"><i class="fas fa-edit" title="Change target"></i></a>
+                                                <span class='text-danger' title="Bottom target">@double.Parse(item.JAN_BT).ToString()</span> @sign <span class='text-warning' title="Basic target">@double.Parse(item.JAN_BS).ToString()</span> @sign <span class='text-success' title="Challenge target">@double.Parse(item.JAN_CH).ToString()</span>
+                                                <input id="@txt_id" type="text" class="c_text" data-id="@item.KpiNo" data-id1="@item.SrNo" value="@item.JAN_IN" data-id2="@item.JAN_BT" data-id3="@item.JAN_BS" data-id4="@item.JAN_CH" data-id5="@item.CategoryCode" data-id6="@item.Weightage">
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                <span class='text-danger' title="Bottom target">@double.Parse(item.JAN_BT).ToString()</span> @sign <span class='text-warning' title="Basic target">@double.Parse(item.JAN_BS).ToString()</span> @sign <span class='text-success' title="Challenge target">@double.Parse(item.JAN_CH).ToString()</span>
+                                                <span class="c_text_readonly">@item.JAN_IN</span>
+                                            </td>
+                                        }
+                                        if (String.IsNullOrEmpty(item.FEB_IN))
+                                        {
+                                            txt_id = "r" + rowCount + "c2";
+                                            <td>
+                                                <script type="text/javascript">
+                                                                    $(document).ready(function () {
+                                                                        setInputFilter(document.getElementById("@txt_id"), function (value) {
+                                                                            return /^-?\d*[.,]?\d{0,3}$/.test(value);
+                                                                        });
+                                                                    });
+                                                </script>
+                                                <a href="javascript:void(0)" data-toggle="modal" onclick="EditTarget('@item.KpiNo','@item.SrNo','@item.FEB_BT','@item.FEB_BS','@item.FEB_CH','02')" data-target="#default-example-modal-lg"><i class="fas fa-edit" title="Change target"></i></a>
+                                                <span class='text-danger' title="Bottom target">@double.Parse(item.FEB_BT).ToString()</span> @sign <span class='text-warning' title="Basic target">@double.Parse(item.FEB_BS).ToString()</span> @sign <span class='text-success' title="Challenge target">@double.Parse(item.FEB_CH).ToString()</span>
+                                                <input id="@txt_id" type="text" class="c_text" data-id="@item.KpiNo" data-id1="@item.SrNo" value="@item.FEB_IN" data-id2="@item.FEB_BT" data-id3="@item.FEB_BS" data-id4="@item.FEB_CH" data-id5="@item.CategoryCode" data-id6="@item.Weightage">
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                <span class='text-danger' title="Bottom target">@double.Parse(item.FEB_BT).ToString()</span> @sign <span class='text-warning' title="Basic target">@double.Parse(item.FEB_BS).ToString()</span> @sign <span class='text-success' title="Challenge target">@double.Parse(item.FEB_CH).ToString()</span>
+                                                <span class="c_text_readonly">@item.FEB_IN</span>
+                                            </td>
+                                        }
+                                        if (String.IsNullOrEmpty(item.MAR_IN))
+                                        {
+                                            txt_id = "r" + rowCount + "c3";
+                                            <td>
+                                                <script type="text/javascript">
+                                                                    $(document).ready(function () {
+                                                                        setInputFilter(document.getElementById("@txt_id"), function (value) {
+                                                                            return /^-?\d*[.,]?\d{0,3}$/.test(value);
+                                                                        });
+                                                                    });
+                                                </script>
+                                                <a href="javascript:void(0)" data-toggle="modal" onclick="EditTarget('@item.KpiNo','@item.SrNo','@item.MAR_BT','@item.MAR_BS','@item.MAR_CH','03')" data-target="#default-example-modal-lg"><i class="fas fa-edit" title="Change target"></i></a>
+                                                <span class='text-danger' title="Bottom target">@double.Parse(item.MAR_BT).ToString()</span> @sign <span class='text-warning' title="Basic target">@double.Parse(item.MAR_BS).ToString()</span> @sign <span class='text-success' title="Challenge target">@double.Parse(item.MAR_CH).ToString()</span>
+                                                <input id="@txt_id" type="text" class="c_text" data-id="@item.KpiNo" data-id1="@item.SrNo" value="@item.MAR_IN" data-id2="@item.MAR_BT" data-id3="@item.MAR_BS" data-id4="@item.MAR_CH" data-id5="@item.CategoryCode" data-id6="@item.Weightage">
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                <span class='text-danger' title="Bottom target">@double.Parse(item.MAR_BT).ToString()</span> @sign <span class='text-warning' title="Basic target">@double.Parse(item.MAR_BS).ToString()</span> @sign <span class='text-success' title="Challenge target">@double.Parse(item.MAR_CH).ToString()</span>
+                                                <span class="c_text_readonly">@item.MAR_IN</span>
+                                            </td>
+                                        }
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <button type="button" id="btnSave" name="btnSubmit" class="btn btn-success btn-sm"><i class="fas fa-save"></i>&nbsp; Save</button>
+            </div>
+            <div class="col-md-6">
+                <span class="text-success float-right pr-3"> <i class="fas fa-info-circle"></i> - Challenge target </span>
+                <span class="text-warning float-right pr-3"> <i class="fas fa-info-circle"></i> - Basic target </span>
+                <span class="text-danger float-right pr-3"> <i class="fas fa-info-circle"></i> - Bottom target </span>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="modal fade" id="default-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary"><strong>Edit Target</strong></h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+            </div>
+            <div class="modal-body pt-0">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-6">
+                            <div class="row p-1">
+                                <label class="col-sm-4 col-form-label">Bottom Target</label>
+                                <div class="col-sm-8">
+                                    <input asp-for="BottomTarget" type="text" required class="form-control" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="row p-1">
+                                <label class="col-sm-4 col-form-label">Basic Target</label>
+                                <div class="col-sm-8">
+                                    <input asp-for="BasicTarget" type="text" required class="form-control" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="row p-1">
+                                <label class="col-sm-4 col-form-label">Challenge Target</label>
+                                <div class="col-sm-8">
+                                    <input asp-for="ChallengeTarget" type="text" required class="form-control" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="row p-1">
+                                <label class="col-sm-4 col-form-label"></label>
+                                <div class="col-sm-8 align-self-center">
+                                    <span id="error-msg" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row p-1">
+                                <label class="col-sm-4 col-form-label"></label>
+                                <div class="col-sm-8">
+                                    <button id="btn-update-target" type="button" name="button" class="btn btn-primary btn-sm">Update Target</button>
+                                    <input id="ekpino" type="hidden" value="0" />
+                                    <input id="esrno" type="hidden" value="0" />
+                                    <input id="emonth" type="hidden" value="0" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsBlock {
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/select.js"></script>
+    <script>
+        $(document).ready(function () {
+            var table = $('#dt-hs').dataTable({
+                scrollY: "300px",
+                scrollX: true,
+                scrollCollapse: true,
+                paging: false,
+                searching: false,
+                "ordering": false,
+                dom:
+                    "<'row'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'lB>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel',
+                        title: null,
+                        titleAttr: 'Generate Excel',
+                        className: 'btn-outline-dark btn-xs mr-1',
+                        exportOptions: {
+                            columns: ':not(.notexport)'
+                        }
+                    }
+                ]
+            });
+            new $.fn.dataTable.FixedColumns(table, { leftColumns: 8 });
+            $(".dataTables_empty").empty();
+
+            var table = $('#dt-hs1').dataTable({
+                scrollY: "300px",
+                scrollX: true,
+                scrollCollapse: true,
+                paging: false,
+                searching: false,
+                "ordering": false,
+                dom:
+                    "<'row'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'lB>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel',
+                        title: null,
+                        titleAttr: 'Generate Excel',
+                        className: 'btn-outline-dark btn-xs mr-1',
+                        exportOptions: {
+                            columns: ':not(.notexport)'
+                        }
+                    }
+                ]
+            });
+            new $.fn.dataTable.FixedColumns(table, { leftColumns: 8 });
+            $(".dataTables_empty").empty();
+        });
+    </script>
+    <script>
+        var totalRow = @rowCount;
+        var row = [];
+        $('#btnSave').click(function () {
+            var r, month;
+            for (r = 1; r <= totalRow; r++) {
+                for (month = 1; month <= 12; month++) {
+                    var id = $('#r' + r + "c" + month);
+                    if (id.val() == undefined || id.val() == '' || id.val() == null || id.val() == 'null') {
+
+                    }
+                    else {
+                        var val = id.val();
+                        var kpiNo = $(id).data("id");
+                        var srNo = $(id).data("id1");
+                        var btmTrgt = $(id).data("id2");
+                        var bscTrgt = $(id).data("id3");
+                        var ChlngTrgt = $(id).data("id4");
+                        var kpiType = $(id).data("id5");
+                        var weightage = $(id).data("id6");
+                        row.push([kpiNo, srNo, val, month, btmTrgt, bscTrgt, ChlngTrgt, kpiType, weightage]);
+                    }
+                }
+            }
+            if (row.length > 0) {
+                $.ajax({
+                url: 'KPI/KpiDetailsInput',
+                type: "POST",
+                data: { row: row },
+                    success: function (data) {
+                        if (data == true) {
+                            $('#btn_search').click();
+                        } else {
+                            Swal.fire("Oops...", "Something went wrong!", "error");
+                        }
+                    },
+                    error: function () {
+                    }
+                });
+            }
+        });
+        function EditTarget(kpino, srno, btm, bs, chl, month) {
+            $('#BottomTarget').val(btm);
+            $('#BasicTarget').val(bs);
+            $('#ChallengeTarget').val(chl);
+            $('#ekpino').val(kpino);
+            $('#esrno').val(srno);
+            $('#emonth').val(month);
+        }
+        $('#btn-update-target').click(function () {
+            var btm = $('#BottomTarget').val();
+            var bs=  $('#BasicTarget').val();
+            var chl= $('#ChallengeTarget').val();
+            var kpino= $('#ekpino').val();
+            var srno= $('#esrno').val();
+            var month = $('#emonth').val();
+            if (btm.trim() != '' && bs.trim() != '' && chl.trim() != '') {
+                $.ajax({
+                    url: 'KPI/KpiUpdateTraget',
+                    type: "POST",
+                    data: { btm: btm, bs: bs, chl: chl, kpino: kpino, srno: srno, month: month },
+                    success: function (data) {
+                        if (data == true) {
+                            $('#btn_search').click();
+                        } else {
+                            Swal.fire("Oops...", "Something went wrong!", "error");
+                        }
+                    },
+                    error: function () {
+                    }
+                });
+            }
+            else {
+                Swal.fire("Info!", "All fields are mandatory.", "error");
+            }
+        });
+    </script>
+}

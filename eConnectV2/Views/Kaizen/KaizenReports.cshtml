@@ -1,0 +1,406 @@
+﻿@model eConnectV2.ViewModels.KaizenViewModel
+@{
+    ViewData["Title"] = "Kaizen Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "Kaizen";
+    ViewBag.Category1 = "Kaizen Report";
+}
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/statistics/chartjs/chartjs.css">
+    <link href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css" rel="stylesheet" />
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div id="panel-2" class="panel">
+            <div class="panel-hdr bg-gray-100">
+                <h2>
+                    Kaizen <span class="fw-300"><i>Report</i></span>
+                </h2>
+                <div class="col-md-3">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold">From :</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input asp-for="Date1" autocomplete="off" onchange="GetKaizenList()" class="form-control" type="text" placeholder="dd-mmm-yyyy" required data-date-format="dd-M-yyyy" />
+                                <div class="input-group-append">
+                                    <span class="input-group-text fs-xl">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold">To :</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input asp-for="Date2" autocomplete="off" onchange="GetKaizenList()" class="form-control" type="text" placeholder="dd-mmm-yyyy" required data-date-format="dd-M-yyyy" />
+                                <div class="input-group-append">
+                                    <span class="input-group-text fs-xl">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold">Status :</label>
+                        <div class="col-sm-9">
+                            <select asp-for="Status" asp-items="@(new SelectList(Model.StatusList, "Value", "Text"))" onchange="GetKaizenList()" class="select2 custom-select form-control w-100">
+                                <option value="0">--Select--</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel-content">
+                        <div class="table-responsive">
+                            <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                                <thead class="bg-primary-800">
+                                    <tr>
+                                        <th class="notexport text-center" width="5%">Action</th>
+                                        <th>Doc</th>
+                                        <th class="text-center">Kaizen No</th>
+                                        <th>Status</th>
+                                        <th>Reg No</th>
+                                        <th>Kaizen Name</th>
+                                        <th>Kaizen Type</th>
+                                        <th>Emp Code</th>
+                                        <th>Emp Name</th>
+                                        <th>Department</th>
+                                        <th>Circle No</th>
+                                        <th>Plant</th>
+                                        <th>Impact</th>
+                                        <th>Fin Year</th>
+                                        <th>Year</th>
+                                        <th>Month</th>
+                                        <th>Machine/Area</th>
+                                        <th>HD Done</th>
+                                        <th>Respective Pillar</th>
+                                        <th>MP Worthy</th>
+                                        <th>Cost Saving</th>
+                                        <th>TDate</th>
+                                        <th>User Id</th>
+                                        <th>Approver Name</th>
+                                        <th>Approval Date</th>
+                                        </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xl-12">
+        <div class="row">
+            <div class="col-xl-12">
+                <div id="panel-2" class="panel">
+                    <div class="panel-hdr">
+                        <h2>
+                            Department<span class="fw-300"><i>Kaizen</i></span>
+                        </h2>
+                        <div class="col-md-3">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label font-weight-bold">From :</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group">
+                                        <input asp-for="Date3" onchange="GetDeptData()" autocomplete="off" class="form-control" type="text" placeholder="dd-mmm-yyyy" required data-date-format="dd-M-yyyy" />
+                                        <div class="input-group-append">
+                                            <span class="input-group-text fs-xl">
+                                                <i class="fas fa-calendar-alt"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label font-weight-bold">To :</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group">
+                                        <input asp-for="Date4" onchange="GetDeptData()" autocomplete="off" class="form-control" type="text" placeholder="dd-mmm-yyyy" required data-date-format="dd-M-yyyy" />
+                                        <div class="input-group-append">
+                                            <span class="input-group-text fs-xl">
+                                                <i class="fas fa-calendar-alt"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label font-weight-bold">Status :</label>
+                                <div class="col-sm-9">
+                                    <select asp-for="StatusDescr" onchange="GetDeptData()" asp-items="@(new SelectList(Model.StatusList, "Value", "Text"))" class="select2 custom-select form-control w-100">
+                                        <option value="0">--Select--</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-container show">
+                        <div class="panel-content">
+                            <div id="barChartdiv">
+                                <canvas style="width:100%; height:300px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    @*<script src="~/js/datagrid/datatables/dths.js"></script>*@
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/js/statistics/chartjs/chartjs.bundle.js"></script>
+    <script>
+        var colors = [color.success._500, color.danger._500, color.info._500, color.primary._500, color.warning._500];
+        $(document).ready(function () {
+            $(function () {
+                $('.select2').select2();
+                runDatePicker();
+                GetDeptData();
+                GetKaizenList();
+            });
+            var controls = {
+                leftArrow: '<i class="fas fa-angle-left" style="font-size: 1.25rem"></i>',
+                rightArrow: '<i class="fas fa-angle-right" style="font-size: 1.25rem"></i>'
+            }
+            var runDatePicker = function () {
+                $('#Date1,#Date2,#Date3,#Date4').datepicker({
+                    todayHighlight: true,
+                    orientation: "bottom right",
+                    templates: controls,
+                    autoclose: true
+                });
+            }
+        });
+
+        function GetDeptData() {
+            var requestUrl = 'Kaizen/GetKaizenDeptData';
+            var date3 = $('#Date3').val();
+            var date4 = $('#Date4').val();
+            var status = $("#StatusDescr").val();
+            $.ajax({
+                url: requestUrl,
+                data: { date3: date3, date4: date4, status: status},
+                type: "POST",
+                success: function (response) {
+                    barChartKaizen(response);
+                },
+                error: function () {
+
+                }
+            });
+        }
+        var barChartKaizen = function (data) {
+            var dept_list = [];
+            var dept_score_list = [];
+            for (i = 0; i < data.length; i++) {
+                dept_list.push(data[i].deptName);
+                dept_score_list.push(data[i].total);
+            }
+            var barChartData = {
+                labels: dept_list,
+                datasets: [{
+                    label: "Kaizen(s)",
+                    backgroundColor: color.info._300,
+                    borderColor: color.info._500,
+                    borderWidth: 1,
+                    data: dept_score_list,
+                },
+                ]
+            };
+            var config = {
+                type: 'bar',
+                data: barChartData,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                        text: ''
+                    },
+                    tooltips: {
+                        enabled: true,
+                        mode: 'single',
+                        callbacks: {
+                            label: function (tooltipItems, data) {
+                                var multistringText = ['Kaizen(s): ' + tooltipItems.yLabel];
+                                return multistringText;
+                            }
+                        }
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 11
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 11
+                            }
+                        }]
+                    },
+                    "hover": {
+                        "animationDuration": 0
+                    },
+                    "animation": {
+                        "duration": 1,
+                        "onComplete": function () {
+                            var chartInstance = this.chart,
+                                ctx = chartInstance.ctx;
+
+                            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'bottom';
+
+                            this.data.datasets.forEach(function (dataset, i) {
+                                var meta = chartInstance.controller.getDatasetMeta(i);
+                                meta.data.forEach(function (bar, index) {
+                                    var data = dataset.data[index];
+                                    if (data == '0.00') {
+
+                                    }
+                                    else {
+                                        ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                                    }
+                                });
+                            });
+                        }
+                    }
+                }
+            }
+            new Chart($("#barChartdiv > canvas").get(0).getContext("2d"), config);
+        }
+
+        function GetKaizenList(status) {
+            var date1 = $("#Date1").val();
+            var date2 = $("#Date2").val();
+            var status = $("#Status").val();
+            var fileDownloadPath = '@Url.Action("DownloadKaizenFile", "Kaizen", new { fileName = "**" })';
+            var tempfiledownloadpath = fileDownloadPath;
+            var data1 = '';
+            $.ajax({
+                url: '/Kaizen/GetKaizenList',
+                type: "POST",
+                data: { date1: date1, date2: date2, status: status },
+                success: function (data, status) {
+                    $("#dt-hs tbody").empty();
+                    $("#dt-hs").DataTable().destroy();
+                    $.each(data, function (index, item) {
+                        tempfiledownloadpath = tempfiledownloadpath.replace("**", item.docName);
+                        data1 += '<tr>';
+                        data1 += '<td class="text-center"><a title="View" href="Kaizen/KaizenApprAdd?Dno=' + item.param1 + '&RUrl=KaizenReports"><i class="fa fa-eye text-info" ></i ></a></td>';
+                        data1 += '<td>';
+                        if (item.docName != null || item.docName != undefined) {
+                            data1 += '<a title="Download" target="_blank" href="' + tempfiledownloadpath + '"><i class="fas fa-download"></i>Doc</a>';
+                        }
+                        else {
+                            data1 += '<a>NA</a>';
+                        }
+                        data1 += '<td class="text-center">' + item.docNo + '</td>';
+                        data1 += '<td>' + item.statusDescr + '</td>';
+                        data1 += '<td>' + item.regNo + '</td>';
+                        data1 += '<td>' + item.kaizenName + '</td>';
+                        data1 += '<td>' + item.kaizenType + '</td>';
+                        data1 += '<td>' + item.empCode + '</td>';
+                        data1 += '<td>' + item.empName + '</td>';
+                        data1 += '<td>' + item.deptName + '</td>';
+                        data1 += '<td>' + item.circleNo + '</td>';
+                        data1 += '<td>' + item.plant + '</td>';
+                        data1 += '<td>' + item.impact + '</td>';
+                        data1 += '<td>' + item.finYearCode + '</td>';
+                        data1 += '<td>' + item.year + '</td>';
+                        data1 += '<td>' + item.month + '</td>';
+                        data1 += '<td>' + item.macArea + '</td>';
+                        data1 += '<td>' + item.hdDone + '</td>';
+                        data1 += '<td>' + item.respPillar + '</td>';
+                        data1 += '<td>' + item.mpWorthy + '</td>';
+                        data1 += '<td>' + item.costSaving + '</td>';
+                        data1 += '<td>' + item.tDate + '</td>';
+                        data1 += '<td>' + item.userId + " - " + item.userName + '</td>';
+                        data1 += '<td>' + item.apprId + " - " + item.apprName + '</td>';
+                        data1 += '<td>' + item.date1 + '</td>';
+                        data1 += '</tr >';
+                        tempfiledownloadpath = fileDownloadPath;
+                    });
+                    $("#dt-hs tbody").html(data1);
+                    $('#dt-hs').dataTable({
+                        responsive: false,
+                        order: [[1, 'desc']],
+                        "columnDefs": [
+                            { "orderable": false, "targets": [0] },
+                        ],
+                        lengthChange: false,
+                        "pageLength": 20,
+                        dom:
+                            "<'row'<'col-sm-12 col-md-3 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-3 d-flex align-items-center justify-content-center'i><'col-sm-12 col-md-3 d-flex align-items-center justify-content-end'lB><'col-sm-12 col-md-3 d-flex align-items-center justify-content-end'p>>" +
+                            "<'row'<'col-sm-12'tr>>" +
+                            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                        //dom:
+                        //    //"<'row'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'lB>>" +
+                        //    //"<'row'<'col-sm-12'tr>>" +
+                        //    //"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                        buttons: [
+                            {
+                                extend: 'excelHtml5',
+                                text: 'Download',
+                                title: null,
+                                titleAttr: 'Download',
+                                className: 'btn-outline-dark btn-xs mr-1',
+                                exportOptions: {
+                                    columns: ':not(.notexport)'
+                                }
+                            },
+                        ]
+                    });
+                },
+                error: function () {
+                },
+            });
+        }
+    </script>
+}

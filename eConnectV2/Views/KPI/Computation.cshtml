@@ -1,0 +1,425 @@
+﻿@model eConnectV2.ViewModels.KPIViewModel
+@{
+    ViewData["Title"] = "KPI - View Score";
+    ViewData["PageHeading"] = "KPI";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "KPI";
+    ViewBag.Category1 = "View Score";
+    int rowCount = 0;
+    decimal t_apr = 0, t_may = 0, t_jun = 0, t_jul = 0, t_aug = 0, t_sep = 0, t_oct = 0, t_nov = 0, t_dec = 0, t_jan = 0, t_feb = 0, t_mar = 0, t_total = 0;
+    bool IsRecordFound = Model.KpiList.Count > 0 ? true : false;
+    string categoryName;
+
+}
+
+@section HeadBlock {
+    <style>
+        .c_text {
+            height: 20px;
+            width: 45px;
+            border: 1px solid #E5E5E5;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            line-height: 1.5;
+            font-weight: 400;
+            background-clip: padding-box;
+            margin-left: 2px;
+            background-color: white;
+        }
+
+        .c_text_readonly {
+            height: 20px;
+            width: 45px;
+            border: 1px solid #E5E5E5;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            line-height: 1.5;
+            font-weight: 400;
+            padding: 2px;
+            background-clip: padding-box;
+            background-color: #e9ecef;
+        }
+    </style>
+}
+
+<div class="panel">
+    <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+        <h2>
+            <span class="fw-300 pr-1">View </span> KPI Score
+        </h2>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content">
+            @using (Html.BeginForm("Computation", "KPI", FormMethod.Post, new { id = "myform", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+            {
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold" for="FinYearCode">Fin. Year<span class="text-danger ml-1"></span> : </label>
+                            <div class="col-sm-6">
+                                <select class="select2 custom-select form-control w-100" asp-for="FinYearCode" required asp-items="@(new SelectList(Model.FinYearList, "Value", "Text"))">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label font-weight-bold" for="DeptName">Department<span class="text-danger ml-1"></span> : </label>
+                            <div class="col-sm-9">
+                                @if (Model.KpiType == KPIController.KpiUser)
+                                {
+                                    <input asp-for="DeptName" class="form-control" value="@User.Identity.GetDeptName()" readonly />
+                                    <input asp-for="DeptCode" type="hidden" value="@User.Identity.GetDeptCode()" />
+                                }
+                                else
+                                {
+                                    @if (Model.HodDepartmentList.Count > 1)
+                                    {
+                                        <select class="select2 custom-select form-control w-100" asp-for="DeptCode" required asp-items="@(new SelectList(Model.HodDepartmentList, "Value", "Text"))">
+                                        </select>
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="DeptName" class="form-control" value="@Model.DeptName" readonly />
+                                        <input asp-for="DeptCode" type="hidden" value="@Model.DeptCode" />
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label font-weight-bold" for="MenuId">Employee<span class="text-danger ml-1">*</span> : </label>
+                            <div class="col-sm-9">
+                                @if (Model.KpiType == KPIController.KpiUser)
+                                {
+                                    <input asp-for="EmpName" class="form-control" value="@User.Identity.GetEmpName()" readonly />
+                                    <input asp-for="EmpCode" type="hidden" value="@User.Identity.GetEmpCode()" />
+                                }
+                                else
+                                {
+                                    <select class="select2 custom-select form-control w-100" asp-for="EmpCode" required asp-items="@(new SelectList(Model.EmployeeList, "Value", "Text"))">
+                                    </select>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group row">
+                            <div class="col-sm-6">
+                                <button class="btn btn-sm btn-primary waves-effect waves-themed" type="submit">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div id="KPIList">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="dt-hs" class="table table-bordered table-sm table-hover nowrap" style="table-layout:fixed;">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Department</th>
+                            <th>Fin Year</th>
+                            <th>KPI</th>
+                            <th>Responsible</th>
+                            <th>Category </th>
+                            <th>Weightage</th>
+                            <th style="min-width:45px;">APR</th>
+                            <th style="min-width:45px;">MAY</th>
+                            <th style="min-width:45px;">JUN</th>
+                            <th style="min-width:45px;">JUL</th>
+                            <th style="min-width:45px;">AUG</th>
+                            <th style="min-width:45px;">SEP</th>
+                            <th style="min-width:45px;">OCT</th>
+                            <th style="min-width:45px;">NOV</th>
+                            <th style="min-width:45px;">DEC</th>
+                            <th style="min-width:45px;">JAN</th>
+                            <th style="min-width:45px;">FEB</th>
+                            <th style="min-width:45px;">MAR</th>
+                        </tr>
+                    </thead>
+                    <tbody class='bg-white text-nowrap'>
+                        @foreach (var item in Model.KpiList)
+                        {
+                            if (item.CategoryCode == "1")
+                            {
+                                categoryName = "Lower is better";
+                            }
+                            else if (item.CategoryCode == "2")
+                            {
+                                categoryName = "Higher is better";
+                            }
+                            else if (item.CategoryCode == "3")
+                            {
+                                categoryName = "0 for all Target";
+                            }
+                            else if (item.CategoryCode == "4")
+                            {
+                                categoryName = "1 for all Target";
+                            }
+                            else if (item.CategoryCode == "5")
+                            {
+                                categoryName = "100% for all Target";
+                            }
+                            else if (item.CategoryCode == "6")
+                            {
+                                categoryName = "In terms of cost";
+                            }
+                            else
+                            {
+                                categoryName = "";
+                            }
+                            rowCount = rowCount + 1;
+                            t_apr = t_apr + (string.IsNullOrEmpty(item.APR_CALC) ? 0 : Convert.ToDecimal(item.APR_CALC));
+                            t_may = t_may + (string.IsNullOrEmpty(item.MAY_CALC) ? 0 : Convert.ToDecimal(item.MAY_CALC));
+                            t_jun = t_jun + (string.IsNullOrEmpty(item.JUN_CALC) ? 0 : Convert.ToDecimal(item.JUN_CALC));
+                            t_jul = t_jul + (string.IsNullOrEmpty(item.JUL_CALC) ? 0 : Convert.ToDecimal(item.JUL_CALC));
+                            t_aug = t_aug + (string.IsNullOrEmpty(item.AUG_CALC) ? 0 : Convert.ToDecimal(item.AUG_CALC));
+                            t_sep = t_sep + (string.IsNullOrEmpty(item.SEP_CALC) ? 0 : Convert.ToDecimal(item.SEP_CALC));
+                            t_oct = t_oct + (string.IsNullOrEmpty(item.OCT_CALC) ? 0 : Convert.ToDecimal(item.OCT_CALC));
+                            t_nov = t_nov + (string.IsNullOrEmpty(item.NOV_CALC) ? 0 : Convert.ToDecimal(item.NOV_CALC));
+                            t_dec = t_dec + (string.IsNullOrEmpty(item.DEC_CALC) ? 0 : Convert.ToDecimal(item.DEC_CALC));
+                            t_jan = t_jan + (string.IsNullOrEmpty(item.JAN_CALC) ? 0 : Convert.ToDecimal(item.JAN_CALC));
+                            t_feb = t_feb + (string.IsNullOrEmpty(item.FEB_CALC) ? 0 : Convert.ToDecimal(item.FEB_CALC));
+                            t_mar = t_mar + (string.IsNullOrEmpty(item.MAR_CALC) ? 0 : Convert.ToDecimal(item.MAR_CALC));
+                            t_total = t_total + (string.IsNullOrEmpty(item.Weightage) ? 0 : Convert.ToDecimal(item.Weightage));
+                            <tr>
+                                <td>@rowCount</td>
+                                <td>@item.EmpName</td>
+                                <td>@item.DeptName</td>
+                                <td>@item.FinYearName</td>
+                                <td>
+                                    <span title="@item.KpiName">
+                                        @item.KpiName.Substring(0, (item.KpiName.Length > 50 ? 50 : item.KpiName.Length))
+                                        @{
+                                            if (item.KpiName.Length > 50)
+                                            {
+                                                <span>...</span>
+                                            }
+                                        }
+                                    </span>
+                                    @if (!string.IsNullOrEmpty(item.DocUId))
+                                    {
+                                        <a title="Download" href="@Url.Action("Download", "KPI", new { filename = item.DocUId })"><i class="fas fa-file-alt ml-2 text-primary"></i></a>
+                                    }
+                                </td>
+                                <td>@item.RespDeptName</td>
+                                <td>@categoryName</td>
+                                <td class="text-center">@item.Weightage  %</td>
+                                <td>
+                                    @item.APR_CALC
+                                </td>
+                                <td>
+                                    @item.MAY_CALC
+                                </td>
+                                <td>
+                                    @item.JUN_CALC
+                                </td>
+                                <td>
+                                    @item.JUL_CALC
+                                </td>
+                                <td>
+                                    @item.AUG_CALC
+                                </td>
+                                <td>
+                                    @item.SEP_CALC
+                                </td>
+                                <td>
+                                    @item.OCT_CALC
+                                </td>
+                                <td>
+                                    @item.NOV_CALC
+                                </td>
+                                <td>
+                                    @item.DEC_CALC
+                                </td>
+                                <td>
+                                    @item.JAN_CALC
+                                </td>
+                                <td>
+                                    @item.FEB_CALC
+                                </td>
+                                <td>
+                                    @item.MAR_CALC
+                                </td>
+                            </tr>
+                        }
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="text-primary font-weight-bold">Total </td>
+                            <td class="text-primary font-weight-bold">@(t_total.ToString() == "100.00" ? "100" : t_total.ToString())</td>
+                            <td>
+                                <span class="c_text_readonly">
+                                    @{
+                                        if (t_apr > 0)
+                                        {
+                                            @t_apr;
+                                        }
+                                    }
+                                </span>
+                            </td>
+                            <td>
+                                <span class="c_text_readonly">
+                                    @{
+                                        if (t_may > 0)
+                                        {
+                                            @t_may;
+                                        }
+                                    }
+                                </span>
+                            </td>
+                            <td>
+                                <span class="c_text_readonly">
+                                    @{
+                                        if (t_jun > 0)
+                                        {
+                                            @t_jun;
+                                        }
+                                    }
+                                </span>
+                            </td>
+                            <td>
+                                <span class="c_text_readonly">
+                                    @{
+                                        if (t_jul > 0)
+                                        {
+                                            @t_jul;
+                                        }
+                                    }
+                                </span>
+                            </td>
+                            <td>
+                                <span class="c_text_readonly">
+                                    @{
+                                        if (t_aug > 0)
+                                        {
+                                            @t_aug;
+                                        }
+                                    }
+                                </span>
+                            </td>
+                            <td>
+                                <span class="c_text_readonly">
+                                    @{
+                                        if (t_sep > 0)
+                                        {
+                                            @t_sep;
+                                        }
+                                    }
+                                </span>
+                            </td>
+                            <td>
+                                <span class="c_text_readonly">
+                                    @{
+                                        if (t_oct > 0)
+                                        {
+                                            @t_oct;
+                                        }
+                                    }
+                                </span>
+                            </td>
+                            <td>
+                                <span class="c_text_readonly">
+                                    @{
+                                        if (t_nov > 0)
+                                        {
+                                            @t_nov;
+                                        }
+                                    }
+                                </span>
+                            </td>
+                            <td>
+                                <span class="c_text_readonly">
+                                    @{
+                                        if (t_dec > 0)
+                                        {
+                                            @t_dec;
+                                        }
+                                    }
+                                </span>
+                            </td>
+                            <td>
+                                <span class="c_text_readonly">
+                                    @{
+                                        if (t_jan > 0)
+                                        {
+                                            @t_jan;
+                                        }
+                                    }
+                                </span>
+                            </td>
+                            <td>
+                                <span class="c_text_readonly">
+                                    @{
+                                        if (t_feb > 0)
+                                        {
+                                            @t_feb;
+                                        }
+                                    }
+                                </span>
+                            </td>
+                            <td>
+                                <span class="c_text_readonly">
+                                    @{
+                                        if (t_mar > 0)
+                                        {
+                                            @t_mar;
+                                        }
+                                    }
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/select.js"></script>
+    <script>
+        $(document).ready(function () {
+            var table = $('#dt-hs').dataTable({
+                scrollY: "300px",
+                scrollX: true,
+                scrollCollapse: true,
+                paging: false,
+                searching: false,
+                "ordering": false,
+                dom:
+                    "<'row'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'lB>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel',
+                        title: null,
+                        titleAttr: 'Generate Excel',
+                        className: 'btn-outline-dark btn-xs mr-1',
+                        exportOptions: {
+                            columns: ':not(.notexport)'
+                        }
+                    }
+                ]
+            });
+            new $.fn.dataTable.FixedColumns(table, { leftColumns: 8 });
+            $(".dataTables_empty").empty();
+        });
+    </script>
+}

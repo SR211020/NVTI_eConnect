@@ -1,0 +1,565 @@
+﻿@model eConnectV2.ViewModels.ITViewModel
+@{
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewData["Title"] = "Help Desk";
+    ViewData["HeaderTitle"] = "Help Desk for Approval";
+    var Mode = ViewBag.TagAttribute;
+}
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+}
+
+
+<div class="panel">
+    <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+        @if (ViewBag.Login == "Y")
+        {
+            <a title="Back" href="@Url.Action("HDView", "IT")" style="color:#fff">
+                <i class="fa fa-angle-double-left"></i> Back
+            </a>
+        }
+        else
+        {
+            <a title="Back" href="@Url.Action("Index", "Account")" style="color:#fff">
+                <i class="fa fa-angle-double-left"></i> Back
+            </a>
+        }
+        <h2 class="justify-content-center">
+            <span class="fw-300 pr-1">Help Desk  </span> Approver
+        </h2>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content">
+            <div class="row">
+                <input asp-for="Plant" hidden />
+                <input asp-for="Type" hidden />
+                <input asp-for="EmpName" hidden />
+                <input asp-for="UserID" hidden />
+                <input asp-for="Status" hidden />
+                <input asp-for="ApprID" hidden />
+                <input asp-for="ApprType" hidden />
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Request No</label>
+                                <span class="col-sm-8 col-form-label text-info">@Model.RequestNo</span>
+                                <input asp-for="RequestNo" value="@Model.RequestNo" hidden />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Status</label>
+                                <span class="col-sm-8 col-form-label text-info font-weight-normal">@Model.StatusDescr</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Priority</label>
+                                <div class="col-sm-8">
+                                    <div class="form-check form-check-inline row">
+                                        <input id="P1" asp-for="Priority" value="Low" class="form-check-input rdPriority" type="radio">
+                                        <label for="P1" class="form-check-label text-success font-weight-bold mr-2">Low</label>
+                                        <input id="P2" asp-for="Priority" value="Medium" class="form-check-input rdPriority" type="radio">
+                                        <label for="P2" class="form-check-label text-info font-weight-bold mr-2">Medium</label>
+                                        <input id="P3" asp-for="Priority" value="High" class="form-check-input rdPriority" type="radio">
+                                        <label for="P3" class="form-check-label text-danger font-weight-bold mr-2">High</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Request Date</label>
+                                <span class="col-sm-8 col-form-label text-info font-weight-normal">@Model.TDate</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Email Id</label>
+                                <span class="col-sm-8 col-form-label text-info font-weight-normal">@Model.Email</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Request Type</label>
+                                <span class="col-sm-8 col-form-label text-info font-weight-normal">@Model.Type</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Requestor</label>
+                                <span class="col-sm-8 text-info font-weight-normal pt-2">@Model.EmpCode - @Model.EmpName</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Contact No</label>
+                                <span class="col-sm-8 col-form-label text-info font-weight-normal">@Model.ContactNo</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Problem Catg</label>
+                                <div class="col-sm-8">
+                                    <select asp-for="ProbCatg" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.CategoryList, "Value", "Text"))" disabled onchange="BindHelpDeskSubCatg()">
+                                        <option value="">-- Select --</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Department</label>
+                                <span class="col-sm-8 text-info font-weight-normal pt-2">@Model.DeptName</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Ext No</label>
+                                <span class="col-sm-8 text-info font-weight-normal pt-2">@Model.ExtNo</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Sub Category</label>
+                                <div class="col-sm-8">
+                                    <select asp-for="SubCatg" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.SubCategoryList, "Value", "Text"))" disabled>
+                                        <option value="">-- Select --</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row pt-2">
+                        <div class="col-md-8">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label font-weight-bold">Subject</label>
+                                <div class="col-sm-10">
+                                    <input asp-for="Subject" class="form-control" type="text" disabled />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Download File</label>
+                                <div class="col-sm-6 pt-2">
+                                    @if (Model.DocName != "")
+                                    {
+                                        <a title='Download' href='@Url.Action("DownloadHelpDeskFile", "IT", new { fileName = @Model.DocName })'>@Model.DocName</a> }
+                                    else
+                                    {
+                                        <label class="font-weight-bold">NA</label>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="col-md-8">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label font-weight-bold">Problem Description</label>
+                                <div class="col-sm-10">
+                                    <textarea asp-for="Descr1" class="form-control" type="text" rows="5" disabled></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div id="divITEnggArea" class="form-group row" style="display:none">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Select IT Engineer Area<span class="text-danger ml-1">*</span></label>
+                                <div class="col-sm-8">
+                                    <select asp-for="Area" class="select2 custom-select w-100" asp-items="@(new SelectList(Model.AreaList, "Value", "Text"))">
+                                        <option value="">-- Select --</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="div_StartTime" class="pt-2" style="display:none">
+                        <div class="row pt-2">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">Start Time</label>
+                                    <div class="col-sm-4">
+                                        <input asp-for="Date1" class="form-control datepickertext" type="text" placeholder="dd-mmm-yyyy" data-date-format="dd-M-yyyy" autocomplete="off"  />
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <input asp-for="Param1" class="form-control" type="time" >
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold">End Time</label>
+                                    <div class="col-sm-4">
+                                        <input asp-for="Date2" class="form-control datepickertext" type="text" placeholder="dd-mmm-yyyy" data-date-format="dd-M-yyyy" autocomplete="off"  />
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <input asp-for="Param2" class="form-control" type="time" >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="col-md-8">
+                            <div id="divStatus" class="form-group row" style="display:none">
+                                <label class="col-sm-2 col-form-label font-weight-bold">Status<span class="text-danger ml-1">*</span></label>
+                                <div class="col-sm-10 form-check form-check-inline row">
+                                    <input id="1" asp-for="ApprStatus" value="APPROVE" class="form-check-input rdApprove" type="radio" onchange="ApprStatus_Change(this)" style="display:none">
+                                    <label for="1" class="form-check-label text-success font-weight-bold mr-2 rdApprove" style="display:none">Approve</label>
+                                    <input id="2" asp-for="ApprStatus" value="COMPLETE" class="form-check-input rdComplete" type="radio" onchange="ApprStatus_Change(this)" style="display:none">
+                                    <label for="2" class="form-check-label text-success font-weight-bold mr-2 rdComplete" style="display:none">Complete</label>
+                                    <input id="3" asp-for="ApprStatus" value="ASSIGN" class="form-check-input rdAssign" type="radio" onchange="ApprStatus_Change(this)" style="display:none">
+                                    <label for="3" class="form-check-label text-success font-weight-bold mr-2 rdAssign" style="display:none">Assign</label>
+                                    <input id="4" asp-for="ApprStatus" value="REJECT" class="form-check-input rdReject" type="radio" onchange="ApprStatus_Change(this)" style="display:none">
+                                    <label for="4" class="form-check-label text-danger font-weight-bold mr-2 rdReject" style="display:none">Reject</label>
+                                    <input id="5" asp-for="ApprStatus" value="REVIEWBACK" class="form-check-input rdRevieBack" type="radio" onchange="ApprStatus_Change(this)" style="display:none">
+                                    <label for="5" class="form-check-label text-warning font-weight-bold mr-2 rdRevieBack" style="display:none">Review Back</label>
+                                    <input id="6" asp-for="ApprStatus" value="WIP" class="form-check-input rdWIP" type="radio" onchange="ApprStatus_Change(this)" style="display:none">
+                                    <label for="6" class="form-check-label text-info font-weight-bold mr-2 rdWIP" style="display:none">WIP</label>
+                                    <input id="7" asp-for="ApprStatus" value="FORWARD" class="form-check-input rdForward" type="radio" onchange="ApprStatus_Change(this)" style="display:none">
+                                    <label for="7" class="form-check-label text-secondary font-weight-bold mr-2 rdForward" style="display:none">Forward</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div id="divITEngg" class="form-group row" style="display:none">
+                                <label class="col-sm-4 col-form-label font-weight-bold">Select IT Engineer<span class="text-danger ml-1">*</span></label>
+                                <div class="col-sm-8">
+                                    <select asp-for="ITEngineer" class="select2 custom-select w-100" asp-items="@(new SelectList(Model.EmployeeList, "Value", "Text"))">
+                                        <option value="">-- Select --</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="divSolution" class="row pt-2" style="display:none">
+                        <div class="col-md-8">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label font-weight-bold">Solution<span class="text-danger ml-1">*</span></label>
+                                <div class="col-sm-10">
+                                    <textarea asp-for="Solution" class="form-control" type="text" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="divRemarks" class="row pt-2" style="display:none">
+                        <div class="col-md-8">
+                            <div class="row">
+                                <label class="col-sm-2 col-form-label font-weight-bold">Remarks</label>
+                                <div class="col-sm-10">
+                                    <textarea asp-for="Remarks" class="form-control" type="text" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="col-md-8">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label font-weight-bold"></label>
+                                <div class="col-sm-10">
+                                    <button id="btnSubmit" type="submit" name="submit" value="Submit" class="btn btn-primary btn-sm" style="display:none" onclick="SaveRecord()">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.HistoryList != null && Model.HistoryList.Count > 0)
+{
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="row col-md-8">
+            <div class="table-responsive">
+                <h3 class="text-info font-weight-bold text-center">Request History</h3>
+                <br />
+                <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                    <thead class="bg-primary-800">
+                        <tr>
+                            <th width="5%" class="text-center">#</th>
+                            <th width="12%">User Type</th>
+                            <th width="20%">User Name</th>
+                            <th>Remarks</th>
+                            <th width="15%">Status</th>
+                            <th width="20%">TDate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.HistoryList)
+                        {
+                            <tr>
+                                <td class="text-center">@item.SrNo</td>
+                                <td>@item.UserType</td>
+                                <td>@item.EmpName</td>
+                                <td>@item.Remarks</td>
+                                <td>@item.StatusDescr</td>
+                                <td>@item.TDate</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>}
+@section ScriptsBlock {
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script>
+    $(document).ready(function () {
+        $('.select2').select2();
+        runDatePicker();
+        FillForm();
+    });
+      
+        var controls = {
+            leftArrow: '<i class="fal fa-angle-left" style="font-size: 1.25rem"></i>',
+            rightArrow: '<i class="fal fa-angle-right" style="font-size: 1.25rem"></i>'
+        }
+        var runDatePicker = function () {
+            $('#Date1, #Date2').datepicker({
+                todayHighlight: true,
+                orientation: "bottom left",
+                templates: controls,
+                autoclose: true
+            });
+        }
+
+    function BindHelpDeskSubCatg() {
+        $("#SubCatg").empty();
+        var catg = $("#ProbCatg :selected").val();
+        $.ajax({
+            url: '/IT/BindHelpDeskSubCatg',
+            type: "POST",
+            data: { catg: catg },
+            success: function (data, status) {
+                $.each(data, function (index, item) {
+                    $("#SubCatg").append($("<option></option>").val(item.value).html(item.text));
+                });
+            },
+            error: function () {
+            },
+        });
+        }
+
+    function ApprStatus_Change(radio) {
+        if ($('#ApprType').val() == 'IT_ADMIN') {
+            if (radio.value == 'FORWARD') {
+                $("#divITEnggArea").show();
+                $('#divITEngg').show();
+            }
+            else {
+                $("#divITEnggArea").hide();
+                $('#divITEngg').hide();
+            }
+        }
+        if ($('#ApprType').val() == 'IT_ENGG') {
+            if (radio.value == 'COMPLETE') {
+                $("#divSolution").show();
+                $("#Solution").prop("disabled", false);
+                $("#div_StartTime").show();
+                $("#Date1").prop("disabled", false);
+                $("#Param1").prop("disabled", false);
+                $("#Date2").prop("disabled", false);
+                $("#Param2").prop("disabled", false);
+            }
+            else {
+                $('#divSolution').hide();
+                $("#Solution").prop("disabled", true);
+                $("#div_StartTime").hide();
+            }
+            if (radio.value == 'FORWARD') {
+                $("#divITEngg").show();
+            }
+            else {
+                $('#divITEngg').hide();
+            }
+        }
+    };
+
+    function FillForm() {
+        $(".rdPriority").prop("disabled", true);
+        $("#Solution").prop("disabled", true);
+        $("#Date1").prop("disabled", true);
+        $("#Param1").prop("disabled", true);
+        $("#Date2").prop("disabled", true);
+        $("#Param2").prop("disabled", true);
+        if ("@Mode" == "E") {
+            $("#divStatus").show();
+            $("#divRemarks").show();
+            $("#btnSubmit").show();
+
+            if ($('#ApprType').val() == 'HOD' && $("#Status").val() == 2) {
+                $(".rdApprove").show();
+                $(".rdReject").show();
+                $(".rdRevieBack").show();
+            }
+            if ($('#ApprType').val() == 'IT_HOD' && $("#Status").val() == 3) {
+                $(".rdApprove").show();
+                $(".rdReject").show();
+                $(".rdRevieBack").show();
+            }
+            if ($('#ApprType').val() == 'IT_ADMIN' && $("#Status").val() == 4) {
+                $(".rdPriority").prop("disabled", false);
+                $("#ProbCatg").prop("disabled", false);
+                $("#SubCatg").prop("disabled", false);
+                $(".rdAssign").show();
+                $(".rdForward").show();
+            }
+            if ($('#ApprType').val() == 'IT_ENGG' && $("#Status").val() == 5) {
+                $(".rdPriority").prop("disabled", false);
+                $("#ProbCatg").prop("disabled", false);
+                $("#SubCatg").prop("disabled", false);
+                $(".rdComplete").show();
+                $(".rdReject").show();
+                $(".rdRevieBack").show();
+                $(".rdWIP").show();
+                $(".rdForward").show();
+            }
+            if ($('#ApprType').val() == 'UAT' && $("#Status").val() == 6) {
+                $(".rdComplete").show();
+                $(".rdRevieBack").show();
+            }
+        }
+        else {
+            $('#div_StartTime').show();
+            $("#divSolution").show();
+            $("#divStatus").hide();
+            $("#divRemarks").hide();
+            $("#btnSubmit").hide();
+        }
+    }
+
+    function SaveRecord(radio)
+    {
+        var requestUrl = 'IT/HDApprAddAjax';
+        var reqNo = $('#RequestNo').val();
+        var plant = $('#Plant').val();
+        var reqType = $('#Type').val();
+        var apprType = $('#ApprType').val();
+        var reqId = $('#UserID').val();
+        var reqName = $('#EmpName').val();
+        var priority = $('[name="Priority"]:radio:checked').val();
+        var probCatg = $('#ProbCatg').val();
+        var subCatg = $('#SubCatg').val();
+        var subject = $('#Subject').val();
+        var solution = $('#Solution').val();
+        var itEngineer = $('#ITEngineer').val();
+        var itEnggArea = $('#Area').val();
+        var remarks = $('#Remarks').val();
+        var date1 = $('#Date1').val() + " " + $('#Param1').val();
+        var date2 = $('#Date2').val() + " " + $('#Param2').val();
+        var currentApprId = $('#ApprID').val();
+        var currentStatus = $('#Status').val();    //Current Status (before click on submit button)
+        var apprStatus = $('[name="ApprStatus"]:radio:checked').val();
+        var bool = 'true';
+        if ($('input[name=ApprStatus]:checked').length == 0) {
+            bool = 'false';
+            Swal.fire("Info!", "Select Status", "error");
+        }
+        if (apprType == "IT_ADMIN" && currentStatus == 4)
+        {
+            if (probCatg == '') {
+                bool = 'false';
+                Swal.fire("Info!", "Select Problem Category", "error");
+            }
+            if (subCatg == '') {
+                bool = 'false';
+                Swal.fire("Info!", "Select Sub Category", "error");
+            }
+            if (apprStatus == "FORWARD")
+            {
+                if (itEnggArea == '') {
+                    bool = 'false';
+                    Swal.fire("Info!", "Select IT Engineer Area", "error");
+                }
+                if (itEngineer == '') {
+                    bool = 'false';
+                    Swal.fire("Info!", "Select IT Engineer", "error");
+                }
+                if (itEngineer == currentApprId) {
+                    bool = 'false';
+                    Swal.fire("Info!", "Select Different IT Engineer", "error");
+                }
+            }
+        }
+
+        if (apprType == "IT_ENGG" && currentStatus == 5)
+        {
+            if (probCatg == '')
+            {
+                bool = 'false';
+                Swal.fire("Info!", "Select Problem Category", "error");
+            }
+            if (subCatg == '') {
+                bool = 'false';
+                Swal.fire("Info!", "Select Sub Category", "error");
+            }
+            if (apprStatus == "COMPLETE" && solution == '') {
+                bool = 'false';
+                Swal.fire("Info!", "Enter Solution", "error");
+            }
+            if (apprStatus == "FORWARD")
+            {
+                if (itEngineer == '')
+                {
+                    bool = 'false';
+                    Swal.fire("Info!", "Select IT Engineer", "error");
+                }
+                if (itEngineer == currentApprId)
+                {
+                    bool = 'false';
+                    Swal.fire("Info!", "Select Different IT Engineer", "error");
+                }
+            }
+        }
+
+    if (bool == 'true')
+    {
+        $.ajax({
+            url: requestUrl,
+            type: "POST",
+            data:
+            {
+                iReqNo: reqNo, strPlant: plant, strReqType: reqType, strApprType: apprType, strReqId: reqId, strReqName: reqName, strPriority: priority, strProbCatg: probCatg, strSubCatg: subCatg, strSubject: subject,
+                strSolution: solution, strITEngineer: itEngineer, strITEnggArea: itEnggArea, strRemarks: remarks, strCurrentApprId: currentApprId, strCurrentApprStatus: apprStatus, strDate1: date1, strDate2: date2
+            },
+            success: function (data, status)
+            {
+                if (data == '2')
+                {
+                    if ('@ViewBag.Login' == 'Y')
+                    {
+                        Swal.fire("Success", "Request Status Updated Successfully", "success").then(function () { window.location.href = "/IT/HDView"; })
+                    }
+                    else
+                    {
+                        Swal.fire("Success", "Request Status Updated Successfully", "success").then(function () { window.location.href = "/Account/Index"; })
+                    }
+                }
+                else
+                {
+                    Swal.fire("Info!", "Something went wrong", "error");
+                }
+            },
+            error: function ()
+            {
+                Swal.fire("Error!", "Encountered Error", "error");
+            },
+        });
+    }
+}
+
+    </script>
+}

@@ -1,0 +1,578 @@
+﻿@model eConnectV2.ViewModels.HRViewModel
+@{
+    ViewData["Title"] = "Employee Exit Survey";
+    ViewData["PageHeading"] = "Employee Exit Survey";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "HR";
+    ViewBag.Category1 = "Exit Survey";
+}
+
+@section HeadBlock {
+    <link href="~/css/exit-survey.css" rel="stylesheet" />
+    <style>
+        .bg_6 {
+            background-color: #03d500;
+            color: white;
+        }
+
+        .bg_5 {
+            background-color: #7ff015;
+            color: white
+        }
+
+        .bg_4 {
+            background-color: #faf523;
+            color: black
+        }
+
+        .bg_3 {
+            background-color: #fe9031;
+            color: white
+        }
+
+        .bg_2 {
+            background-color: #f64338;
+            color: white
+        }
+
+        .bg_1 {
+            background-color: #de1215;
+            color: white
+        }
+
+        .starRating {
+            position: relative;
+            font-family: arial;
+            text-align: center;
+            align-content: center;
+        }
+
+            .starRating input {
+                display: none;
+            }
+
+            .starRating label {
+                font-size: 30px;
+                float: right;
+                margin: 0px 5px;
+                color: #ddd;
+            }
+
+                .starRating label:before {
+                    content: '★';
+                }
+
+            .starRating input:checked ~ label {
+                color: #FFC107;
+            }
+
+            .starRating:input:checked > label:hover,
+            .starRating:input:checked > label:hover ~ label {
+                color: #FFC107;
+            }
+
+            .starRating:not(:checked) > label:hover,
+            .starRating:not(:checked) > label:hover ~ label {
+                color: #FFC107;
+            }
+
+            .starRating .result:after {
+                left: 0px;
+                right: 0px;
+                font-size: 20px;
+                color: #FFC107;
+                display: none;
+            }
+
+            .starRating input:checked ~ .result:after {
+                content: "Strongly Agree (6)";
+            }
+
+            .starRating #fifth:checked ~ .result:after {
+                content: "Agree (5)";
+            }
+
+            .starRating #fourth:checked ~ .result:after {
+                content: "Slightly Agree (4)";
+            }
+
+            .starRating #third:checked ~ .result:after {
+                content: "Slightly Disagree (3)";
+            }
+
+            .starRating #second:checked ~ .result:after {
+                content: "Disagree (2)";
+            }
+
+            .starRating #first:checked ~ .result:after {
+                content: "Strongly Disagree (1)";
+            }
+    </style>
+}
+
+
+@if (ViewBag.StartExitSurvey == "NO")
+{
+    @using (Html.BeginForm("ExitSurvey", "HR", FormMethod.Post, new { id = "myform", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="alert alert-info">
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label font-weight-bold">Employee<span class="text-danger ml-1">*</span> : </label>
+                        <div class="col-md-4">
+                            <select class="select2 custom-select form-control w-100" required asp-for="EmpCode" asp-items="@(new MultiSelectList(Model.EmpList, "Value", "Text"))">
+                                <option value="">Select</option>
+                            </select>
+                            <br />
+                            <br />
+                            <button type="submit" class="btn btn-warning waves-effect waves-themed">
+                                <strong> Start Survey </strong>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <table width="100%">
+                <tr>
+                    <td align="left" class="font-weight-bold"><code class="bg_1 p-1">Strongly Disagree <img src="~/img/r1.png" /></code></td>
+                    <td align="left" class="font-weight-bold"><code class="bg_2 p-1">Disagree <img src="~/img/r2.png" /></code></td>
+                    <td align="left" class="font-weight-bold"><code class="bg_3 p-1">Slightly Disagree <img src="~/img/r3.png" /></code></td>
+                    <td align="left" class="font-weight-bold"><code class="bg_4 p-1">Slightly Agree <img src="~/img/r4.png" /></code></td>
+                    <td align="left" class="font-weight-bold"><code class="bg_5 p-1">Agree <img src="~/img/r5.png" /></code></td>
+                    <td align="left" class="font-weight-bold"><code class="bg_6 p-1">Strongly Agree <img src="~/img/r6.png" /></code></td>
+                </tr>
+            </table>
+            <hr style="border-top: 1px solid #8c8b8b; border-bottom: 1px solid #fff; ">
+            <br>
+        </div>
+    </div>
+
+    <form id="msform">
+        <!-- progressbar -->
+        <ul id="progressbar">
+            <li class="active"></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+        @using (Html.BeginForm("ExitSurvey", "HR", FormMethod.Post, new { id = "myform", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+        {
+            //Question 1
+            <fieldset>
+                <h2 class="fs-title">Question 1</h2>
+                <h3 id="Q1" class="fs-subtitle">What is the most important reason why you decided to leave NVTI? <span class="text-danger ml-1"> Choose Reason 1</span></h3>
+                <select class="select2 custom-select form-control" asp-for="Ans1" onchange="GetSubQuestion('Q1')" required asp-items="@(new SelectList(Model.DDLOptionList,"Value", "Text"))">
+                    <option value="">Select</option>
+                </select>
+                <div id="divSQ1" class="text-left">
+
+                </div>
+                <input type="button" name="next" class="next action-button" value="Next" />
+            </fieldset>
+            //Question 2
+            <fieldset>
+                <h2 class="fs-title">Question 2</h2>
+                <h3 id="Q2" class="fs-subtitle">What is the most important reason why you decided to leave NVTI?  <span class="text-danger ml-1"> Choose Reason 2</span></h3>
+                <select class="select2 custom-select form-control" asp-for="Ans2" onchange="GetSubQuestion('Q2')" required asp-items="@(new SelectList(Model.DDLOptionList2,"Value", "Text"))">
+                    <option value="">Select</option>
+                </select>
+                <div id="divSQ2" class="text-left">
+
+                </div>
+                <input type="button" name="previous" class="previous action-button" value="Previous" />
+                <input type="button" name="next" class="next action-button" value="Next" />
+            </fieldset>
+            //Question 3
+            <fieldset>
+                <h2 class="fs-title">Question 3</h2>
+                <h3 id="Q3" class="fs-subtitle">What is the most important reason why you decided to leave NVTI?  <span class="text-danger ml-1"> Choose Reason 3</span></h3>
+                <select class="select2 custom-select form-control" asp-for="Ans3" onchange="GetSubQuestion('Q3')" required asp-items="@(new SelectList(Model.DDLOptionList3,"Value", "Text"))">
+                    <option value="">Select</option>
+                </select>
+                <div id="divSQ3" class="text-left">
+
+                </div>
+                <input type="button" name="previous" class="previous action-button" value="Previous" />
+                <input type="button" name="next" class="next action-button" value="Next" />
+            </fieldset>
+            //Qustion 4
+            <fieldset>
+                <h2 class="fs-title">Question 4</h2>
+                <h3 id="Q4" class="fs-subtitle">This organization delivers on the employee experience it promises :</h3>
+                <div class="starRating col-sm-8">
+                    <input type="radio" name="starRate4" value="6" id="RBQ46" required asp-for="Ans4">
+                    <label for="RBQ46" title="Strongly Agree"></label>
+                    <input type="radio" name="starRate4" value="5" id="RBQ45" required asp-for="Ans4">
+                    <label for="RBQ45" title="Agree"></label>
+                    <input type="radio" name="starRate4" value="4" id="RBQ44" required asp-for="Ans4">
+                    <label for="RBQ44" title="Slightly Agree"></label>
+                    <input type="radio" name="starRate4" value="3" id="RBQ43" required asp-for="Ans4">
+                    <label for="RBQ43" title="Slightly Disagree"></label>
+                    <input type="radio" name="starRate4" value="2" id="RBQ42" required asp-for="Ans4">
+                    <label for="RBQ42" title="Disagree"></label>
+                    <input type="radio" name="starRate4" value="1" id="RBQ41" required asp-for="Ans4">
+                    <label for="RBQ41" title="Strongly Disagree"></label>
+                </div>
+                <br /><br /><br />
+                <input type="button" name="previous" class="previous action-button" value="Previous" />
+                <input type="button" name="next" class="next action-button" value="Next" />
+            </fieldset>
+            //Qustion 5
+            <fieldset>
+                <h2 class="fs-title">Question 5</h2>
+                <h3 id="Q5" class="fs-subtitle">Given the opportunity, I tell others great things about working here :</h3>
+                <div class="starRating col-sm-8">
+                    <input type="radio" name="starRate5" value="6" id="RBQ56" required asp-for="Ans5">
+                    <label for="RBQ56" title="Strongly Agree"></label>
+                    <input type="radio" name="starRate5" value="5" id="RBQ55" required asp-for="Ans5">
+                    <label for="RBQ55" title="Agree"></label>
+                    <input type="radio" name="starRate5" value="4" id="RBQ54" required asp-for="Ans5">
+                    <label for="RBQ54" title="Slightly Agree"></label>
+                    <input type="radio" name="starRate5" value="3" id="RBQ53" required asp-for="Ans5">
+                    <label for="RBQ53" title="Slightly Disagree"></label>
+                    <input type="radio" name="starRate5" value="2" id="RBQ52" required asp-for="Ans5">
+                    <label for="RBQ52" title="Disagree"></label>
+                    <input type="radio" name="starRate5" value="1" id="RBQ51" required asp-for="Ans5">
+                    <label for="RBQ51" title="Strongly Disagree"></label>
+                </div>
+                <br /><br /><br />
+                <input type="button" name="previous" class="previous action-button" value="Previous" />
+                <input type="button" name="next" class="next action-button" value="Next" />
+            </fieldset>
+            //Qustion 6
+            <fieldset>
+                <h2 class="fs-title">Question 6</h2>
+                <h3 id="Q6" class="fs-subtitle">I would not hesitate to recommend this organization to a friend seeking employment :</h3>
+                <div class="starRating col-sm-8">
+                    <input type="radio" name="starRate6" value="6" id="RBQ66" required asp-for="Ans6">
+                    <label for="RBQ66" title="Strongly Agree"></label>
+                    <input type="radio" name="starRate6" value="5" id="RBQ65" required asp-for="Ans6">
+                    <label for="RBQ65" title="Agree"></label>
+                    <input type="radio" name="starRate6" value="4" id="RBQ64" required asp-for="Ans6">
+                    <label for="RBQ64" title="Slightly Agree"></label>
+                    <input type="radio" name="starRate6" value="3" id="RBQ63" required asp-for="Ans6">
+                    <label for="RBQ63" title="Slightly Disagree"></label>
+                    <input type="radio" name="starRate6" value="2" id="RBQ62" required asp-for="Ans6">
+                    <label for="RBQ62" title="Disagree"></label>
+                    <input type="radio" name="starRate6" value="1" id="RBQ61" required asp-for="Ans6">
+                    <label for="RBQ61" title="Strongly Disagree"></label>
+                </div>
+                <br /><br /><br />
+                <input type="button" name="previous" class="previous action-button" value="Previous" />
+                <input type="button" name="next" class="next action-button" value="Next" />
+            </fieldset>
+            //Qustion 7
+            <fieldset>
+                <h2 class="fs-title">Question 7</h2>
+                <h3 id="Q7" class="fs-subtitle">I seldom worried about losing my job :</h3>
+                <div class="starRating col-sm-8">
+                    <input type="radio" name="starRate7" value="6" id="RBQ76" required asp-for="Ans7">
+                    <label for="RBQ76" title="Strongly Agree"></label>
+                    <input type="radio" name="starRate7" value="5" id="RBQ75" required asp-for="Ans7">
+                    <label for="RBQ75" title="Agree"></label>
+                    <input type="radio" name="starRate7" value="4" id="RBQ74" required asp-for="Ans7">
+                    <label for="RBQ74" title="Slightly Agree"></label>
+                    <input type="radio" name="starRate7" value="3" id="RBQ73" required asp-for="Ans7">
+                    <label for="RBQ73" title="Slightly Disagree"></label>
+                    <input type="radio" name="starRate7" value="2" id="RBQ72" required asp-for="Ans7">
+                    <label for="RBQ72" title="Disagree"></label>
+                    <input type="radio" name="starRate7" value="1" id="RBQ71" required asp-for="Ans7">
+                    <label for="RBQ71" title="Strongly Disagree"></label>
+                </div>
+                <br /><br /><br />
+                <input type="button" name="previous" class="previous action-button" value="Previous" />
+                <input type="button" name="next" class="next action-button" value="Next" />
+            </fieldset>
+            //Question 8
+            <fieldset>
+                <h2 class="fs-title">Question 8</h2>
+                <h3 id="Q8" class="fs-subtitle">Please provide any additional details on your reasons for leaving the company :</h3>
+                <textarea asp-for="Ans8" class="form-control" rows="4" onkeydown="if(this.value.length>=4000)this.value=this.value.substring(0,3999);"></textarea>
+                <input type="button" name="previous" class="previous action-button" value="Previous" />
+                <input type="button" name="submit" class="submit action-button" value="Submit" />
+            </fieldset>
+        }
+    </form>
+}
+
+
+@section ScriptsBlock {
+    <script src="~/js/select.js"></script>
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/exitsurvey.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(function () {
+                $('#Ans1').on('select2:select', function (e) {
+                    $("#Ans2").empty();
+                    $("#Ans2").val('');
+                    $("#Ans2").append($("<option></option>").val('').html('Select'));
+                    $("#Ans3").empty();
+                    $("#Ans3").val('');
+                    $("#Ans3").append($("<option></option>").val('').html('Select'));
+                    $('#divSQ1').empty();
+                    $('#divSQ2').empty();
+                    $('#divSQ3').empty();
+                    var ans1 = e.params.data.id;
+                    var ans2 = "0";
+                    if (ans1 == '') {
+                        $('#divSQ1').hide();
+                    }
+                    else {
+                        $('#divSQ1').show();
+                        BindAnswer(ans1, ans2, "Ans2");
+                    }
+                });
+                $('#Ans2').on('select2:select', function (e) {
+                    $("#Ans3").empty();
+                    $("#Ans3").val('');
+                    $("#Ans3").append($("<option></option>").val('').html('Select'));
+                    $('#divSQ2').empty();
+                    $('#divSQ3').empty();
+                    var ans1 = $('#Ans1').val();
+                    var ans2 = e.params.data.id;
+                    if (ans2 == '') {
+                        $('#divSQ2').hide();
+                    }
+                    else {
+                        $('#divSQ2').show();
+                        BindAnswer(ans1, ans2, "Ans3");
+                    }
+                });
+            });
+        });
+
+        function BindAnswer(selectedAns1, selectedAns2, ddlId) {
+            var requestUrl = 'HR/GetAnswer';
+            $.post(requestUrl,
+                {
+                    ans1: selectedAns1,
+                    ans2: selectedAns2
+                },
+                function (data, status) {
+                    $.each(data.result, function (index, item) {
+                        $("#" + ddlId).append($("<option></option>").val(item.value).html(item.text));
+                    });
+                });
+        }
+
+        function GetSubQuestion(queId) {
+            $('#divS' + queId).empty();
+            var selectedMainAnswer = '';
+            var remarkId = '';
+            var remarkQueId = '';
+            var remarkQuestion = 'Remarks';
+            var subQueDivContent = "";
+            if (queId == 'Q1') {
+                selectedMainAnswer = $('#Ans1').val();
+                remarkId = 'Q1Remark';
+                remarkQueId = 'RemarkQ1';
+            } else if (queId == 'Q2') {
+                selectedMainAnswer = $('#Ans2').val();
+                remarkId = 'Q2Remark';
+                remarkQueId = 'RemarkQ2';
+            } else if (queId == 'Q3') {
+                selectedMainAnswer = $('#Ans3').val();
+                remarkId = 'Q3Remark';
+                remarkQueId = 'RemarkQ3';
+            }
+
+            $.ajax({
+                url: 'HR/GetSubQuestionsBySelectedAnswer',
+                type: "POST",
+                data: { selectedMainAnswer: selectedMainAnswer },
+                success: function (data, status) {
+                    var count = 1;
+                    $.each(data.result, function (index, item) {
+                        subQueDivContent += '<table width="100%" cellpadding="0">';
+                        subQueDivContent += '<tr>';
+                        subQueDivContent += '<td width="60%">';
+                        subQueDivContent += "<span id='" + queId + "SQ" + count + "'>" + item.subQue + "</span>";
+                        subQueDivContent += '</td>';
+                        subQueDivContent += '<td width="40%">';
+                        subQueDivContent += '<div class="starRating">';
+                        subQueDivContent += "<input type='radio' name='" + queId + "SQ" + count + "star' id='" + queId + "SQ" + count + "star6' value='6'>";
+                        subQueDivContent += "<label for='" + queId + "SQ" + count + "star6' title='Strongly Agree'></label>";
+                        subQueDivContent += "<input type='radio' name='" + queId + "SQ" + count + "star' id='" + queId + "SQ" + count + "star5' value='5'>";
+                        subQueDivContent += "<label for='" + queId + "SQ" + count + "star5' title='Agree'></label>";
+                        subQueDivContent += "<input type='radio' name='" + queId + "SQ" + count + "star' id='" + queId + "SQ" + count + "star4' value='4'>";
+                        subQueDivContent += "<label for='" + queId + "SQ" + count + "star4' title='Slightly Agree'></label>";
+                        subQueDivContent += "<input type='radio' name='" + queId + "SQ" + count + "star' id='" + queId + "SQ" + count + "star3' value='3'>";
+                        subQueDivContent += "<label for='" + queId + "SQ" + count + "star3' title='Slightly Disagree'></label>";
+                        subQueDivContent += "<input type='radio' name='" + queId + "SQ" + count + "star' id='" + queId + "SQ" + count + "star2' value='2'>";
+                        subQueDivContent += "<label for='" + queId + "SQ" + count + "star2' title='Disagree'></label>";
+                        subQueDivContent += "<input type='radio' name='" + queId + "SQ" + count + "star' id='" + queId + "SQ" + count + "star1' value='1'>";
+                        subQueDivContent += "<label for='" + queId + "SQ" + count + "star1' title='Strongly Disagree' ></label>";
+                        subQueDivContent += '</td>';
+                        subQueDivContent += '</tr>';
+                        subQueDivContent += "</div>";
+                        count++;
+                    });
+                    subQueDivContent += '<tr>';
+                    subQueDivContent += '<td width=10px;>';
+                    subQueDivContent += "<span id='" + remarkQueId + "'>" + remarkQuestion + "</span>";
+                    subQueDivContent += '</td>';
+                    subQueDivContent += '<td width=90px;>';
+                    subQueDivContent += "<textarea required class='form-control' name='" + remarkId + "' id='" + remarkId + "' rows='2' placeholder= 'Please enter Remarks' onkeydown='if (this.value.length >= 4000) this.value = this.value.substring(0, 3999);'></textarea>";
+                    subQueDivContent += '</td>';
+                    subQueDivContent += '</tr>';
+                    subQueDivContent += '</table>';
+
+                    $('#divS' + queId).html(subQueDivContent);
+                },
+                error: function () {
+
+                },
+            });
+        }
+
+        var rowDetails = [];
+        var questionRowList = [];
+        var mainQueId = '';
+
+        var subRowDetails = [];
+        var subQuestionRowList = [];
+        var subQueId = '';
+
+        $(".submit").click(function () {
+            FillMainQuestionList();
+        })
+
+        function FillMainQuestionList() {
+            var isValidQ = '1';
+            for (var i = 1; i < 9; i++) {
+                mainQueId = 'Q' + i;
+                var questionText = $("#" + mainQueId).text();
+                var subRemarkAns = '';
+                var selectedMainAns = $("#Ans" + i + " option:selected").text();
+                if (selectedMainAns == 'Select') {
+                    isValidQ = '0';
+                    Swal.fire("Response Required!", "All questions are compulsory to answer.!", "error");
+                    questionRowList = [];
+                    break;
+                }
+                else {
+                    if (i > 3 && i < 8) {
+                        selectedMainAns = GetStarRatingValueByName(i);
+                        if (selectedMainAns == '' || selectedMainAns == undefined) {
+                            isValidQ = '0'
+                            Swal.fire("Response Required!", "All Star Ratings are mandatory for all questions!", "error");
+                            questionRowList = [];
+                            break;
+                        }
+                    }
+                    else if (i == 8) {
+                        selectedMainAns = document.getElementById("Ans8").value;
+                        if (selectedMainAns == '' || selectedMainAns == undefined) {
+                            isValidQ = '0';
+                            Swal.fire("Response Required!", "All questions are compulsory to answer.!", "error");
+                            questionRowList = [];
+                            break;
+                        }
+                    }
+                    else if (i < 4) {
+                        subRemarkAns = document.getElementById(mainQueId + "Remark").value;
+                        if (subRemarkAns == "") {
+                            isValidQ = '0';
+                            Swal.fire("Remarks Required!", "All Remarks are required for the appropriate question.!", "error");
+                            questionRowList = [];
+                            break;
+                        }
+                    }
+                    rowDetails.push(mainQueId, questionText, selectedMainAns, subRemarkAns);
+                    questionRowList.push(rowDetails);
+                    rowDetails = [];
+                }
+            }
+            if (isValidQ == '1') {
+                if (questionRowList.length > 0) {
+                    FillSubQuestionList();
+                }
+            }
+        }
+
+        function GetStarRatingValueByName(starId) {
+            return $('input[name="starRate' + starId + '"]:checked').val();
+        }
+
+        function FillSubQuestionList() {
+            var isValidSQ = '1';
+            const questions = questionRowList;
+            questions.forEach(iterateSubQuestions);
+            function iterateSubQuestions(value, index, array) {
+                mainQueId = value[0]; //Q1
+                subQueId = mainQueId + "SQ"; //Q1SQ
+                for (var i = 1; i < 10; i++) {
+                    subQueId = subQueId + i;
+                    if (isValidSQ == '0') {
+                        break;
+                    }
+                    if ($("#" + subQueId).length == 0) {
+                        //id not exists
+                        break;
+                    }
+                    else {
+                        //id exists
+                        var subQueText = $("#" + subQueId).text(); //sub question text
+                        var subQueAns = $('input[name="' + subQueId + 'star"]:checked').val(); //sub question ans
+                        //var subRemarkQue = document.getElementById("Remark" + mainQueId).value;
+                        var subRemarkAns = document.getElementById(mainQueId + "Remark").value;
+                        if (subQueAns == '' || subQueAns == undefined) {
+                            isValidSQ =  '0'
+                            Swal.fire("Response Required!", "All fields are mandatory.!", "error");
+                            questionRowList = [];
+                            subQuestionRowList = [];
+                            break;
+                        }
+                        subRowDetails.push(mainQueId, subQueId, subQueText, subQueAns, subRemarkAns);
+                        subQuestionRowList.push(subRowDetails);
+                        subRowDetails = [];
+                        subQueId = mainQueId + "SQ";
+                    }
+                }
+            }
+            if (isValidSQ == '1') {
+                SaveExitData();
+            }
+        }
+
+        function SaveExitData() {
+            var requestUrl = 'HR/SaveExitData';
+            var cUrl = '@Url.Action("ExitSurvey", "HR")'
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                data: {params1: questionRowList,params2: subQuestionRowList},
+                success: function (data) {
+                    if (data == '1') {
+                        Swal.fire("Record Saved!", "Data has been saved successfully", "success").then(function () {
+                            location.replace(location.href)
+                        })
+                    }
+                    else {
+                        questionRowList = [];
+                        subQuestionRowList = [];
+                        Swal.fire("Response Required!", "All questions are compulsory to answer.!", "error");
+                    }
+                },
+                error: function () {
+
+                },
+            });
+        }
+
+    </script>
+}

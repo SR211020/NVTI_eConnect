@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" class="root-text-sm">
+<head>
+    <partial name="_Head" />
+    @RenderSection("HeadBlock", required: false)
+</head>
+<body class="mod-bg-1 mod-nav-link mod-nav-link">
+    <partial name="_ScriptsLoadingSaving" />
+    
+    <div class="page-wrapper">
+        <div class="page-inner">
+            <div class="page-content-wrapper">
+                <header class="page-header" role="banner" style="padding-left: 1rem;">
+                    <a href=@ViewBag.URL class="page-logo-link press-scale-down d-flex align-items-center position-relative">
+                        <img src="~/img/logo.png" aria-roledescription="logo">
+                        <span class="page-logo-text mr-1 text-primary font-weight-bolder">eConnect</span>
+                    </a>
+                    <div class="w-100" style="border: 0px double;">
+                        <h2><span class="font-weight-bolder text-primary float-right">@ViewBag.HeaderTitle</span></h2>
+                    </div>
+                    <div class="w-100" style="border: 0px double;">
+                        <span style="font-size:large" class="font-weight-bolder text-primary float-right">NAVITASYS <small style="font-size:60%"> (A TDK Group Company)</small></span>
+                    </div>
+                </header>
+                <main id="js-page-content" role="main" class="page-content">
+                    @if (ViewBag.PreemptiveClass?.Length > 0)
+                    {
+                    }
+                    else
+                    {
+                        @RenderSection("Subheaderblock", required: false)
+                    }
+                    @RenderBody()
+                </main>
+                <div class="page-content-overlay" data-action="toggle" data-class="mobile-nav-on"></div>
+                <footer class="page-footer" role="contentinfo">
+                    <div class="d-flex align-items-center flex-1 text-muted">
+                        <span class="hidden-md-down fw-700">Copyright <span>&#169;</span> 2021 <a href="http://www.nvtpower.com/" class="text-primary fw-500" title="nvtpower.com" target="_blank">Navitasys India Private Limited</a> All Rights Reserved.</span>
+                    </div>
+                </footer>
+                <partial name="_ColorProfileReference" />
+            </div>
+        </div>
+    </div>
+    <partial name="_ScriptsBasePlugins" />
+    <script type="text/javascript">
+        var dtorderby = "asc"; //default
+        var dtorderbycol = 0; //defalut
+        var _successStatus = '1';
+        var _errorStatus = '2';
+        var _result = '@TempData["Result"]';
+        var _msg = '@TempData["Message"]';
+        $(function () {
+            if (_result == _successStatus) {
+                toastr["success"](_msg, "Success")
+            }
+            if (_result == _errorStatus) {
+                Swal.fire("Info!", _msg, "error");
+            }
+        });
+    </script>
+    @RenderSection("ScriptsBlock", required: false)
+</body>
+</html>

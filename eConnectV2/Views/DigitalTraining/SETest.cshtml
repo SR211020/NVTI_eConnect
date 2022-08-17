@@ -1,0 +1,447 @@
+﻿@model eConnectV2.ViewModels.DTViewModel
+@{
+    ViewData["Title"] = "NVTI-Skill Evaluation Test";
+    ViewData["PageHeading"] = "Skill Evaluation Test";
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewBag.Module = "Digital Training";
+    ViewBag.Category1 = "Skill Evaluation Test";
+    int counter = 1;
+    int totalQuestion = 0;
+}
+
+<style>
+    .sticky-div {
+        position: sticky;
+        top: 0px;
+        z-index: 1;
+        padding: 0.5px;
+    }
+
+    .start {
+        height: 100px;
+    }
+
+    .end {
+        height: 500px;
+    }
+</style>
+
+
+@if (ViewBag.TestStart == "YES")
+{
+    <div id="panel-1" class="panel">
+        <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+            <h2>
+                <i class="fal fa-clipboard-list-check fa-2x"></i>&nbsp; Skill Evaluation Test
+            </h2>
+            <div class="panel-toolbar">
+                <strong class="text-white"><em>Attempt All Questions. All Carry Equal Marks Question.</em></strong>
+                <button id="btnCancelTop" type="button" class="ml-3 btn btn-sm btn-danger font-weight-bold">
+                    Cancel
+                </button>
+                <button id="btnSubmitTop" type="submit" class="ml-3 btn btn-sm btn-success font-weight-bold hide">
+                    Submit Test
+                </button>
+            </div>
+        </div>
+        <div class="panel-container bg-primary-50">
+            <div class="panel-content p-0">
+                <table width="100%" align="center">
+                    <tr>
+                        <td align="right" class="font-weight-bold">Employee :</td>
+                        <td align="left"><span class="font-italic text-black pl-2">@Model.TestEmpName</span></td>
+                        <td align="right" class="font-weight-bold">Conducted By :</td>
+                        <td align="left"><span class="font-italic text-black pl-2">@Model.TestConductedByEmpName</span></td>
+                    </tr>
+                    <tr>
+                        <td align="right" class="font-weight-bold">Station :</td>
+                        <td align="left"><span class="font-italic text-black pl-2">@Model.TestStationName</span></td>
+                        <td align="right" class="font-weight-bold">Customer :</td>
+                        <td align="left"><span class="font-italic text-black pl-2">@Model.TestCustomerName</span></td>
+                    </tr>
+                    <tr>
+                        <td align="right" class="font-weight-bold">Current Grade :</td>
+                        <td align="left"><span class="font-italic text-black pl-2">@Model.TestCurrentGrade</span></td>
+                        <td align="right" class="font-weight-bold">Attempt test for Grade:</td>
+                        <td align="left"><span class="font-italic text-black pl-2">@Model.TestForGrade</span></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="panel-hdr bg-primary-800 min-height-reset">
+
+        </div>
+        <div class="panel-container">
+            <div class="panel-content p-0">
+                <div class="sticky-div bg-primary-800">
+                    <div class="alert alert-light m-3 p-1">
+                        <span id="progressAttemptQue" class="font-italic text-info">Test 0% Complete</span>
+                        <div class="progress-group text-info">
+                            <div class="progress progress-sm">
+                                <div id="progress-bar" class="progress-bar progress-bar-striped bg-info progress-bar-animated" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @foreach (var item in Model.QuestionList)
+                {
+                    <div class="alert alert-primary m-3 p-1" style="height: 100%">
+                        <table width="100%">
+                            <tbody>
+                                <tr>
+                                    <td style="width:50px;font-weight:bold" valign="top">
+                                        Que @counter:
+                                    </td>
+                                    <td>
+                                        <table width="100%">
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        @item.Que
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <table width="100%">
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <input type="radio" id="O1Q_@counter" name="Q_@counter" class="checkSingle" onclick="SetSelectedAns('@item.Id','A')">
+                                                        <label for="O1Q_@counter"><span id="A_@item.Id"><strong class="mr-2">(A)</strong> @item.Option1</span></label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <input type="radio" id="O2Q_@counter" name="Q_@counter" class="checkSingle" onclick="SetSelectedAns('@item.Id','B')">
+                                                        <label for="O2Q_@counter"><span id="B_@item.Id"><strong class="mr-2">(B)</strong> @item.Option2</span></label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <input type="radio" id="O3Q_@counter" name="Q_@counter" class="checkSingle" onclick="SetSelectedAns('@item.Id','C')">
+                                                        <label for="O3Q_@counter"><span id="C_@item.Id"><strong class="mr-2">(C)</strong> @item.Option3</span></label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <input type="radio" id="O4Q_@counter" name="Q_@counter" class="checkSingle" onclick="SetSelectedAns('@item.Id','D')">
+                                                        <label for="O4Q_@counter"><span id="D_@item.Id"><strong class="mr-2">(D)</strong> @item.Option4</span></label>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr style="border-top: 1px solid lightsteelblue; ">
+                                    <td style="font-weight:bold;" valign="middle">
+                                        Ans:
+                                    </td>
+                                    <td class="text-info font-weight-bold font-italic">
+                                        <span id="Ans_@item.Id"></span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    counter++;
+                    totalQuestion = 10 + totalQuestion;
+                }
+                <div class="container">
+                    <div class="row">
+                        <div class="col text-center pb-2">
+                            <button id="btnSubmitBottom" type="submit" class="btn btn-success font-weight-bold hide">
+                                Submit Test
+                            </button>
+                            <button id="btnCancelBottom" type="button" class="btn btn-danger font-weight-bold ml-6">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-info mb-3">
+                @using (Html.BeginForm("SETest", "DigitalTraining", FormMethod.Post, new { id = "form", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+                {
+                    <table width="100%">
+                        <tr>
+                            <td style="border-right:groove;" class="text-center">
+                                <div class="subheader mb-3">
+                                    <h1 class="subheader-title text-primary text-center">
+                                        <i class="fal fa-clipboard-list-check fa-3x pb-2"></i> <i class="fas fa-user-graduate fa-3x pb-2 pl-6"></i><br />Conduct Skill Evaluation Test
+                                    </h1>
+                                </div>
+                                <br /><br />
+                                <a class="btn btn-xs btn-outline-warning waves-effect waves-themed text-black-50" href="@Url.Action("ManPower", "DigitalTraining")">Back to main menu</a>
+                            </td>
+                            <td style="padding-left:40px;">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <label class="col-sm-4 col-form-label font-weight-bold">Employee<span class="text-danger ml-1">*</span> : </label>
+                                            <div class="col-sm-8">
+                                                <select class="select2 custom-select form-control w-100" required asp-for="TestEmpCode" asp-items="@(new MultiSelectList(Model.ManPowerDDLList, "Value", "Text"))">
+                                                    <option value="">Select</option>
+                                                </select>
+                                                <input asp-for="TestEmpName" type="hidden" value="@Model.TestEmpName" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4 col-form-label font-weight-bold">Station<span class="text-danger ml-1">*</span> : </label>
+                                            <div class="col-sm-8">
+                                                <select class="select2 custom-select form-control w-100" asp-for="TestStation" required asp-items="@(new SelectList(Model.StationList, "Value", "Text"))">
+                                                    <option value="">Select</option>
+                                                </select>
+                                                <input asp-for="TestStationName" type="hidden" value="@Model.TestStationName" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4 col-form-label font-weight-bold">Current Grade<span class="text-danger ml-1">*</span> : </label>
+                                            <div class="col-sm-8">
+                                                <input asp-for="TestCurrentGrade" class="form-control" required readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <label class="col-sm-4 col-form-label font-weight-bold">Conducted By : </label>
+                                            <div class="col-sm-8">
+                                                <input asp-for="TestConductedByEmpName" class="form-control" required readonly />
+                                                <input asp-for="TestConductedByEmpCode" type="hidden" value="@Model.TestConductedByEmpCode" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4 col-form-label font-weight-bold">Customer<span class="text-danger ml-1">*</span> : </label>
+                                            <div class="col-sm-8">
+                                                <select class="select2 custom-select form-control w-100" asp-for="TestCustomer" required asp-items="@(new SelectList(Model.CustomerDDLList, "Value", "Text"))">
+                                                    <option value="">Select</option>
+                                                </select>
+                                                <input asp-for="TestCustomerName" type="hidden" value="@Model.TestCustomerName" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4 col-form-label font-weight-bold">Test for Grade<span class="text-danger ml-1">*</span> : </label>
+                                            <div class="col-sm-8">
+                                                <input asp-for="TestForGrade" class="form-control" required readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row pt-6">
+                                    <div class="col-md-4">
+
+                                    </div>
+                                    <div class="col-md-4">
+
+                                        @{
+                                            bool timeIsValid = false;
+
+                                            bool TimeBetween(DateTime datetime, TimeSpan start, TimeSpan end)
+                                            {
+                                                TimeSpan now = datetime.TimeOfDay;
+                                                if (start < end)
+                                                    return start <= now && now <= end;
+                                                return !(end < now && now < start);
+                                            }
+
+                                            TimeSpan AStart = new TimeSpan(06, 0, 0);
+                                            TimeSpan AEnd = new TimeSpan(11, 0, 0);
+                                            TimeSpan BStart = new TimeSpan(14, 0, 0);
+                                            TimeSpan BEnd = new TimeSpan(19, 0, 0);
+                                            TimeSpan CStart = new TimeSpan(22, 0, 0);
+                                            TimeSpan CEnd = new TimeSpan(03, 0, 0);
+                                            TimeSpan now = DateTime.Now.TimeOfDay;
+                                            if (TimeBetween(DateTime.Now, AStart, AEnd))
+                                            {
+                                                timeIsValid = true;
+                                            }
+                                            if (TimeBetween(DateTime.Now, BStart, BEnd))
+                                            {
+                                                timeIsValid = true;
+                                            }
+                                            if (TimeBetween(DateTime.Now, CStart, CEnd))
+                                            {
+                                                timeIsValid = true;
+                                            }
+                                            if (timeIsValid)
+                                            {
+                                                <button id="btnStartTest" type="submit" class="btn btn-warning font-weight-bold btn-block waves-effect waves-themed">
+                                                    Start Test
+                                                </button>
+                                            }
+                                            else
+                                            {
+
+                                                <div>
+                                                    <div class="alert alert-danger" role="alert">
+                                                        The test is available for the following time only.
+                                                    </div>                                                   
+                                                    <table class="table table-bordered table-sm text-center w-100">
+                                                        <tbody>
+                                                            <tr class="bg-success text-white">
+                                                                <td>Timing</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Between 06:00 AM to 11:00 AM</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Between 02:00 PM to 07:00 PM</td>                                                                
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Between 10:00 PM to 03:00 AM</td>                                                               
+                                                            </tr>                                                           
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                    <div class="col-md-4">
+
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+}
+@section ScriptsBlock {
+    <script src="~/js/select.js"></script>
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#TestEmpCode').change(function () {
+                $('#TestEmpName').val($("#TestEmpCode option:selected").text());
+                BindGrade($('#TestEmpCode').val(), $('#TestStation').val());
+            });
+            $('#TestStation').change(function () {
+                $('#TestStationName').val($("#TestStation option:selected").text());
+                BindGrade($('#TestEmpCode').val(), $('#TestStation').val());
+            });
+            $('#TestCustomer').change(function () {
+                $('#TestCustomerName').val($("#TestCustomer option:selected").text());
+            });
+            $("#btnCancelTop,#btnCancelBottom").click(function (e) {
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes, Cancel Test"
+                }).then(function (result) {
+                    if (result.value) {
+                        location.replace(location.href);
+                    }
+                });
+            });
+            $("#btnSubmitTop,#btnSubmitBottom").click(function (e) {
+                var requestUrl = 'DigitalTraining/SubmitTest';
+                $.ajax({
+                    url: requestUrl,
+                    type: "POST",
+                    success: function (response) {
+                        if (response == '1') {
+                            Swal.fire("Saved!", 'Your Exam has been submitted successfully.', "success").then(function () {
+                                location.replace(location.href);
+                            })
+                        }
+                    },
+                    error: function () {
+                        Swal.fire("Oops...", "Something went wrong!", "error");
+                    }
+                });
+            });
+        });
+        function BindGrade(p1, p2) {
+            if (p1 != '' && p2 != '') {
+                var requestUrl = 'DigitalTraining/GetMPGrade';
+                $.ajax({
+                    url: requestUrl,
+                    type: "POST",
+                    data: { empCode: p1, station: p2 },
+                    success: function (response) {
+                        if (response.length > 0) {
+                            if (response[0].testResult == 'Pending Viva' ) {
+                                $('#TestStation').val('').change();
+                                $('#TestForGrade').val('');
+                                $('#TestCurrentGrade').val('');
+                                Swal.fire("Pending viva!", 'The test has already been attempted for the selected station.', "info").then(function () {
+
+                                })
+                            }
+                            else {
+                                if (response[0].grade == 'A') {
+                                    $('#TestStation').val('').change();
+                                    $('#TestForGrade').val('');
+                                    $('#TestCurrentGrade').val('');
+                                    Swal.fire("Already A Grade!", 'The user has already been assigned A grade for the selected station.', "info").then(function () {
+
+                                    })
+                                }
+                                else {
+                                    $('#TestCurrentGrade').val(response[0].grade);
+                                    if (response[0].grade == 'D') {
+                                        $('#TestForGrade').val('C');
+                                    } else if (response[0].grade == 'C') {
+                                        $('#TestForGrade').val('B');
+                                    } else if (response[0].grade == 'B') {
+                                        $('#TestForGrade').val('A');
+                                    } else {
+                                        $('#TestForGrade').val('C');
+                                        $('#TestCurrentGrade').val('D');
+                                    }
+                                }
+                            }
+                        } else {
+                            $('#TestForGrade').val('C');
+                            $('#TestCurrentGrade').val('D');
+                        }
+                    },
+                    error: function () {
+                        Swal.fire("Oops...", "Something went wrong!", "error");
+                    }
+                });
+            }
+            else {
+                $('#EmpGrade,#Grade').val('');
+            }
+        }
+        function SetSelectedAns(id, ans) {
+            var totalQues = '@totalQuestion'
+            var selectedAnsText = $('#' + ans + '_' + id).text();
+            $('#Ans_' + id).text(selectedAnsText);
+            var requestUrl = 'DigitalTraining/SetSelectedTestAns';
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                data: { qid: id, ans: ans, selectedAnsText: selectedAnsText },
+                success: function (comp) {
+                    if (comp < 100) {
+                        $('#btnSubmitTop,#btnSubmitBottom').hide();
+                        $('#progressAttemptQue').text('Test ' + comp + '% Complete')
+                        $("#progress-bar").css("width", comp + "%");
+                        $('#progress-bar').removeClass("bg-success").addClass("bg-info");
+                    }
+                    if (comp >= 100) {
+                        $('#btnSubmitTop,#btnSubmitBottom').show();
+                        $('#progressAttemptQue').html('<span class="text-success"><i class="fas fa-check-circle"></i> Test 100% Complete. <b>Please submit Test </b></span>');
+                        $("#progress-bar").css("width", comp + "%");
+                        $('#progress-bar').removeClass("bg-info").addClass("bg-success");
+                    }
+                },
+                error: function () {
+                    Swal.fire("Oops...", "Something went wrong!", "error");
+                }
+            });
+        }
+    </script>
+}

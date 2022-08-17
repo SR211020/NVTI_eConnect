@@ -1,0 +1,190 @@
+﻿@model eConnectV2.ViewModels.ITViewModel
+@{
+    ViewData["Title"] = "Help Desk Asset";
+    ViewData["PageHeading"] = "Asset View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var Mode = ViewBag.TagAttribute;
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+}
+<div id="panel-1" class="panel p-2">
+    <div class="panel-content-show">
+        <div class="row">
+            <div class="col-md-12 row">
+                <div class="col-md-2 align-self-center">
+                    <a class="btn btn-warning pt-1" onclick="window.location='@Url.Action("AssetMasterAdd","IT")'" style="height:25px;" title="Add Asset ">
+                        <i class="fas fa-plus mr-1"></i>Add
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold">From</label>
+                        <div class="col-sm-9">
+                            <input asp-for="Date1" onchange="FillData();" autocomplete="off" class="form-control datepickertext" type="text" required data-date-format="dd-M-yyyy" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold">To</label>
+                        <div class="col-sm-9">
+                            <input asp-for="Date2" onchange="FillData();" autocomplete="off" class="form-control datepickertext" type="text" required data-date-format="dd-M-yyyy" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                        <thead class="bg-primary-800">
+                            <tr>
+                                <th class="notexport" width="5%" style="text-align:center">Action</th>
+                                <th>DocNo</th>
+                                <th>Plant</th>
+                                <th>Asset Type</th>
+                                <th>Equipment Type</th>
+                                <th>Make</th>
+                                <th>Model</th>
+                                <th>Device SrNo</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Quantity</th>
+                                <th>Vendor</th>
+                                <th>Invoice No</th>
+                                <th>Po No</th>
+                                <th>Purchase Cost</th>
+                                <th>Permanent Asset No</th>
+                                <th>Temp Asset No</th>
+                                <th>Processor</th>
+                                <th>Cpu Speed</th>
+                                <th>Ram</th>
+                                <th>Hdd Type</th>
+                                <th>Hdd Capacity</th>
+                                <th>Dvd</th>
+                                <th>OS Version</th>
+                                <th>UserId</th>
+                                <th>TDATE</th>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsBlock {
+    @*<script src="~/js/datagrid/datatables/dths_excel.js"></script>*@
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/rowdelete.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2();
+            runDatePicker();
+            FillData();
+        });
+
+        var controls = {
+            leftArrow: '<i class="fal fa-angle-left" style="font-size: 1.25rem"></i>',
+            rightArrow: '<i class="fal fa-angle-right" style="font-size: 1.25rem"></i>'
+        }
+        var runDatePicker = function () {
+            $('#Date1, #Date2').datepicker({
+                todayHighlight: true,
+                orientation: "bottom left",
+                templates: controls,
+                autoclose: true
+            });
+        }
+
+        function FillData() {
+            var date1 = $("#Date1").val();
+            var date2 = $("#Date2").val();
+            var data1 = '';
+            $.ajax({
+                url: '/IT/FillAssetMasterViewList',
+                type: "POST",
+                data: { date1: date1, date2: date2 },
+                success: function (data, status) {
+                    $("#dt-hs tbody").empty();
+                    $("#dt-hs").DataTable().destroy();
+                    $.each(data, function (index, item) {
+                        data1 += '<tr>';
+                        data1 += '<td class="text-center bg-primary-gradient" align="center">';
+                        data1 += '<a title="View" href="IT/AssetMasterAdd?Dno=' + item.param2 + '&Utp=' + item.param3 + '">';
+                        data1 += '<i class="fa fa-eye text-info mr-1" ></i ></a>';
+                        data1 += '</td>';
+                        //data1 += '<a title="View" href="IT/HDApprAdd?Dno=' + item.param1;
+                        //data1 += '<i class="fa fa-eye text-info mr-1" ></i ></a>';
+                        /*data1 += '</td>';*/
+                        data1 += '<td>' + item.srNo + '</td>';
+                        data1 += '<td>' + item.plant + '</td>';
+                        data1 += '<td>' + item.type + '</td>';
+                        data1 += '<td>' + item.equipCatg + '</td>';
+                        data1 += '<td>' + item.make + '</td>';
+                        data1 += '<td>' + item.modelName + '</td>';
+                        data1 += '<td>' + item.deviceSerialNo + '</td>';
+                        data1 += '<td>' + item.date1 + '</td>';
+                        data1 += '<td>' + item.date2 + '</td>';
+                        data1 += '<td>' + item.quantity + '</td>';
+                        data1 += '<td>' + item.vendorName + '</td>';
+                        data1 += '<td>' + item.invoiceNo + '</td>';
+                        data1 += '<td>' + item.poNo + '</td>';
+                        data1 += '<td>' + item.amount + '</td>';
+                        data1 += '<td>' + item.permanentAssetNo + '</td>';
+                        data1 += '<td>' + item.param1 + '</td>';
+                        data1 += '<td>' + item.processor + '</td>';
+                        data1 += '<td>' + item.cpuSpeed + '</td>';
+                        data1 += '<td>' + item.ram + '</td>';
+                        data1 += '<td>' + item.hddType + '</td>';
+                        data1 += '<td>' + item.hddCapacity + '</td>';
+                        data1 += '<td>' + item.dvd + '</td>';
+                        data1 += '<td>' + item.osVersion + '</td>';
+                        data1 += '<td>' + item.userID + '</td>';
+                        data1 += '<td>' + item.tDate + '</td>';
+                        data1 += '</tr >';
+                    });
+                    $("#dt-hs tbody").html(data1);
+                    $('#dt-hs').dataTable({
+                        responsive: false,
+                        lengthChange: false,
+                        "pageLength": 20,
+                        dom:
+                            "<'row'<'col-sm-12 col-md-4 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-4 d-flex align-items-center justify-content-center'i><'col-sm-12 col-md-4 d-flex align-items-center justify-content-end'lB>>" +
+                            "<'row'<'col-sm-12'tr>>" +
+                            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                        //dom:
+                        //    //"<'row'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'lB>>" +
+                        //    //"<'row'<'col-sm-12'tr>>" +
+                        //    //"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                        buttons: [
+                            {
+                                extend: 'excelHtml5',
+                                text: 'Download',
+                                title: null,
+                                titleAttr: 'Download',
+                                className: 'btn-outline-dark btn-xs mr-1',
+                                exportOptions: {
+                                    columns: ':not(.notexport)'
+                                }
+                            },
+                        ]
+                    });
+                },
+                error: function () {
+                },
+            });
+        }
+    </script>
+}

@@ -1,0 +1,144 @@
+﻿@model eConnectV2.ViewModels.SMTViewModel
+@{
+    ViewData["Title"] = "Baking Model Add";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["PageHeading"] = "Model Name";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "SMT";
+    ViewBag.Category1 = "BakingModelAdd";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel">
+            <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+                <h2 class="justify-content-center">
+                    <span class="fw-300 pr-1">Manage </span> Model Name
+                </h2>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content">
+                    @using (Html.BeginForm("BakingModelAdd", "SMT", FormMethod.Post, new { id = "myform", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+                    {
+                        <div class="row">
+                            <div class="col-md-12" style="width: auto; margin-left: auto; margin-right: auto">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold" for="PartNo">Part No<span class="text-danger ml-1">*</span> : </label>
+                                    <div class="col-sm-4">
+                                        <input asp-for="PartNo" oninput="this.value = this.value.toUpperCase()" class="form-control" placeholder="Please enter Part No" required pattern=".*\S+.*" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label font-weight-bold" for="ModelName">Model Name<span class="text-danger ml-1">*</span> : </label>
+                                    <div class="col-sm-4">
+                                        <input asp-for="ModelName" class="form-control" placeholder="Please enter Model Name" required pattern=".*\S+.*" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-2">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-4"></label>
+                                    <div class="col-sm-8">
+                                        <button id="btnSaveUpdate" class="btn btn-sm btn-primary" type="submit">Save</button>
+                                        <button onclick="Cancel()" class="btn btn-sm btn-secondary" type="button">Cancel</button>
+                                        <input asp-for="Action" type="hidden" value="@Model.Action" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div id="ModelList">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel p-2">
+                        <div class="panel-content-show">
+                            <div class="table-responsive">
+                                <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover nowrap">
+                                    <thead class="bg-primary-800">
+                                        <tr>
+                                            <th class='notexport'>Action</th>
+                                            <th>Part No</th>
+                                            <th>Model Name</th>
+                                            <th>Created By</th>
+                                            <th>TDate</th>
+                                            <th>Updated By</th>
+                                            <th>UDate</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white">
+                                        @foreach (var item in Model.ModelList)
+                                        {
+                                            <tr>
+                                                <td class="bg-primary-gradient">
+                                                    <a title="Edit" href="javascript:void(0)" onclick='Edit("@item.PartNo")'><i class="fas fa-edit ml-3"></i></a>
+                                                    <a title="Delete" href="javascript:void(0)" onclick='RowDelete("@item.PartNo","SMT/DeleteBakingModel")' class="text-danger ml-2 mr-3"><i class="fas fa-trash-alt"></i></a>
+                                                </td>
+                                                <td>
+                                                    @item.PartNo
+                                                </td>
+                                                <td>
+                                                    @item.ModelName
+                                                </td>
+                                                <td>@item.UserId</td>
+                                                <td>@item.Date1</td>
+                                                <td>@item.Param1</td>
+                                                <td>@item.Date2</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/rowdelete.js"></script>
+    <script src="~/js/datagrid/datatables/dths_excel.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script type="text/javascript">
+
+    var action = '@Model.Action'
+    $(document).ready(function () {
+        $(function () {
+            if (action == 'UPDATE') {
+                $("#PartNo").prop("readonly", true);
+                $("#btnSaveUpdate").html('Update');
+            }
+        });
+    });
+
+    function Edit(partNo) {
+        var requestUrl = 'SMT/FillBakingModelByPartNo';
+        $.post(requestUrl,
+            {
+                partNo: partNo
+            },
+            function (model) {
+                $("#PartNo").val(model.partNo);
+                $("#ModelName").val(model.modelName);
+                $("#PartNo").prop("readonly", true);
+                $("#btnSaveUpdate").html('Update');
+                $("#Action").val("UPDATE")
+            });
+        }
+
+    function Cancel() {
+        location.replace(location.pathname)
+    }
+    </script>
+}

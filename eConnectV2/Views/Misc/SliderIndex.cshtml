@@ -1,0 +1,108 @@
+﻿@model eConnectV2.ViewModels.MiscViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Slider</title>
+    <link href="~/img/logo.png" rel="icon">
+    <link href="~/img/logo.png" rel="apple-touch-icon">
+    <style type="text/css">
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        iframe {
+            border: none;
+            width: 100%;
+            height: 100%;
+            display: none;
+            pointer-events: none;
+        }
+
+            iframe.active {
+                display: block;
+            }
+    </style>
+</head>
+<body>
+    <script src="~/assets/vendor/jquery/jquery.min.js"></script>
+    <script type="text/javascript">
+        var currUrl = window.location.href;
+        var custName = currUrl.split('=');
+        var custUrl = custName[1];
+        var total = @ViewBag.Total;
+        var time1 = (total * 30) + 5;
+        var Dash = {
+            nextIndex: 0,
+
+            dashboards: [
+                { url: "../BIS/UPPHAuto2?cust=" + custUrl, time: 180, refresh: true },
+                { url: "../Misc/Slider", time: time1, refresh: true },
+            ],
+
+            startup: function () {
+                for (var index = 0; index < Dash.dashboards.length; index++) {
+                    Dash.loadFrame(index);
+                }
+                setTimeout(Dash.display, Dash.dashboards[0].time * 1000);
+            },
+
+            loadFrame: function (index) {
+                var iframe = document.getElementById(index);
+                iframe.src = Dash.dashboards[index].url;
+            },
+
+            display: function () {
+                var dashboard = Dash.dashboards[Dash.nextIndex];
+                Dash.hideFrame(Dash.nextIndex - 1);
+                if (dashboard.refresh) {
+                    Dash.loadFrame(Dash.nextIndex);
+                }
+                Dash.showFrame(Dash.nextIndex);
+                Dash.nextIndex = (Dash.nextIndex + 1) % Dash.dashboards.length;
+                setTimeout(Dash.display, dashboard.time * 1000);
+            },
+
+            hideFrame: function (index) {
+                if (index < 0) {
+                    index = Dash.dashboards.length - 1;
+                }
+                $('#' + index).css({ opacity: 1.0, visibility: "visible" }).animate({ opacity: 0.0 }, 2000);
+                setTimeout(function () { true; }, 2000);
+                document.getElementById(index).removeAttribute('class');
+            },
+
+            showFrame: function (index) {
+                $('#' + index).css({ opacity: 0.0, visibility: "visible" }).animate({ opacity: 1.0 }, 200);
+                document.getElementById(index).setAttribute('class', 'active');
+            }
+        };
+        function fetchPage(url) {
+            $.ajax({
+                type: "GET",
+                url: url,
+                error: function (request, status) {
+                    alert('Error fetching ' + url);
+                },
+                success: function (data) {
+                    parse_hadoop_active_nodes(data.responseText);
+                }
+            });
+        }
+
+        function parse(data) {
+            alert($(data).find("#nodes").text());
+        }
+
+        window.onload = Dash.startup;
+    </script>
+    <iframe id="0" class="active"></iframe>
+    <iframe id="1" class="active"></iframe>
+</body>
+</html>

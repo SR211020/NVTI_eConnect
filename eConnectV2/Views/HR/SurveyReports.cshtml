@@ -1,0 +1,2400 @@
+﻿@model eConnectV2.ViewModels.HRViewModel
+@{
+    ViewData["Title"] = "Survey Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "HR";
+    ViewBag.Category1 = "Survey Report";
+    int counter = 1;
+    int yeartotalLeftEmp = Convert.ToInt32(ViewBag.Box3) + Convert.ToInt32(ViewBag.Box52) + Convert.ToInt32(ViewBag.InvResTotal);
+}
+@section HeadBlock {
+    <link href="~/css/statistics/c3/c3.css" rel="stylesheet" />
+    <link href="~/css/statistics/chartjs/chartjs.css" rel="stylesheet" />
+    <style>
+        .swal2-container {
+            z-index: 300000 !important;
+        }
+    </style>
+}
+<div class="subheader mb-2">
+    <h1 class="subheader-title">
+        <i class="subheader-icon fal fa-bullhorn"></i> Exit Employee <span class="fw-300">Stats</span>
+    </h1>
+    @using (Html.BeginForm("SurveyReports", "HR", FormMethod.Post, new { id = "form", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+    {
+        <strong class="font-weight-bold pr-2">Financial Year :  </strong>
+        <select style="padding: 2px; width: 70px; border: ridge; border-color: lightgray; margin-right: 15px;" asp-for="DefaultFinYear" onchange="BoxOnChange()">
+            <option value="T126">T126</option>
+            <option value="T127">T127</option>
+            <option value="T128">T128</option>
+            <option value="T129">T129</option>
+            <option value="T130">T130</option>
+        </select>
+        <button type="submit" class="btn btn-sm btn-danger waves-effect waves-themed">Download Feedback Data</button>
+    }
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-sm-6 col-xl-3">
+                <div class="pl-3 pr-3 pt-3 pb-2 bg-primary-400 rounded overflow-hidden position-relative text-white mb-g">
+                    <div>
+                        <h1 class="m-0 fw-700">
+                            <span id="boxDeptName"></span>
+                        </h1>
+                        <span id="box1heading" class="m-0 l-h-n">Department has the highest number of attrition, which is </span>
+                        <a href="javascript:void(0);" class="btn btn-sm btn-dark btn-icon rounded-circle position-relative js-waves-off">
+                            <span id="boxhiattrrate" class="font-weight-bold mb-0 pb-0"></span>
+                        </a>
+                    </div>
+                    <i class="fal fa-building position-absolute pos-right pos-bottom opacity-50 mb-1 mr-1" style="font-size:3rem"></i>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="pl-3 pr-3 pt-3 pb-2 bg-warning-400 rounded overflow-hidden position-relative text-white mb-g">
+                    <div>
+                        <h1 class="m-0 fw-700">
+                            <span id="box4heading"></span>
+                        </h1>
+                        <span id="box4subheading" class="m-0 l-h-n">Employee has the highest number <br /> of attrition, which is </span>
+                        <a href="javascript:void(0);" class="btn btn-sm btn-dark btn-icon rounded-circle position-relative js-waves-off">
+                            <span id="box4hiattrrate" class="font-weight-bolder"></span>
+                        </a>
+                    </div>
+                    <i class="fal fa-users-class position-absolute pos-right pos-bottom opacity-50 mb-1 mr-1" style="font-size: 4rem;"></i>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="pl-3 pr-3 pt-3 pb-2 bg-info rounded overflow-hidden position-relative text-white mb-g">
+                    <div>
+                        <h1 class="m-0 mb-2 fw-700">
+                            <span>@yeartotalLeftEmp</span>
+                        </h1>
+                        <span class="m-0 l-h-n">Employees left between the period of <br /> <code><strong class="font-weight-bolder">@Model.Date1</strong></code> to  <code><strong class="font-weight-bolder">@Model.Date2</strong></code></span>
+                    </div>
+                    <i class="fal fa-users-slash position-absolute pos-right pos-bottom opacity-50 mb-1 mr-1" style="font-size: 4rem;"></i>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="pl-3 pr-3 pt-1 pb-2 bg-success-400 rounded overflow-hidden position-relative text-white mb-g">
+                    <div>
+                        <h1 class="m-0 fw-700">
+                            <span id="box2heading" class="text-gradient">Top 3 Reason</span>
+                        </h1>
+                        <span id="box3top3reason" class="m-0 l-h-n">
+                            @{
+                                foreach (var val1 in ViewBag.TopReasonsforLeaving)
+                                {
+                                    @counter <b>@val1.Param1</b><br />
+                                    if (counter == 3)
+                                    {
+                                        break;
+                                    }
+                                    counter = counter + 1;
+                                }
+                                counter = 1;
+                            }
+                        </span>
+                    </div>
+                    <i class="fal fa-comment-alt-lines position-absolute pos-right pos-bottom opacity-50 mb-1 mr-1" style="font-size: 4rem;"></i>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-xl-3">
+                <div class="pl-3 pr-3 pt-3 pb-2 bg-primary-200 rounded overflow-hidden position-relative text-white mb-g">
+                    <div>
+                        <h1 id="finYearattrPer" class="m-0 fw-700">
+                        </h1>
+                        <span class="m-0 l-h-n">
+                            Employee Attrition : <b> @ViewBag.Box5 %</b><br />
+                            Infant Attrition : <b> @ViewBag.InfantPerMax %</b><br />
+                        </span>
+                    </div>
+                    <i class="fas fa-chart-line position-absolute pos-right pos-bottom opacity-50 mb-1 mr-1" style="font-size:3rem"></i>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="pl-3 pr-3 pt-1 pb-2 bg-warning-200 rounded overflow-hidden position-relative text-white mb-g">
+                    <div>
+                        <h1 class="m-0 fw-700">
+                            <span class="text-gradient">Quick Stats</span>
+                        </h1>
+                        <span class="m-0 l-h-n text-black-50">
+                            <b>Total Attrition : @ViewBag.Box3</b><br />
+                            <b>Infant Attrition : @ViewBag.Box52</b><br />
+                            <b>Involuntary Resignation : @ViewBag.InvResTotal </b>
+                        </span>
+                    </div>
+                    <i class="fal fa-list position-absolute pos-right pos-bottom opacity-50 mb-1 mr-1" style="font-size: 4rem;"></i>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="pl-3 pr-3 pt-3 pb-2 bg-info-200 rounded overflow-hidden position-relative text-white mb-g">
+                    <div>
+                        <h1 class="m-0 mb-2 fw-700">
+                            <span class="text-gradient">Active Employee</span>
+                        </h1>
+                        <span class="badge bg-primary-100">
+                            <span class="badge bg-primary-200">
+                                <span class="badge bg-primary-300">
+                                    <span class="badge bg-primary-400">
+                                        <span class="badge bg-primary-500">
+                                            <span class="fs-xl fw-300">@ViewBag.ActiveEmp</span>
+                                        </span>
+                                    </span>
+                                </span>
+                            </span>
+                        </span>
+                    </div>
+                    <i class="fal fa-users position-absolute pos-right pos-bottom opacity-50 mb-1 mr-1" style="font-size: 4rem;"></i>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="pl-3 pr-3 pt-3 pb-2 bg-success-200 rounded overflow-hidden position-relative text-white mb-g">
+                    <div>
+                        <h1 class="m-0 mb-2 fw-700">
+                            <span class="text-gradient">Employee feedback</span>
+                        </h1>
+                        <span class="badge bg-primary-100">
+                            <span class="badge bg-primary-200">
+                                <span class="badge bg-primary-300">
+                                    <span class="badge bg-primary-400">
+                                        <span class="badge bg-primary-500">
+                                            <span class="fs-xl fw-300">@ViewBag.Box53</span>
+                                        </span>
+                                    </span>
+                                </span>
+                            </span>
+                        </span>
+                    </div>
+                    <i class="fal fa-file-alt position-absolute pos-right pos-bottom opacity-50 mb-1 mr-1" style="font-size: 4rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 p-1">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr bg-gray-100 min-height-reset height-3">
+                <h2 class="fw-900 text-dark subheader-title mb-0">
+                    Attrition in Headcount<small>Month wise </small>
+                </h2>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content bg-gray p-2">
+                    <div id="MonthwiseAttritionChart">
+                        <canvas style="width:100%; height:300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 p-1">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr bg-gray-100 min-height-reset height-3">
+                <h2 class="fw-900 text-dark subheader-title mb-0">
+                    Attrition in Percentage(%) <small>Month wise</small>
+                </h2>
+                @if (User.Identity.GetEmpCode() == "9022246" || User.Identity.GetEmpCode() == "9024960")
+                {
+                    <div class="panel-toolbar">
+                        <button type="button" class="refresh_graph btn btn-primary btn-xs waves-effect waves-themed">Refresh</button>
+                        <button type="button" class="btn btn-warning btn-xs waves-effect waves-themed ml-3" data-toggle="modal" data-target=".default-example-modal-right-sm">Update</button>
+                    </div>
+                }
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content bg-gray p-2">
+                    <div id="MonthwiseAttritionInPercentageChart">
+                        <canvas style="width:100%; height:300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 p-1">
+        <div id="panel-12" class="panel">
+            <div class="panel-hdr bg-gray-100 min-height-reset height-3">
+                <h2 class="fw-900 text-dark subheader-title mb-0">
+                    Employee Rating attrition in Percentage(%) (@Model.RatingFinYear)
+                </h2>
+                @if (User.Identity.GetEmpCode() == "9022246" || User.Identity.GetEmpCode() == "9024960")
+                {
+                    <div class="panel-toolbar">
+                        <button type="button" class="refresh_graph btn btn-primary btn-xs waves-effect waves-themed">Refresh</button>
+                        <button type="button" onclick="ResetFromPanel()" class="btn btn-warning btn-xs waves-effect waves-themed ml-3" data-toggle="modal" data-target=".default-example-modal-right-sm1">Update</button>
+                    </div>
+                }
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content bg-gray p-2">
+                    <div id="EmpRatingwiseAttritionChart">
+                        <canvas style="width:100%; height:300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 p-1">
+        <div id="panel-2" class="panel">
+            <div class="panel-hdr bg-gray-100 min-height-reset height-3">
+                <h2 class="fw-900 text-dark subheader-title mb-0">
+                    Department wise Attrition
+                </h2>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content">
+                    <div id="DepartmentwiseAttritionChart">
+                        <canvas style="width:100%; height:365px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 p-1">
+        <div id="panel-10" class="panel">
+            <div class="panel-hdr bg-gray-100 min-height-reset height-3">
+                <h2 class="fw-900 text-dark subheader-title mb-0">
+                    Engagement Star Rating (Head Count)
+                </h2>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content p-0 m-0">
+                    <div class="panel-tag p-0 m-0 pl-2">
+                        <strong>Que 1:</strong> This organization delivers on the employee experience it promises <br />
+                        <strong>Que 2:</strong> Given the opportunity, I tell others great things about working here <br />
+                        <strong>Que 3:</strong> I would not hesitate to recommend this organization to a friend seeking employment <br />
+                        <strong>Que 4:</strong> I seldom worried about losing my job
+                    </div>
+                    <div id="EngagementCount">
+                        <canvas style="width:100%; height:300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 pb-3">
+        <h3 class="text-primary font-weight-bold">Engagement Average Rating</h3>
+        <div class="frame-wrap">
+            <table class="table table-sm bg-info-900 table-bordered m-0 p-0" cellpadding="0" cellspacing="0">
+                <thead class="bg-info-500">
+                    <tr>
+                        <th>Rating</th>
+                        <th>Actual </th>
+                        <th width="8%">Given Feedback</th>
+                        <th>Question</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var val in ViewBag.Engagement)
+                    {
+                        <tr>
+                            <td>
+                                <div class="d-flex mt-1 text-warning align-items-center">
+                                    @if (val.Param2 == "1")
+                                    {
+                                        <i class="fas fa-star mr-1 fa-xs"></i>
+                                        <i class="fal fa-star mr-1 fa-xs"></i>
+                                        <i class="fal fa-star mr-1 fa-xs"></i>
+                                        <i class="fal fa-star mr-1 fa-xs"></i>
+                                        <i class="fal fa-star mr-1 fa-xs"></i>
+                                        <i class="fal fa-star mr-1 fa-xs"></i>
+                                    }
+                                    else if (val.Param2 == "2")
+                                    {
+                                        <i class="fas fa-star mr-1 fa-xs"></i>
+                                        <i class="fas fa-star mr-1 fa-xs"></i>
+                                        <i class="fal fa-star mr-1 fa-xs"></i>
+                                        <i class="fal fa-star mr-1 fa-xs"></i>
+                                        <i class="fal fa-star mr-1 fa-xs"></i>
+                                        <i class="fal fa-star mr-1 fa-xs"></i>
+                                    }
+                                    else if (val.Param2 == "3")
+                                    {
+                                        <i class="fas fa-star mr-1 fa-xs"></i>
+                                        <i class="fas fa-star mr-1 fa-xs"></i>
+                                        <i class="fas fa-star mr-1 fa-xs"></i>
+                                        <i class="fal fa-star mr-1 fa-xs"></i>
+                                        <i class="fal fa-star mr-1 fa-xs"></i>
+                                        <i class="fal fa-star mr-1 fa-xs"></i>
+                                    }
+                                    else if (val.Param2 == "4")
+                                    {
+                                        <i class="fas fa-star mr-1 fa-xs"></i>
+                                        <i class="fas fa-star mr-1 fa-xs"></i>
+                                        <i class="fas fa-star mr-1 fa-xs"></i>
+                                        <i class="fas fa-star mr-1 fa-xs"></i>
+                                        <i class="fal fa-star mr-1 fa-xs"></i>
+                                        <i class="fal fa-star mr-1 fa-xs"></i>
+                                    }
+                                    else if (val.Param2 == "5")
+                                    {
+                                        <i class="fas fa-star mr-1 fa-xs"></i>
+                                        <i class="fas fa-star mr-1 fa-xs"></i>
+                                        <i class="fas fa-star mr-1 fa-xs"></i>
+                                        <i class="fas fa-star mr-1 fa-xs"></i>
+                                        <i class="fas fa-star mr-1 fa-xs"></i>
+                                        <i class="fal fa-star mr-1 fa-xs"></i>
+                                    }
+                                    else if (val.Param2 == "0")
+                                    {
+                                        <i class="fal fa-star mr-1"></i>
+                                        <i class="fal fa-star mr-1"></i>
+                                        <i class="fal fa-star mr-1"></i>
+                                        <i class="fal fa-star mr-1"></i>
+                                        <i class="fal fa-star mr-1"></i>
+                                        <i class="fal fa-star mr-1"></i>
+                                    }
+                                </div>
+                            </td>
+                            @if (counter == 1)
+                            {
+                                <td>@val.Param3</td>
+                                <td align="center"><span class="text-muted font-italic text-warning">@val.Param1  <i class="fas fa-user-friends"></i></span></td>
+                                <td width="100%">
+                                    This organization delivers on the employee experience it promises
+                                </td>
+                            }
+                            else if (counter == 2)
+                            {
+                                <td>@val.Param3</td>
+                                <td align="center"><span class="text-muted font-italic text-warning">@val.Param1  <i class="fas fa-user-friends"></i></span></td>
+                                <td width="100%">
+                                    Given the opportunity, I tell others great things about working here
+                                </td>
+                            }
+                            else if (counter == 3)
+                            {
+                                <td>@val.Param3</td>
+                                <td align="center"><span class="text-muted font-italic text-warning">@val.Param1  <i class="fas fa-user-friends"></i></span></td>
+                                <td width="100%">
+                                    I would not hesitate to recommend this organization to a friend seeking employment
+                                </td>
+                            }
+                            else if (counter == 4)
+                            {
+                                <td>@val.Param3</td>
+                                <td align="center"><span class="text-muted font-italic text-warning">@val.Param1  <i class="fas fa-user-friends"></i></span></td>
+                                <td width="100%">
+                                    I seldom worried about losing my job
+                                </td>
+                            }
+                        </tr>
+                        counter++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4 p-1">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr bg-gray-100 min-height-reset height-3">
+                <h2 class="fw-900 text-dark subheader-title mb-0">
+                    Generation wise Attrition
+                </h2>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content bg-gray p-2">
+                    <div id="GenerationwiseAttritionChart">
+                        <canvas style="width:100%; height:300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 p-1">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr bg-gray-100 min-height-reset height-3">
+                <h2 class="fw-900 text-dark subheader-title mb-0">
+                    Age wise Attrition
+                </h2>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content bg-gray p-2">
+                    <div id="AgewiseAttritionChart">
+                        <canvas style="width:100%; height:300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 p-1">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr bg-gray-100 min-height-reset height-3">
+                <h2 class="fw-900 text-dark subheader-title mb-0">
+                    BU Wise Attrition
+                </h2>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content bg-gray p-2">
+                    <div id="BUWiseAttrition">
+                        <canvas style="width:100%; height:300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 p-1">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr bg-gray-100 min-height-reset height-3">
+                <h2 class="fw-900 text-dark subheader-title mb-0">
+                    Top Reasons for Leaving
+                </h2>
+            </div>
+            <div class="">
+                <div class="">
+                    <img id="TopReasonsforLeavingChartimg" src="~/img/noDataFound.png" class="img-fluid hide" style="height: 400px;" />
+                    <div id="TopReasonsforLeavingChart">
+                        <canvas style="width:100%; height:300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 p-1">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr bg-gray-100 min-height-reset height-3">
+                <h2 class="fw-900 text-dark subheader-title mb-0">
+                    Band Wise Attrition
+                </h2>
+            </div>
+            <div class="">
+                <div class="">
+                    <div id="BandWiseAttritionChart">
+                        <canvas style="width:100%; height:300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 p-1">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr bg-gray-100 min-height-reset height-3">
+                <h2 class="fw-900 text-dark subheader-title mb-0">
+                    Reasons for Leaving for Staff
+                </h2>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content bg-gray p-4">
+                    <div id="ReasonsforLeavingforStaffChart">
+                        <canvas style="width: 100%; height: 500px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 p-1">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr bg-gray-100 min-height-reset height-3">
+                <h2 class="fw-900 text-dark subheader-title mb-0">
+                    Reasons for Leaving for FLO
+                </h2>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content bg-gray p-4">
+                    <div id="ReasonsforLeavingforFLOChart">
+                        <canvas style="width:100%; height:500px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 p-1">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr bg-gray-100 min-height-reset height-3">
+                <h2 class="fw-900 text-dark subheader-title mb-0">
+                    Reasons for Leaving for SH & Above
+                </h2>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content bg-gray p-4">
+                    <div id="ReasonsforLeavingforSHAboveChart">
+                        <canvas style="width:100%; height:500px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 p-1">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr bg-gray-100 min-height-reset height-3">
+                <h2 class="fw-900 text-dark subheader-title mb-0">
+                    Tenure Wise Attrition & Engagement Average Rating
+                </h2>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content bg-gray p-2">
+                    <div id="TenureWiseAttritionChart">
+                        <canvas style="width:100%; height:360px;"></canvas>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade default-example-modal-right-sm" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title h5 pb-0 text-primary">
+                    Update Records of Attrition in Percentage(%)
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+            </div>
+            <div class="modal-body pt-0">
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <table width="100%" cellspacing="2" cellpadding="2">
+                            <tr>
+                                <td>Financial Year<span class="text-danger ml-1">*</span> :</td>
+                                <td>
+                                    <select id="eFinYear" class="form-control">
+                                        <option value="T126">T126</option>
+                                        <option value="T127">T127</option>
+                                        <option value="T128">T128</option>
+                                        <option value="T129">T129</option>
+                                        <option value="T129">T130</option>
+                                    </select>
+                                </td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Month<span class="text-danger ml-1">*</span> :</td>
+                                <td>
+                                    <select id="eMonth" class="form-control">
+                                        <option value="April">Apr</option>
+                                        <option value="May">May</option>
+                                        <option value="June">Jun</option>
+                                        <option value="July">Jul</option>
+                                        <option value="August">Aug</option>
+                                        <option value="September">sep</option>
+                                        <option value="October">Oct</option>
+                                        <option value="November">Nov</option>
+                                        <option value="December">Dec</option>
+                                        <option value="January">Jan</option>
+                                        <option value="February">Feb</option>
+                                        <option value="March">Mar</option>
+                                    </select>
+                                </td>
+                                <td class="pl-6">Involuntary Resignation<span class="text-danger ml-1">*</span> :</td>
+                                <td>
+                                    <input id="eInvRes" type="number" class="form-control">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Infant<span class="text-danger ml-1">*</span> :</td>
+                                <td>
+                                    <input id="eInfant" type="number" class="form-control">
+                                </td>
+                                <td class="pl-6">Attrition<span class="text-danger ml-1">*</span> :</td>
+                                <td>
+                                    <input id="eAttrition" type="number" class="form-control">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Infant(%)<span class="text-danger ml-1">*</span> :</td>
+                                <td>
+                                    <input id="eInfantPercent" type="number" class="form-control">
+                                </td>
+                                <td class="pl-6">Attrition(%)<span class="text-danger ml-1">*</span> :</td>
+                                <td>
+                                    <input id="ePercentage" type="number" class="form-control">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <button id="ebtn" type="button" class="btn btn-warning btn-xs mt-2">Save</button>
+                                </td>
+                                <td colspan="2">
+                                    <span id="msg2" class="text-danger font-weight-bold ml-3"></span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="card mb-g">
+                    <div class="card-body p-2">
+                        <div id="divTable">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade default-example-modal-right-sm1" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title h5 pb-0 text-primary">
+                    Update Records of Employee Rating Wise attrition
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+            </div>
+            <div class="modal-body pt-0">
+                <div class="card">
+                    <div class="card-body">
+                        Financial Year<span class="text-danger ml-1">*</span> : <span id="ratingYear">@Model.RatingFinYear</span>
+                    </div>
+                </div>
+                <div class="card mb-g">
+                    <div class="card-body">
+                        <div id="divTable1" class="table table-sm m-0">
+                            <table width="100%">
+                                <thead class="bg-primary-500">
+                                    <tr>
+                                        <td>Rating</td>
+                                        <td>Head Count</td>
+                                        <td>Left</td>
+                                        <td>Percent</td>
+                                        <td align="center">Action</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Far Below Expectations <span class="text-danger ml-1">*</span> :</td>
+                                        <td><input id="FBE1" type="number" class="form-control w-75" readonly></td>
+                                        <td><input id="FBE2" type="number" class="form-control w-75" readonly></td>
+                                        <td><input id="FBE3" type="number" class="form-control w-75" readonly></td>
+                                        <td align="center">
+                                            <button id="FBE4" type="button" onclick="RWRowEdit('FBE')" class="btn btn-sm text-primary"><i class="fas fa-edit ml-3"></i> Edit</button>
+                                            <button id="FBE5" type="button" onclick="RWRowUpdate('FBE','Far Below Expectations')" class="btn btn-sm text-danger hide">Update</button>
+                                            <input id="FBE6" type="hidden" value="0" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Below Expectations <span class="text-danger ml-1">*</span> :</td>
+                                        <td><input id="BE1" type="number" class="form-control w-75" readonly></td>
+                                        <td><input id="BE2" type="number" class="form-control w-75" readonly></td>
+                                        <td><input id="BE3" type="number" class="form-control w-75" readonly></td>
+                                        <td align="center">
+                                            <button id="BE4" type="button" onclick="RWRowEdit('BE')" class="btn btn-sm text-primary"><i class="fas fa-edit ml-3"></i> Edit</button>
+                                            <button id="BE5" type="button" onclick="RWRowUpdate('BE','Below Expectations')" class="btn btn-sm text-danger hide">Update</button>
+                                            <input id="BE6" type="hidden" value="0" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Meet Expectations <span class="text-danger ml-1">*</span> :</td>
+                                        <td><input id="ME1" type="number" class="form-control w-75" readonly></td>
+                                        <td><input id="ME2" type="number" class="form-control w-75" readonly></td>
+                                        <td><input id="ME3" type="number" class="form-control w-75" readonly></td>
+                                        <td align="center">
+                                            <button id="ME4" type="button" onclick="RWRowEdit('ME')" class="btn btn-sm text-primary"><i class="fas fa-edit ml-3"></i> Edit</button>
+                                            <button id="ME5" type="button" onclick="RWRowUpdate('ME','Meet Expectations')" class="btn btn-sm text-danger hide">Update</button>
+                                            <input id="ME6" type="hidden" value="0" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Exceeds Expectations <span class="text-danger ml-1">*</span> :</td>
+                                        <td><input id="EE1" type="number" class="form-control w-75" readonly></td>
+                                        <td><input id="EE2" type="number" class="form-control w-75" readonly></td>
+                                        <td><input id="EE3" type="number" class="form-control w-75" readonly></td>
+                                        <td align="center">
+                                            <button id="EE4" type="button" onclick="RWRowEdit('EE')" class="btn btn-sm text-primary"><i class="fas fa-edit ml-3"></i> Edit</button>
+                                            <button id="EE5" type="button" onclick="RWRowUpdate('EE','Exceeds Expectations')" class="btn btn-sm text-danger hide">Update</button>
+                                            <input id="EE6" type="hidden" value="0" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Far Exceed Expectations <span class="text-danger ml-1">*</span> :</td>
+                                        <td><input id="FEE1" type="number" class="form-control w-75" readonly></td>
+                                        <td><input id="FEE2" type="number" class="form-control w-75" readonly></td>
+                                        <td><input id="FEE3" type="number" class="form-control w-75" readonly></td>
+                                        <td align="center">
+                                            <button id="FEE4" type="button" onclick="RWRowEdit('FEE')" class="btn btn-sm text-primary"><i class="fas fa-edit ml-3"></i> Edit</button>
+                                            <button id="FEE5" type="button" onclick="RWRowUpdate('FEE','Far Exceed Expectations')" class="btn btn-sm text-danger hide">Update</button>
+                                            <input id="FEE6" type="hidden" value="0" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Not Rated <span class="text-danger ml-1">*</span> :</td>
+                                        <td><input id="NR1" type="number" class="form-control w-75" readonly></td>
+                                        <td><input id="NR2" type="number" class="form-control w-75" readonly></td>
+                                        <td><input id="NR3" type="number" class="form-control w-75" readonly></td>
+                                        <td align="center">
+                                            <button id="NR4" type="button" onclick="RWRowEdit('NR')" class="btn btn-sm text-primary"><i class="fas fa-edit ml-3"></i> Edit</button>
+                                            <button id="NR5" type="button" onclick="RWRowUpdate('NR','Not Rated')" class="btn btn-sm text-danger hide">Update</button>
+                                            <input id="NR6" type="hidden" value="0" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <span id="msg3" class="text-danger font-weight-bold ml-3"></span>
+            </div>
+        </div>
+    </div>
+</div>
+@section ScriptsBlock {
+    <script src="~/js/statistics/chartjs/chartjs.bundle.js"></script>
+    <script src="~/js/statistics/c3/c3.js"></script>
+    <script src="~/js/statistics/d3/d3.js"></script>
+    <script src="~/js/statistics/flot/flot.bundle.js"></script>
+    <script>
+        var TopReasonsforLeaving = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.TopReasonsforLeaving))');
+        var BandWiseAttrition = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.BandWiseAttrition))');
+        var EmpRatingwiseAttrition = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.EmpRatingwiseAttrition))');
+        var DepartmentwiseAttrition = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.DepartmentwiseAttrition))');
+        var EngagementCount = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.EngagementCount))');
+        var MWAttrEmpFeedback = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.MWAttrEmpFeedback))');
+        var MWAttrInfant = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.MWAttrInfant))');
+        var MWAttr = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.MWAttr))');
+        var MWInvResgn = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.MWInvResgn))');
+        var MonthwiseAttritionInPercentage = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.MonthwiseAttritionInPercentage))');
+        var ReasonsforLeavingforStaff = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.ReasonsforLeavingforStaff))');
+        var ReasonsforLeavingforFLO = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.ReasonsforLeavingforFLO))');
+        var ReasonsforLeavingforSHAbove = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.ReasonsforLeavingforSHAbove))');
+        var TenureWiseAttrition = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.TenureWiseAttrition))');
+        var GenerationwiseAttrition = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.GenerationwiseAttrition))');
+        var AgewiseAttrition = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.AgewiseAttrition))');
+        var BUWiseAttrition = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.BUWiseAttrition))');
+
+        $(document).ready(function () {
+            $('#finYearattrPer').text($('#DefaultFinYear').val());
+            $('#eFinYear').val($('#DefaultFinYear').val());
+            fnTopReasonsforLeavingChart(TopReasonsforLeaving);
+            fnBandWiseAttritionChart(BandWiseAttrition);
+            fnEmpRatingwiseAttritionChart(EmpRatingwiseAttrition);
+            bindEmpRatingwiseAttritionTable(EmpRatingwiseAttrition); // this is for popup table binding
+            fnDepartmentwiseAttritionChart(DepartmentwiseAttrition);
+            fnEngagementCount(EngagementCount);
+            fnMonthwiseAttritionChart(MWAttrEmpFeedback, MWAttrInfant, MWAttr, MWInvResgn);
+            fnMonthwiseAttritionInPercentageChart(MonthwiseAttritionInPercentage);
+            bindMonthwiseAttritionInPercentageTable(MonthwiseAttritionInPercentage);// this is for popup table binding
+            fnReasonsforLeavingforStaffChart(ReasonsforLeavingforStaff);
+            fnReasonsforLeavingforFLOChart(ReasonsforLeavingforFLO);
+            fnReasonsforLeavingforSHAboveChart(ReasonsforLeavingforSHAbove);
+            fnTenureWiseAttritionChart(TenureWiseAttrition);
+            fnGenerationwiseAttritionChart(GenerationwiseAttrition);
+            fnAgewiseAttritionChart(AgewiseAttrition);
+            fnBUWiseAttritionChart(BUWiseAttrition);
+            jQuery('#FBE1,#FBE2').on('input propertychange paste', function () {
+                var FBE1 = $('#FBE1').val();
+                var FBE2 = $('#FBE2').val();
+                if (FBE1 != '' && FBE2 != '') {
+                    var per = FBE2 / FBE1
+                    if (isNaN(per) || per == 'Infinity' || per == '-Infinity') { per = 0; }
+                    per = per * 100;
+                    per = per.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0];
+                    $('#FBE3').val(per);
+                }
+                else {
+                    $('#FBE3').val('0');
+                }
+            });
+            jQuery('#BE1,#BE2').on('input propertychange paste', function () {
+                var BE1 = $('#BE1').val();
+                var BE2 = $('#BE2').val();
+                if (BE1 != '' && BE2 != '') {
+                    var per = BE2 / BE1
+                    if (isNaN(per) || per == 'Infinity' || per == '-Infinity') { per = 0; }
+                    per = per * 100;
+                    per = per.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0];
+                    $('#BE3').val(per);
+                }
+                else {
+                    $('#BE3').val('0');
+                }
+            });
+            jQuery('#ME1,#ME2').on('input propertychange paste', function () {
+                var ME1 = $('#ME1').val();
+                var ME2 = $('#ME2').val();
+                if (ME1 != '' && ME2 != '') {
+                    var per = ME2 / ME1
+                    if (isNaN(per) || per == 'Infinity' || per == '-Infinity') { per = 0; }
+                    per = per * 100;
+                    per = per.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0];
+                    $('#ME3').val(per);
+                }
+                else {
+                    $('#ME3').val('0');
+                }
+            });
+            jQuery('#EE1,#EE2').on('input propertychange paste', function () {
+                var EE1 = $('#EE1').val();
+                var EE2 = $('#EE2').val();
+                if (EE1 != '' && EE2 != '') {
+                    var per = EE2 / EE1
+                    if (isNaN(per) || per == 'Infinity' || per == '-Infinity') { per = 0; }
+                    per = per * 100;
+                    per = per.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0];
+                    $('#EE3').val(per);
+                }
+                else {
+                    $('#EE3').val('0');
+                }
+            });
+            jQuery('#FEE1,#FEE2').on('input propertychange paste', function () {
+                var FEE1 = $('#FEE1').val();
+                var FEE2 = $('#FEE2').val();
+                if (FEE1 != '' && FEE2 != '') {
+                    var per = FEE2 / FEE1
+                    if (isNaN(per) || per == 'Infinity' || per == '-Infinity') { per = 0; }
+                    per = per * 100;
+                    per = per.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0];
+                    $('#FEE3').val(per);
+                }
+                else {
+                    $('#FEE3').val('0');
+                }
+            });
+            jQuery('#NR1,#NR2').on('input propertychange paste', function () {
+                var NR1 = $('#NR1').val();
+                var NR2 = $('#NR2').val();
+                if (NR1 != '' && NR2 != '') {
+                    var per = NR2 / NR1
+                    if (isNaN(per) || per == 'Infinity' || per == '-Infinity') { per = 0; }
+                    per = per * 100;
+                    per = per.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0];
+                    $('#NR3').val(per);
+                }
+                else {
+                    $('#NR3').val('0');
+                }
+            });
+        });
+        function BoxOnChange() {
+            var DefaultFinYear = $('#DefaultFinYear').val();
+            $('#finYearattrPer').text(DefaultFinYear);
+            var requestUrl = 'HR/ChangeFilterData';
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                data: { DefaultFinYear: DefaultFinYear },
+                success: function () {
+                    location.replace(location.href)
+                }
+            });
+        }
+        function RWRowEdit(id) {
+            $('#' + id + '1').removeAttr('readonly');
+            $('#' + id + '2').removeAttr('readonly');
+            $('#' + id + '4').hide();
+            $('#' + id + '5').show();
+        }
+        function RWRowUpdate(code, category) {
+            var id = $('#' + code + '6').val();
+            var rFinYear = $('#ratingYear').text();
+            var rRating = category;
+            var rRatingCode = code;
+            var rHeadcount = $('#' + code + '1').val();
+            var rLeft = $('#' + code + '2').val();
+            var rPercent = $('#' + code + '3').val();
+            if (id != '' && rFinYear != '' && rRating != '' && rRatingCode != '' && rHeadcount != '' && rLeft != '' && rPercent != '') {
+                $('#msg3').text('');
+                var requestUrl = 'HR/RatingPerYear';
+                $.ajax({
+                    url: requestUrl,
+                    type: "POST",
+                    data: {
+                        id: id,
+                        rFinYear: rFinYear,
+                        rRating: rRating,
+                        rRatingCode: rRatingCode,
+                        rHeadcount: rHeadcount,
+                        rLeft: rLeft,
+                        rPercent: rPercent
+                    },
+                    success: function (response) {
+                        if (response.result === _errorStatus) {
+                            Swal.fire("Oops...", response.msg, "error");
+                        } else {
+                            $('#' + code + '1').prop('readonly', true);
+                            $('#' + code + '2').prop('readonly', true);
+                            $('#' + code + '4').show();
+                            $('#' + code + '5').hide();
+                            Swal.fire("Saved!", response.msg, "success").then(function () {
+
+                            })
+                        }
+                    },
+                    error: function () {
+                        Swal.fire("Oops...", "Something went wrong!", "error");
+                    }
+                });
+            }
+            else {
+                $('#msg3').text('All (*) marked fields are mandatory');
+            }
+        }
+        function fnTopReasonsforLeavingChart(data) {
+            var dataList = [];
+            var subDataList = [];
+                if (data != null) {
+                    for (i = 0; i < data.length; i++) {
+                        subDataList = [];
+                        subDataList.push(data[i].param1 +' - '+data[i].param2, data[i].param2)
+                        dataList.push(subDataList);
+                    }
+            }
+            var chart = c3.generate({
+                bindto: "#TopReasonsforLeavingChart",
+                data: {
+                    columns: dataList,
+                    type: 'donut'
+                },
+                donut: {
+                    title: "Top Reasons for Leaving"
+                },
+                color: {
+                    pattern: [
+                        color.success._900, color.danger._900, color.info._900, color.primary._900, color.warning._900,
+                        color.success._700, color.danger._700, color.info._700, color.primary._700, color.warning._700,
+                        color.success._400, color.danger._400, color.info._400, color.primary._400, color.warning._400,
+                        color.success._100, color.danger._100, color.info._100, color.primary._100, color.warning._100
+                    ]
+                }, legend: {
+                    position: 'right'
+                },
+                size: {
+                    width: 500,
+                    height: 400
+                }
+            });
+            if (data.length == 0) {
+                $('#TopReasonsforLeavingChart,#box2heading').html('');
+                $('#box1heading,#box2heading').html('Data not available for this financial year');
+                $('#TopReasonsforLeavingChartimg').show();
+            }
+        }
+        var fnBandWiseAttritionChart = function (data) {
+            var chart = c3.generate({
+                bindto: "#BandWiseAttritionChart",
+                data: {
+                    columns: [
+                        ['S - ' + data[0].param1, data[0].param1],
+                        ['FLO - ' + data[1].param1, data[1].param1],
+                        ['SH & Above - ' + data[2].param1, data[2].param1]
+                    ],
+                    type: 'pie'
+                },
+                color: {
+                    pattern: [
+                        "#336bad",
+                        "#b73633",
+                        "#99c047"
+                    ]
+                }, legend: {
+                    position: 'right'
+                },
+                size: {
+                    width: 500,
+                    height: 400
+                }
+            });
+        }
+        var fnEmpRatingwiseAttritionChart = function (data) {
+            var group_list = [];
+            var qty_list = [];
+            if (data != null) {
+                for (i = 0; i < data.length; i++) {
+                    group_list.push(data[i].param3);
+                    qty_list.push(data[i].param6);
+                }
+            }
+            var barChartData = {
+                labels: group_list,
+                datasets: [{
+                    type: 'bar',
+                    label: 'Employee Rating Wise attrition',
+                    backgroundColor: "#97C5FE",
+                    borderColor: "#80aad6",
+                    borderWidth: 1,
+                    data: qty_list
+                }]
+            };
+            var config = {
+                type: 'bar',
+                data: barChartData,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'bottom',
+                    }, title: {
+                        display: true,
+                        text: ' '
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 12,
+                                fontColor: '#4183df'
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Employee Rating Wise attrition'
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 12,
+                                fontColor: '#4183df'
+                            }
+                        }]
+                    },
+                    "hover": {
+                        "animationDuration": 0
+                    },
+                    "animation": {
+                        "duration": 1,
+                        "onComplete": function () {
+                            var chartInstance = this.chart, ctx = chartInstance.ctx;
+                            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'bottom';
+                            ctx.fillStyle = '#4183df';
+                            this.data.datasets.forEach(function (dataset, i) {
+                                var meta = chartInstance.controller.getDatasetMeta(i); meta.data.forEach(function (bar, index) {
+                                    var data = dataset.data[index];
+                                    ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                                });
+                            });
+                        }
+                    }
+                }
+            }
+            new Chart($("#EmpRatingwiseAttritionChart > canvas").get(0).getContext("2d"), config);
+        }
+        function bindEmpRatingwiseAttritionTable(data) {
+            if (data != null) {
+                for (i = 0; i < data.length; i++) {
+                    if (data[i].param7 == 'FBE') {
+                        $('#FBE1').val(data[i].param4);
+                        $('#FBE2').val(data[i].param5);
+                        $('#FBE3').val(data[i].param6);
+                        $('#FBE6').val(data[i].param1);
+                    }
+                    if (data[i].param7 == 'BE') {
+                        $('#BE1').val(data[i].param4);
+                        $('#BE2').val(data[i].param5);
+                        $('#BE3').val(data[i].param6);
+                        $('#BE6').val(data[i].param1);
+                    }
+                    if (data[i].param7 == 'ME') {
+                        $('#ME1').val(data[i].param4);
+                        $('#ME2').val(data[i].param5);
+                        $('#ME3').val(data[i].param6);
+                        $('#ME6').val(data[i].param1);
+                    }
+                    if (data[i].param7 == 'EE') {
+                        $('#EE1').val(data[i].param4);
+                        $('#EE2').val(data[i].param5);
+                        $('#EE3').val(data[i].param6);
+                        $('#EE6').val(data[i].param1);
+                    }
+                    if (data[i].param7 == 'FEE') {
+                        $('#FEE1').val(data[i].param4);
+                        $('#FEE2').val(data[i].param5);
+                        $('#FEE3').val(data[i].param6);
+                        $('#FEE6').val(data[i].param1);
+                    }
+                    if (data[i].param7 == 'NR') {
+                        $('#NR1').val(data[i].param4);
+                        $('#NR2').val(data[i].param5);
+                        $('#NR3').val(data[i].param6);
+                        $('#NR6').val(data[i].param1);
+                    }
+                }
+            }
+        }
+
+        var fnDepartmentwiseAttritionChart = function (data) {
+            var deptName = '';
+            var highestRateofattrition = 0;
+            var group_list = [];
+            var qty_list = [];
+            if (data != null) {
+                for (i = 0; i < data.length; i++) {
+                    group_list.push(data[i].param1);
+                    if (highestRateofattrition < parseInt(data[i].param2)) {
+                        highestRateofattrition = parseInt(data[i].param2);
+                        deptName = data[i].param1;
+                    }
+                    qty_list.push(data[i].param2);
+                }
+                $('#boxDeptName').text(deptName);
+                $('#boxhiattrrate').text(highestRateofattrition);
+            }
+            var barChartData = {
+                labels: group_list,
+                datasets: [{
+                    type: 'bar',
+                    label: 'Attrition',
+                    backgroundColor: "#4183df",
+                    borderColor: "#80aad6",
+                    borderWidth: 1,
+                    data: qty_list
+                }]
+            };
+            var config = {
+                type: 'bar',
+                data: barChartData,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'bottom',
+                    }, title: {
+                        display: true,
+                        text: ' '
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 12,
+                                fontColor: '#4183df'
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Department wise Attrition'
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 12,
+                                fontColor: '#4183df'
+                            }
+                        }]
+                    },
+                    "hover": {
+                        "animationDuration": 0
+                    },
+                    "animation": {
+                        "duration": 1,
+                        "onComplete": function () {
+                            var chartInstance = this.chart, ctx = chartInstance.ctx;
+                            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'bottom';
+                            ctx.fillStyle = '#4183df';
+                            this.data.datasets.forEach(function (dataset, i) {
+                                var meta = chartInstance.controller.getDatasetMeta(i); meta.data.forEach(function (bar, index) {
+                                    var data = dataset.data[index];
+                                    ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                                });
+                            });
+                        }
+                    }
+                }
+            }
+            new Chart($("#DepartmentwiseAttritionChart > canvas").get(0).getContext("2d"), config);
+        }
+        var fnEngagementCount = function (data) {
+
+            var r1 = ['0', '0', '0', '0'];
+            var r2 = ['0','0','0','0'];
+            var r3 = ['0','0','0','0'];
+            var r4 = ['0','0','0','0'];
+            var r5 = ['0','0','0','0'];
+            var r6 = ['0','0','0','0'];
+
+            if (data != null) {
+                if (data.length > 0) {
+                    var q41 = data.find(x => x.param1 == 'Q4' && x.param2 == '1');
+                    var q42 = data.find(x => x.param1 == 'Q4' && x.param2 == '2');
+                    var q43 = data.find(x => x.param1 == 'Q4' && x.param2 == '3');
+                    var q44 = data.find(x => x.param1 == 'Q4' && x.param2 == '4');
+                    var q45 = data.find(x => x.param1 == 'Q4' && x.param2 == '5');
+                    var q46 = data.find(x => x.param1 == 'Q4' && x.param2 == '6');
+                    if (q41 == undefined) { q41 = '0'; } else { q41 = q41.param3; }
+                    if (q42 == undefined) { q42 = '0'; } else { q42 = q42.param3; }
+                    if (q43 == undefined) { q43 = '0'; } else { q43 = q43.param3; }
+                    if (q44 == undefined) { q44 = '0'; } else { q44 = q44.param3; }
+                    if (q45 == undefined) { q45 = '0'; } else { q45 = q45.param3; }
+                    if (q46 == undefined) { q46 = '0'; } else { q46 = q46.param3; }
+
+                    var q51 = data.find(x => x.param1 == 'Q5' && x.param2 == '1');
+                    var q52 = data.find(x => x.param1 == 'Q5' && x.param2 == '2');
+                    var q53 = data.find(x => x.param1 == 'Q5' && x.param2 == '3');
+                    var q54 = data.find(x => x.param1 == 'Q5' && x.param2 == '4');
+                    var q55 = data.find(x => x.param1 == 'Q5' && x.param2 == '5');
+                    var q56 = data.find(x => x.param1 == 'Q5' && x.param2 == '6');
+                    if (q51 == undefined) { q51 = '0'; } else { q51 = q51.param3; }
+                    if (q52 == undefined) { q52 = '0'; } else { q52 = q52.param3; }
+                    if (q53 == undefined) { q53 = '0'; } else { q53 = q53.param3; }
+                    if (q54 == undefined) { q54 = '0'; } else { q54 = q54.param3; }
+                    if (q55 == undefined) { q55 = '0'; } else { q55 = q55.param3; }
+                    if (q56 == undefined) { q56 = '0'; } else { q56 = q56.param3; }
+
+                    var q61 = data.find(x => x.param1 == 'Q6' && x.param2 == '1');
+                    var q62 = data.find(x => x.param1 == 'Q6' && x.param2 == '2');
+                    var q63 = data.find(x => x.param1 == 'Q6' && x.param2 == '3');
+                    var q64 = data.find(x => x.param1 == 'Q6' && x.param2 == '4');
+                    var q65 = data.find(x => x.param1 == 'Q6' && x.param2 == '5');
+                    var q66 = data.find(x => x.param1 == 'Q6' && x.param2 == '6');
+                    if (q61 == undefined) { q61 = '0'; } else { q61 = q61.param3; }
+                    if (q62 == undefined) { q62 = '0'; } else { q62 = q62.param3; }
+                    if (q63 == undefined) { q63 = '0'; } else { q63 = q63.param3; }
+                    if (q64 == undefined) { q64 = '0'; } else { q64 = q64.param3; }
+                    if (q65 == undefined) { q65 = '0'; } else { q65 = q65.param3; }
+                    if (q66 == undefined) { q66 = '0'; } else { q66 = q66.param3; }
+
+                    var q71 = data.find(x => x.param1 == 'Q7' && x.param2 == '1');
+                    var q72 = data.find(x => x.param1 == 'Q7' && x.param2 == '2');
+                    var q73 = data.find(x => x.param1 == 'Q7' && x.param2 == '3');
+                    var q74 = data.find(x => x.param1 == 'Q7' && x.param2 == '4');
+                    var q75 = data.find(x => x.param1 == 'Q7' && x.param2 == '5');
+                    var q76 = data.find(x => x.param1 == 'Q7' && x.param2 == '6');
+                    if (q71 == undefined) { q71 = '0'; } else { q71 = q71.param3; }
+                    if (q72 == undefined) { q72 = '0'; } else { q72 = q72.param3; }
+                    if (q73 == undefined) { q73 = '0'; } else { q73 = q73.param3; }
+                    if (q74 == undefined) { q74 = '0'; } else { q74 = q74.param3; }
+                    if (q75 == undefined) { q75 = '0'; } else { q75 = q75.param3; }
+                    if (q76 == undefined) { q76 = '0'; } else { q76 = q76.param3; }
+
+                    r1 = [q41, q51, q61, q71,]
+                    r2 = [q42, q52, q62, q72,]
+                    r3 = [q43, q53, q63, q73,]
+                    r4 = [q44, q54, q64, q74,]
+                    r5 = [q45, q55, q65, q75,]
+                    r6 = [q46, q56, q66, q76,]
+                }
+            }
+
+            var barChartData1 = {
+                labels: ["Que 1", "Que 2", "Que 3", "Que 4"],
+                datasets: [
+                    {
+                        label: '★',
+                        backgroundColor: "#FF4500",
+                        borderColor: "#FF4500",
+                        borderWidth: 1,
+                        data: r1
+                    },
+                    {
+                        label: '★★',
+                        backgroundColor: "#FFA500",
+                        borderColor: "#FFA500",
+                        borderWidth: 1,
+                        data: r2
+                    },
+                    {
+                        label: '★★★',
+                        backgroundColor: "#FFD700",
+                        borderColor: "#FFD700",
+                        borderWidth: 1,
+                        data: r3
+                    },
+                    {
+                        label: '★★★★',
+                        backgroundColor: "#ADFF2F",
+                        borderColor: "#ADFF2F",
+                        borderWidth: 1,
+                        data: r4
+                    },
+                    {
+                        label: '★★★★★',
+                        backgroundColor: "#32CD32",
+                        borderColor: "#32CD32",
+                        borderWidth: 1,
+                        data: r5
+                    },
+                    {
+                        label: '★★★★★★',
+                        backgroundColor: "#006400",
+                        borderColor: "#006400",
+                        borderWidth: 1,
+                        data: r6
+                    }]
+            };
+            var config1 = {
+                type: 'bar',
+                data: barChartData1,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                        text: ' '
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 11
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 11
+                            }
+                        }]
+                    },
+                    "hover": {
+                        "animationDuration": 0
+                    },
+                    "animation": {
+                        "duration": 1,
+                        "onComplete": function () {
+                            var chartInstance = this.chart, ctx = chartInstance.ctx;
+                            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'bottom';
+                            this.data.datasets.forEach(function (dataset, i) {
+                                var meta = chartInstance.controller.getDatasetMeta(i); meta.data.forEach(function (bar, index) {
+                                    var data = dataset.data[index];
+                                    ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                                });
+                            });
+                        }
+                    }
+                }
+            }
+            new Chart($("#EngagementCount > canvas").get(0).getContext("2d"), config1);
+        }
+        function fnMonthwiseAttritionChart(mwAttrEmpFeedback, mwAttrInfant, mwAttr, mwInvResgn) {
+            var month_list = [];
+            var empFeedback_list = [];
+            var infant_list = [];
+            var attr_list = [];
+            var invResgn_list = [];
+            if (mwAttrEmpFeedback != null) {
+                for (i = 0; i < mwAttrEmpFeedback.length; i++) {
+                    month_list.push(mwAttrEmpFeedback[i].param1);
+                    empFeedback_list.push(mwAttrEmpFeedback[i].param2);
+                }
+            }
+            if (mwAttrInfant != null) {
+                for (i = 0; i < mwAttrInfant.length; i++) {
+                    infant_list.push(mwAttrInfant[i].param2);
+                }
+            }
+            if (mwAttr != null) {
+                for (i = 0; i < mwAttr.length; i++) {
+                    attr_list.push(mwAttr[i].param2);
+                }
+            }
+            if (mwInvResgn != null) {
+                for (i = 0; i < mwInvResgn.length; i++) {
+                    invResgn_list.push(mwInvResgn[i].param2);
+                }
+            }
+            var barlineCombineData = {
+                labels: month_list,
+                datasets: [
+                    {
+                        type: 'bar',
+                        label: 'Attrition',
+                        backgroundColor: "#4b9bfe",
+                        borderColor: "#9cc3ed",
+                        borderWidth: 1,
+                        data: attr_list
+                    },
+                    {
+                        type: 'bar',
+                        label: 'Employee feedback',
+                        backgroundColor: "#feb46d",
+                        borderColor: "#f4b678",
+                        borderWidth: 1,
+                        data: empFeedback_list
+                    },
+                    {
+                        type: 'bar',
+                        label: 'Infant',
+                        backgroundColor: "#ff5f5d",
+                        borderColor: "#fd5e62",
+                        borderWidth: 1,
+                        data: infant_list,
+                        borderWidth: 1
+                    },
+                    {
+                        type: 'bar',
+                        label: 'Involuntary Resignation',
+                        backgroundColor: "#4fd2a0",
+                        borderColor: "#87d4b8",
+                        borderWidth: 1,
+                        data: invResgn_list,
+                        borderWidth: 1
+                    }
+                ]
+            };
+            var config = {
+                type: 'bar',
+                data: barlineCombineData,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'bottom',
+                    }, title: {
+                        display: true,
+                        text: ' '
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: false,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 12
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'In Headcount'
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 12
+                            }
+                        }]
+                    },
+                    "hover": {
+                        "animationDuration": 0
+                    },
+                    "animation": {
+                        "duration": 1,
+                        "onComplete": function () {
+                            var chartInstance = this.chart, ctx = chartInstance.ctx;
+                            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'top';
+                            this.data.datasets.forEach(function (dataset, i) {
+                                var meta = chartInstance.controller.getDatasetMeta(i); meta.data.forEach(function (bar, index) {
+                                    var data = dataset.data[index];
+                                    if (data == 0 || data == '0') {
+
+                                    } else {
+                                        ctx.fillText(data, bar._model.x, bar._model.y - 15);
+                                    }
+                                });
+                            });
+                        }
+                    }
+                }
+            }
+            new Chart($("#MonthwiseAttritionChart > canvas").get(0).getContext("2d"), config);
+        }
+        function fnMonthwiseAttritionInPercentageChart(data) {
+            var group_list = [];
+            var qty_list = [];
+            if (data != null) {
+                for (i = 0; i < data.length; i++) {
+                    group_list.push(data[i].param2);
+                    qty_list.push(data[i].param3);
+                }
+            }
+            var config = {
+                type: 'line',
+                data: {
+                    labels: group_list,
+                    datasets: [{
+                        label: "Attrition",
+                        borderColor: '#8064a2',
+                        pointBackgroundColor: "#c00000",
+                        pointBorderColor: 'rgba(0, 0, 0, 0)',
+                        pointBorderWidth: 3,
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        data: qty_list,
+                        fill: true
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                        text: ' '
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 9
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'In Percentage',
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 12
+                            }
+                        }]
+                    },
+                    "hover": {
+                        "animationDuration": 0
+                    },
+                    "animation": {
+                        "duration": 1,
+                        "onComplete": function () {
+                            var chartInstance = this.chart, ctx = chartInstance.ctx;
+                            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'bottom';
+                            this.data.datasets.forEach(function (dataset, i) {
+                                var meta = chartInstance.controller.getDatasetMeta(i); meta.data.forEach(function (bar, index) {
+                                    var data = dataset.data[index];
+                                    ctx.fillText(data + '%', bar._model.x, bar._model.y - 5);
+                                });
+                            });
+                        }
+                    }
+                }
+            };
+            new Chart($("#MonthwiseAttritionInPercentageChart > canvas").get(0).getContext("2d"), config);
+        }
+        function bindMonthwiseAttritionInPercentageTable(data) {
+            var subQueDivContent =
+                '<table class="table table-sm m-0"><thead class="bg-primary-500">' +
+                '<tr><th>Financial Year</th>' +
+                '<th>Month</th>' +
+                '<th>Attrition(%)</th>' +
+                '<th>Attrition</th>' +
+                '<th>Infant(%)</th>' +
+                '<th>Infant</th>' +
+                '<th>Involuntary</th>' +
+                '<th>Action</th>' +
+                '</tr ></thead ><tbody>';
+            if (data != null) {
+                for (i = 0; i < data.length; i++) {
+                    subQueDivContent += '<tr><td>'
+                        + data[i].param1 + '</td><td>'
+                        + data[i].param2 + '</td><td>'
+                        + data[i].param3 + '</td><td>'
+                        + data[i].param5 + '</td><td>'
+                        + data[i].param8 + '</td><td>'
+                        + data[i].param4 + '</td><td>'
+                        + data[i].ans1 + '</td><td>'
+                        + '<button type="button" onclick="RowDelete(' + data[i].param7 + ')" class="btn btn-xs text-danger"><i class="fas fa-trash-alt"></i> Delete</button>'
+                        + '</td></tr>';
+                }
+            }
+            subQueDivContent += '</tbody></table>';
+            $('#divTable').html(subQueDivContent);
+        }
+        var fnReasonsforLeavingforStaffChart = function (data) {
+            var group_list = [];
+            var qty_list = [];
+            if (data != null) {
+                for (i = 0; i < data.length; i++) {
+                    group_list.push(data[i].param1 + ' (' + data[i].param2 + ')');
+                    qty_list.push(data[i].param2);
+                }
+            }
+            var fgChartData = {
+                labels: group_list,
+                datasets: [{
+                    label: "Reasons for Leaving for Staff",
+                    backgroundColor: "#336bad",
+                    borderColor: "#336bad",
+                    borderWidth: 1,
+                    data: qty_list
+                }]
+            };
+            var fgDataConfig = {
+                type: 'horizontalBar',
+                data: fgChartData,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'bottom',
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 12,
+                                fontColor: "#336bad",
+                                callback: function (value, index, values) {
+                                    return value;
+                                }
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 12,
+                                fontColor: "#336bad",
+                            }
+                        }]
+                    },
+                    "hover": {
+                        "animationDuration": 0
+                    },
+                    "animation": {
+                    "duration": 1,
+                    "onComplete": function () {
+                        var chartInstance = this.chart,
+                            ctx = chartInstance.ctx;
+
+                        ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                        ctx.textAlign = 'left';
+                        ctx.textBaseline = 'bottom';
+                        ctx.fillStyle = "white";
+                        this.data.datasets.forEach(function (dataset, i) {
+                            var meta = chartInstance.controller.getDatasetMeta(i);
+                            meta.data.forEach(function (bar, index) {
+                                var data = dataset.data[index];
+                                ctx.fillText(data, bar._model.x - 15, bar._model.y + 5);
+                            });
+                        });
+                    }
+                }
+                }
+            }
+            new Chart($("#ReasonsforLeavingforStaffChart > canvas").get(0).getContext("2d"), fgDataConfig);
+        }
+        var fnReasonsforLeavingforFLOChart = function (data) {
+            var group_list = [];
+            var qty_list = [];
+            if (data != null) {
+                for (i = 0; i < data.length; i++) {
+                    group_list.push(data[i].param1 + ' (' + data[i].param2 + ')');
+                    qty_list.push(data[i].param2);
+                }
+            }
+            var fgChartData = {
+                labels: group_list,
+                datasets: [{
+                    label: "Reasons for Leaving for FLO",
+                    backgroundColor: "#b73633",
+                    borderColor: "#b73633",
+                    borderWidth: 1,
+                    data: qty_list
+                }]
+            };
+            var fgDataConfig = {
+                type: 'horizontalBar',
+                data: fgChartData,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'bottom',
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: false,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 12,
+                                fontColor: "#b73633",
+                                callback: function (value, index, values) {
+                                    return value;
+                                }
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 12,
+                                fontColor: "#b73633",
+                            }
+                        }]
+                    },
+                    "hover": {
+                        "animationDuration": 0
+                    },
+                    "animation": {
+                        "duration": 1,
+                        "onComplete": function () {
+                            var chartInstance = this.chart,
+                                ctx = chartInstance.ctx;
+
+                            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                            ctx.textAlign = 'left';
+                            ctx.textBaseline = 'bottom';
+                            ctx.fillStyle = "white";
+                            this.data.datasets.forEach(function (dataset, i) {
+                                var meta = chartInstance.controller.getDatasetMeta(i);
+                                meta.data.forEach(function (bar, index) {
+                                    var data = dataset.data[index];
+                                    ctx.fillText(data, bar._model.x - 15, bar._model.y + 5);
+                                });
+                            });
+                        }
+                    }
+                }
+            }
+            new Chart($("#ReasonsforLeavingforFLOChart > canvas").get(0).getContext("2d"), fgDataConfig);
+        }
+        var fnReasonsforLeavingforSHAboveChart = function (data) {
+            var group_list = [];
+            var qty_list = [];
+            if (data != null) {
+                for (i = 0; i < data.length; i++) {
+                    group_list.push(data[i].param1 + ' (' + data[i].param2 + ')');
+                    qty_list.push(data[i].param2);
+                }
+            }
+            var fgChartData = {
+                labels: group_list,
+                datasets: [{
+                    label: "Reasons for Leaving for SH & Above",
+                    backgroundColor: "#99c047",
+                    borderColor: "#99c047",
+                    borderWidth: 1,
+                    data: qty_list
+                }]
+            };
+            var fgDataConfig = {
+                type: 'horizontalBar',
+                data: fgChartData,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'bottom',
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: false,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 12,
+                                fontColor: "#99c047",
+                                callback: function (value, index, values) {
+                                    return value;
+                                }
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 12,
+                                fontColor: "#99c047",
+                            }
+                        }]
+                    },
+                    "hover": {
+                        "animationDuration": 0
+                    },
+                    "animation": {
+                        "duration": 1,
+                        "onComplete": function () {
+                            var chartInstance = this.chart,
+                                ctx = chartInstance.ctx;
+
+                            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                            ctx.textAlign = 'left';
+                            ctx.textBaseline = 'bottom';
+                            ctx.fillStyle = "white";
+                            this.data.datasets.forEach(function (dataset, i) {
+                                var meta = chartInstance.controller.getDatasetMeta(i);
+                                meta.data.forEach(function (bar, index) {
+                                    var data = dataset.data[index];
+                                    ctx.fillText(data, bar._model.x - 15, bar._model.y + 5);
+                                });
+                            });
+                        }
+                    }
+                }
+            }
+            new Chart($("#ReasonsforLeavingforSHAboveChart > canvas").get(0).getContext("2d"), fgDataConfig);
+        }
+        var fnTenureWiseAttritionChart = function (data) {
+            var group_list = [];
+            var qty_list = [];
+            if (data != null) {
+                for (i = 0; i < data.length; i++) {
+                    group_list.push(data[i].param1);
+                    qty_list.push(data[i].param2);
+                }
+            }
+            var fgChartData = {
+                labels: group_list,
+                datasets: [{
+                    label: "Tenure wise Attrition",
+                    backgroundColor: "#8064a2",
+                    borderColor: "#432c63",
+                    borderWidth: 1.5,
+                    data: qty_list
+                }]
+            };
+            var fgDataConfig = {
+                type: 'horizontalBar',
+                data: fgChartData,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'bottom',
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: false,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 12,
+                                fontColor: "#8064a2",
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 13,
+                                fontColor: "#8064a2",
+                            }
+                        }]
+                    },
+                    "hover": {
+                        "animationDuration": 0
+                    },
+                    "animation": {
+                        "duration": 1,
+                        "onComplete": function () {
+                            var chartInstance = this.chart,
+                                ctx = chartInstance.ctx;
+
+                            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                            ctx.textAlign = 'left';
+                            ctx.textBaseline = 'bottom';
+                            ctx.fillStyle = "white";
+                            this.data.datasets.forEach(function (dataset, i) {
+                                var meta = chartInstance.controller.getDatasetMeta(i);
+                                meta.data.forEach(function (bar, index) {
+                                    var data = dataset.data[index];
+                                    ctx.fillText(data, bar._model.x - 15, bar._model.y + 5);
+                                });
+                            });
+                        }
+                    }
+                }
+            }
+            new Chart($("#TenureWiseAttritionChart > canvas").get(0).getContext("2d"), fgDataConfig);
+        }
+        var fnGenerationwiseAttritionChart = function (data) {
+            var group_list = [];
+            var qty_list = [];
+            if (data != null) {
+                for (i = 0; i < data.length; i++) {
+                    group_list.push(data[i].param1);
+                    qty_list.push(data[i].param2);
+                }
+            }
+            var fgChartData = {
+                labels: group_list,
+                datasets: [{
+                    label: "Reasons for Leaving for FLO",
+                    backgroundColor: "#1e487e",
+                    borderColor: "#16385e",
+                    borderWidth: 1.5,
+                    data: qty_list
+                }]
+            };
+            var fgDataConfig = {
+                type: 'bar',
+                data: fgChartData,
+                options: {
+                    responsive: true,
+                    legend: {
+                        display: false,
+                    },
+                    title: {
+                        display: true,
+                        text: ' '
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: false,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 13,
+                                fontColor:'#1e487e'
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 13,
+                                fontColor: '#1e487e'
+                            }
+                        }]
+                    },
+                    "hover": {
+                        "animationDuration": 0
+                    },
+                    "animation": {
+                        "duration": 1,
+                        "onComplete": function () {
+                            var chartInstance = this.chart, ctx = chartInstance.ctx;
+                            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'bottom';
+                            this.data.datasets.forEach(function (dataset, i) {
+                                var meta = chartInstance.controller.getDatasetMeta(i); meta.data.forEach(function (bar, index) {
+                                    var data = dataset.data[index];
+                                    ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                                });
+                            });
+                        }
+                    }
+                }
+            }
+            new Chart($("#GenerationwiseAttritionChart > canvas").get(0).getContext("2d"), fgDataConfig);
+        }
+        var fnAgewiseAttritionChart = function (data) {
+            var highestRateofattritionage = '';
+            var highestRateofattritionagenumber = 0;
+            var group_list = [];
+            var qty_list = [];
+            if (data != null) {
+                for (i = 0; i < data.length; i++) {
+                    group_list.push(data[i].param1);
+                    qty_list.push(data[i].param2);
+                    if (highestRateofattritionagenumber < parseInt(data[i].param2)) {
+                        highestRateofattritionagenumber = data[i].param2;
+                        highestRateofattritionage = data[i].param1;
+                    }
+                }
+            }
+            $('#box4heading').text(highestRateofattritionage);
+            $('#box4hiattrrate').text(highestRateofattritionagenumber);
+            var fgChartData = {
+                labels: group_list,
+                datasets: [{
+                    label: "Reasons for Leaving for FLO",
+                    backgroundColor: "#00b150",
+                    borderColor: "#00853c",
+                    borderWidth: 1,
+                    data: qty_list
+                }]
+            };
+            var fgDataConfig = {
+                type: 'bar',
+                data: fgChartData,
+                options: {
+                    responsive: true,
+                    legend: {
+                        display: false,
+                    },
+                    title: {
+                        display: true,
+                        text: ' '
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: false,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 13,
+                                fontColor: '#00b150'
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 13,
+                                fontColor: '#00b150'
+                            }
+                        }]
+                    },
+                    "hover": {
+                        "animationDuration": 1
+                    },
+                    "animation": {
+                        "duration": 1,
+                        "onComplete": function () {
+                            var chartInstance = this.chart, ctx = chartInstance.ctx;
+                            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'bottom';
+                            this.data.datasets.forEach(function (dataset, i) {
+                                var meta = chartInstance.controller.getDatasetMeta(i); meta.data.forEach(function (bar, index) {
+                                    var data = dataset.data[index];
+                                    ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                                });
+                            });
+                        }
+                    }
+                }
+            }
+            new Chart($("#AgewiseAttritionChart > canvas").get(0).getContext("2d"), fgDataConfig);
+        }
+        var fnBUWiseAttritionChart = function (data) {
+            var group_list = [];
+            var qty_list = [];
+            if (data != null) {
+                for (i = 0; i < data.length; i++) {
+                    group_list.push(data[i].param1);
+                    qty_list.push(data[i].param2);
+                }
+            }
+            var fgChartData = {
+                labels: group_list,
+                datasets: [{
+                    label: "",
+                    backgroundColor: ["#d94340", "#255186"],
+                    borderColor: "#D6DBDF",
+                    borderWidth: 1,
+                    data: qty_list
+                }]
+            };
+            var fgDataConfig = {
+                type: 'bar',
+                data: fgChartData,
+                options: {
+                    responsive: true,
+                    legend: {
+                        display: false,
+                    },
+                    title: {
+                        display: true,
+                        text: ' '
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: false,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 13
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 13
+                            }
+                        }]
+                    },
+                    "hover": {
+                        "animationDuration": 0
+                    },
+                    "animation": {
+                        "duration": 1,
+                        "onComplete": function () {
+                            var chartInstance = this.chart, ctx = chartInstance.ctx;
+                            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'bottom';
+                            this.data.datasets.forEach(function (dataset, i) {
+                                var meta = chartInstance.controller.getDatasetMeta(i); meta.data.forEach(function (bar, index) {
+                                    var data = dataset.data[index];
+                                    ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                                });
+                            });
+                        }
+                    }
+                }
+            }
+            new Chart($("#BUWiseAttrition> canvas").get(0).getContext("2d"), fgDataConfig);
+        }
+
+        //Percentage graph operation
+        $("#ebtn").click(function (e) {
+            var eFinYear = $('#eFinYear').val();
+            var eMonth = $('#eMonth').val();
+            var ePercentage = $('#ePercentage').val();
+            var eAttrition = $('#eAttrition').val();
+            var eInfant = $('#eInfant').val();
+            var eInfantPercent = $('#eInfantPercent').val();
+            var eInvRes = $('#eInvRes').val();
+            if (eFinYear != '' && eMonth != '' && ePercentage != '' && eAttrition != '' && eInfant != '' && eInvRes != '' && eInfantPercent != '') {
+                $('#msg2').text('');
+                var requestUrl = 'HR/MonthlyPer';
+                $.ajax({
+                    url: requestUrl,
+                    type: "POST",
+                    data: {
+                        eFinYear: eFinYear,
+                        eMonth: eMonth,
+                        ePercentage: ePercentage,
+                        eAttrition: eAttrition,
+                        eInfant: eInfant,
+                        eInvRes: eInvRes,
+                        eInfantPercent: eInfantPercent
+                    },
+                    success: function (response) {
+                        if (response.result === _errorStatus) {
+                            Swal.fire("Oops...", response.msg, "error");
+                        } else {
+                            Swal.fire("Saved!", response.msg, "success").then(function () {
+                                $('#ePercentage,#eAttrition,#eInfant,#eInfantPercent,#eInvRes').val('');
+                                bindMonthwiseAttritionInPercentageTable1();
+                            })
+                        }
+                    },
+                    error: function () {
+                        Swal.fire("Oops...", "Something went wrong!", "error");
+                    }
+                });
+            }
+            else {
+                $('#msg2').text('All (*) marked fields are mandatory');
+            }
+        });
+        function RowDelete(id) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (result) {
+                if (result.value) {
+                    var requestUrl = 'HR/DeleteMonthlyPer';
+                    $.ajax({
+                        url: requestUrl,
+                        type: "POST",
+                        data: {
+                            id: id
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire("Deleted!", response.responseMsg, "success").then(function () {
+                                    bindMonthwiseAttritionInPercentageTable1();
+                                })
+                            } else {
+                                Swal.fire("Oops...", "Something went wrong!", "error");
+                            }
+                        },
+                        error: function () {
+                            Swal.fire("Oops...", "Something went wrong!", "error");
+                        }
+                    });
+                }
+            });
+        }
+        $(".refresh_graph").click(function (e) {
+            location.replace(location.href)
+        });
+        function bindMonthwiseAttritionInPercentageTable1() {
+            var requestUrl = 'HR/GetMonthlyAttrPer';
+            var defaultFinYear = $('#DefaultFinYear').val();
+            $.ajax({
+                url: requestUrl,
+                type: "POST",
+                data: { defaultFinYear: defaultFinYear},
+                success: function (data) {
+                    bindMonthwiseAttritionInPercentageTable(data)
+                },
+                error: function () {
+
+                }
+            });
+        }
+        function ResetFromPanel() {
+            $('#FBE1,#FBE2,#FBE3,#BE1,#BE2,#BE3,#ME1,#ME2,#ME3,#EE1,#EE2,#EE3,#FEE1,#FEE2,#FEE3,#NR1,#NR2,#NR3').prop('readonly', true);
+            $('#FBE4,#BE4,#ME4,#EE4,#FEE4,#NR4').show();
+            $('#FBE5,#BE5,#ME5,#EE5,#FEE5,#NR5').hide();
+       }
+    </script>
+}

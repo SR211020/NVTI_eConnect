@@ -1,0 +1,355 @@
+﻿@model eConnectV2.ViewModels.KPIViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    ViewData["PageHeading"] = "KPI - Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "KPI";
+    ViewBag.Category1 = "Dashboard";
+}
+
+@section HeadBlock {
+    <link href="~/css/statistics/chartjs/chartjs.css" rel="stylesheet" />
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-xl-12">
+                <div id="panel-1" class="panel">
+                    <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+                        <h2>
+                            Organisation KPI Score<span class="fw-300"><i>Monthly</i></span>
+                        </h2>
+                        <div class="panel-toolbar">
+                            <select asp-for="FinYearCode" asp-items="@(new SelectList(Model.FinYearList, "Value", "Text"))" style="padding: 2px; width: 115px; border: ridge; border-color: lightgray;">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="panel-container show">
+                        <div class="panel-content">
+                            <span class="font-weight-bold">Financial Year : <span id="finyearspan" class="font-italic font-weight-bold text-danger"></span></span>
+                            <div id="barChartdiv">
+                                <canvas style="width:100%; height:300px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-xl-12">
+                <div id="panel-2" class="panel">
+                    <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+                        <h2>
+                            Department KPI Score<span class="fw-300"><i>Monthly</i></span>
+                        </h2>
+                        <div class="panel-toolbar">
+                            <select asp-for="DefaultFinYearCode" asp-items="@(new SelectList(Model.FinYearList, "Value", "Text"))" style="padding: 2px; width: 115px; border: ridge; border-color: lightgray; margin-right: 15px;">
+                            </select>
+                            <select asp-for="Month" style="padding: 2px; width: 115px; border: ridge; border-color: lightgray;">
+                                <option value="1">January</option>
+                                <option value="2">Feburary</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="panel-container show">
+                        <div class="panel-content">
+                            <span class="font-weight-bold">Financial Year : <span id="finyearspan1" class="font-italic font-weight-bold text-danger mr-4"></span></span>
+                            <span class="font-weight-bold">Month : <span id="monthspan1" class="font-italic font-weight-bold text-danger"></span></span>
+                            <div id="barChartdiv1" class="col-md-12 ">
+                                <canvas style="width:100%; height:300px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/statistics/chartjs/chartjs.bundle.js"></script>
+    <script>
+        let isOrgChange = false;
+        $(document).ready(function () {
+            GetOrgData();
+            $("#FinYearCode").change(function () {
+                isOrgChange = true;
+                document.getElementById("barChartdiv").innerHTML = '&nbsp;';
+                document.getElementById("barChartdiv").innerHTML = '<canvas style="width:100%; height:300px;"></canvas>';
+                GetOrgData();
+            });
+            $('#DefaultFinYearCode,#Month').change(function () {
+                isOrgChange = false;
+                document.getElementById("barChartdiv1").innerHTML = '&nbsp;';
+                document.getElementById("barChartdiv1").innerHTML = '<canvas style="width:100%; height:300px;"></canvas>';
+                GetDeptData();
+            });
+        });
+        function GetOrgData() {
+            var fid = $('#FinYearCode').val();
+            $.ajax({
+                url: '/KPI/GetOrgData',
+                data: { finYear: fid },
+                type: "POST",
+                success: function (response) {
+                    barChartOrg(response);
+                    if (!isOrgChange) {
+                        GetDeptData();
+                    }
+                },
+                error: function () {
+
+                }
+            });
+        }
+        var barChartOrg = function (data) {
+            var barChartData = {
+                labels: ['April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January', 'Feburary', 'March'],
+                datasets: [{
+                    label: "KPI Score",
+                    backgroundColor: '#55b947',
+                    borderColor: color.fusion._500,
+                    borderWidth: 1,
+                    data: [
+                        data[0].m12,
+                        data[0].m11,
+                        data[0].m10,
+                        data[0].m9,
+                        data[0].m8,
+                        data[0].m7,
+                        data[0].m6,
+                        data[0].m5,
+                        data[0].m4,
+                        data[0].m3,
+                        data[0].m2,
+                        data[0].m1
+                    ]
+                },
+                ]
+            };
+            var config = {
+                type: 'bar',
+                data: barChartData,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                        text: ''
+                    },
+                    tooltips: {
+                        enabled: true,
+                        mode: 'single',
+                        callbacks: {
+                            label: function (tooltipItems, data) {
+                                var multistringText = ['Score: ' + tooltipItems.yLabel];
+                                return multistringText;
+                            }
+                        }
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 11
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 11
+                            }
+                        }]
+                    },
+                    "hover": {
+                        "animationDuration": 0
+                    },
+                    "animation": {
+                        "duration": 1,
+                        "onComplete": function () {
+                            var chartInstance = this.chart,
+                                ctx = chartInstance.ctx;
+
+                            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'bottom';
+
+                            this.data.datasets.forEach(function (dataset, i) {
+                                var meta = chartInstance.controller.getDatasetMeta(i);
+                                meta.data.forEach(function (bar, index) {
+                                    var data = dataset.data[index];
+                                    if (data == '0.00') {
+
+                                    }
+                                    else {
+                                        ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                                    }
+                                });
+                            });
+                        }
+                    }
+                }
+            }
+            new Chart($("#barChartdiv > canvas").get(0).getContext("2d"), config);
+            $('#finyearspan').text($('#FinYearCode option:selected').text());
+        }
+        function GetDeptData() {
+            var fid = $('#DefaultFinYearCode').val();
+            var mn = $('#Month').val();
+            $.ajax({
+                url: '/KPI/GetDeptData',
+                data: { finYear: fid, month: mn },
+                type: "POST",
+                success: function (response) {
+                    barChartOrg1(response);
+                },
+                error: function () {
+
+                }
+            });
+        }
+        var barChartOrg1 = function (data) {
+            var dept_list = [];
+            var dept_hod_list = [];
+            var dept_score_list = [];
+            for (i = 0; i < data.length; i++) {
+                dept_list.push(data[i].deptName);
+                dept_hod_list.push(data[i].hodName);
+                dept_score_list.push(data[i].score);
+            }
+            var barChartData1 = {
+                labels: dept_list,
+                datasets: [{
+                    label: "KPI Score",
+                    backgroundColor: '#26a2ec',
+                    borderColor: color.info._500,
+                    borderWidth: 1,
+                    data: dept_score_list,
+                    data1: dept_hod_list,
+                },
+                ]
+            };
+            var config1 = {
+                type: 'bar',
+                data: barChartData1,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                        text: ''
+                    },
+                    tooltips: {
+                        enabled: true,
+                        mode: 'single',
+                        callbacks: {
+                            label: function (tooltipItems, data) {
+                                var multistringText = ['Score: ' + tooltipItems.yLabel];
+                                multistringText.push('HOD : ' + data.datasets[0].data1[tooltipItems.index]);
+                                return multistringText;
+                            }
+                        }
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 11
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: false,
+                                labelString: ''
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "#f2f2f2"
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 11
+                            }
+                        }]
+                    },
+                    "hover": {
+                        "animationDuration": 0
+                    },
+                    "animation": {
+                        "duration": 1,
+                        "onComplete": function () {
+                            var chartInstance = this.chart,
+                                ctx = chartInstance.ctx;
+
+                            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'bottom';
+
+                            this.data.datasets.forEach(function (dataset, i) {
+                                var meta = chartInstance.controller.getDatasetMeta(i);
+                                meta.data.forEach(function (bar, index) {
+                                    var data = dataset.data[index];
+                                    if (data == '0.00') {
+
+                                    }
+                                    else {
+                                        ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                                    }
+                                });
+                            });
+                        }
+                    }
+                }
+            }
+            new Chart($("#barChartdiv1 > canvas").get(0).getContext("2d"), config1);
+            $('#finyearspan1').text($('#DefaultFinYearCode option:selected').text());
+            $('#monthspan1').text($('#Month option:selected').text());
+        }
+    </script>
+}

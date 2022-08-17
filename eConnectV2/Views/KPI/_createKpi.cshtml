@@ -1,0 +1,140 @@
+﻿@model eConnectV2.ViewModels.KPIViewModel
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group row">
+            <label class="col-sm-4 col-form-label font-weight-bold" for="EmpName">Employee<span class="text-danger ml-1">*</span> : </label>
+            <div class="col-sm-8">
+                @if (Model.KpiType == "ORG")
+                {
+                    <input asp-for="EmpName" class="form-control" readonly />
+                }
+                else
+                {
+                    <input asp-for="EmpName" class="form-control" value="@User.Identity.GetEmpName()" readonly />
+                }
+            </div>
+        </div>
+        @if (Model.KpiType == "ORG")
+        {
+            <input asp-for="DeptCode" type="hidden" value="@Model.DeptCode" />
+        }
+        else
+        {
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label font-weight-bold" for="Department">Department<span class="text-danger ml-1">*</span> : </label>
+                <div class="col-sm-8">
+                    @if (Model.HodDepartmentList.Count > 1)
+                    {
+                        <select class="select2 custom-select form-control w-100" required asp-for="DeptCode" asp-items="@(new SelectList(Model.HodDepartmentList, "Value", "Text"))">
+                        </select>
+                    }
+                    else
+                    {
+                        <input asp-for="DeptName" class="form-control" value="@User.Identity.GetDeptName()" readonly />
+                        <input asp-for="DeptCode" type="hidden" value="@Model.DeptCode" />
+                    }
+                </div>
+            </div>
+        }
+
+        @if (Model.KpiType == "ORG")
+        {
+
+        }
+        else
+        {
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label font-weight-bold" title="head of department" for="Department">HOD<span class="text-danger ml-1">*</span> : </label>
+                <div class="col-sm-8">
+                    <input asp-for="HodName" class="form-control" readonly />
+                </div>
+            </div>
+        }
+        <div class="form-group row">
+            <label class="col-sm-4 col-form-label font-weight-bold" for="FinYearName">Financial Year<span class="text-danger ml-1">*</span> : </label>
+            <div class="col-sm-8">
+                <input asp-for="FinYearName" class="form-control" readonly />
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group row">
+            <label class="col-sm-4 col-form-label font-weight-bold" for="KpiName">KPI<span class="text-danger ml-1">*</span> : </label>
+            <div class="col-sm-8">
+                <input asp-for="KpiName" class="form-control" required autocomplete="off" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-4 col-form-label font-weight-bold" for="RespDeptCode">Responsible Dept.<span class="text-danger ml-1">*</span> : </label>
+            <div class="col-sm-8">
+                <select class="select2 custom-select form-control w-100" asp-for="RespDeptCode" required asp-items="@(new SelectList(Model.DepartmentList, "Value", "Text"))">
+                    <option value="">Select</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-4 col-form-label font-weight-bold" for="CategoryCode">Category<span class="text-danger ml-1">*</span> : </label>
+            <div class="col-sm-8">
+                <select class="select2 custom-select form-control w-100" asp-for="CategoryCode" required asp-items="@(new SelectList(Model.CategoryList, "Value", "Text"))">
+                    <option value="">Select</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-4 col-form-label font-weight-bold" for="Weightage">Weightage<span class="text-danger ml-1">*</span> : </label>
+            <div class="col-sm-8">
+                <div class="input-group input-group-md">
+                    <input asp-for="Weightage" type="text" class="form-control" required aria-describedby="input-group-md-size" autocomplete="off">
+                    <div class="input-group-append">
+                        <span class="input-group-text">
+                            <i class="fas fa-percentage"></i>
+                        </span>
+                    </div>
+                </div>
+                <span id="error-msg1" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group row">
+            <label class="col-sm-4 col-form-label font-weight-bold" for="RespDeptCode">Attach file : </label>
+            <div class="col-sm-8">
+                <div class="custom-file">
+                    <input id="customFile" asp-for="AttachDocument" type="file" class="custom-file-input" onchange="GetFileSize()">
+                    <label class="custom-file-label" for="customFile">Choose file...</label>
+                    <p class="text-danger mt-2" id="fp"></p>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-4 col-form-label font-weight-bold" for="BottomTarget">Bottom Target<span class="text-danger ml-1">*</span> : <span class="text-info" id="btmunit"></span> </label>
+            <div class="col-sm-8">
+                <input asp-for="BottomTarget" type="text" required class="form-control" autocomplete="off">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-4 col-form-label font-weight-bold" for="BasicTarget">Basic Target<span class="text-danger ml-1">*</span> : <span class="text-info" id="bscunit"></span></label>
+            <div class="col-sm-8">
+                <input asp-for="BasicTarget" type="text" required class="form-control" autocomplete="off">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-4 col-form-label font-weight-bold" for="ChallengeTarget">Challenge Target<span class="text-danger ml-1">*</span> : <span class="text-info" id="chlunit"></span></label>
+            <div class="col-sm-8">
+                <input asp-for="ChallengeTarget" type="text" required class="form-control" autocomplete="off">
+                <span id="error-msg" class="text-danger mt-2"></span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4 pt-2">
+        <div class="form-group row">
+            <label class="col-sm-4"></label>
+            <div class="col-sm-8">
+                <button id="btn_add" type="submit" name="submit" class="btn btn-primary btn-sm">Add KPI</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,1070 @@
+﻿@{
+    Layout = null;
+    var winUserName = ViewBag.WinUserName;
+    var empcode = ViewBag.EmpCode;
+    var isUserLogin = ViewBag.IsUserLoggedIn;
+    string[] strlist;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>NVTI - eConnect</title>
+    <!-- Favicons -->
+    <meta name="description" content="NVTI - eConnect">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="msapplication-tap-highlight" content="no">
+    <link href="~/img/logo.png" rel="icon">
+    <link href="~/img/logo.png" rel="apple-touch-icon">
+    <!-- Google Fonts -->
+    <link href="~/assets/vendor/boxicons/css/googlefont.css" rel="stylesheet" />
+    <!--Video.js-->
+    <link href="~/assets/css/video-js.css" rel="stylesheet" />
+    <!-- Vendor CSS Files -->
+    <link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/icofont/icofont.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/aos/aos.css" rel="stylesheet">
+    <link href="~/assets/css/chatBot.css" rel="stylesheet" type="text/css" />
+    <!-- Template Main CSS File -->
+    <link href="~/assets/css/style.css" rel="stylesheet">
+    <style>
+        .icon-box21 {
+            padding: 10px 10px !important;
+        }
+
+        .center {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 50% !important;
+        }
+
+        .img-thumbnail1 {
+            height: 100px;
+        }
+
+        .card {
+            border: 2px solid blue;
+        }
+
+            .card:hover {
+                transform: scale(1.1);
+                font-weight: 800;
+            }
+
+        .team {
+            margin-left: auto;
+            margin-right: auto;
+            width: 80% !important;
+            height: 100% !important;
+        }
+
+        .image {
+            height: 65px;
+            width: 55px;
+        }
+
+        .time {
+            font-size: 12px;
+            color: #0B2C76;
+            font-weight: 600;
+        }
+
+        .load {
+            margin-left: auto;
+            margin-right: auto;
+            width: 100% !important;
+            height: 100% !important;
+            margin-top: 12% !important;
+        }
+    </style>
+    <style>
+        ul.pinboards li,
+        ul.tag-list li {
+            list-style: none;
+        }
+
+            ul.pinboards li h4 {
+                margin-top: 20px;
+                font-size: 18px;
+            }
+
+            ul.pinboards li div p {
+                font-size: 16px;
+            }
+
+            ul.pinboards li div {
+                text-decoration: none;
+                color: #000;
+                background: #ffc;
+                display: block;
+                height: 160px;
+                width: 160px;
+                padding: 1em;
+                position: relative;
+            }
+
+                ul.pinboards li div small {
+                    position: absolute;
+                    top: 5px;
+                    right: 5px;
+                    font-size: 10px;
+                }
+
+                ul.pinboards li div a {
+                    position: absolute;
+                    right: 10px;
+                    bottom: 10px;
+                    color: inherit;
+                }
+
+        ul.pinboards li {
+            margin: 10px 40px 50px 0;
+            float: left;
+        }
+
+            ul.pinboards li div p {
+                font-size: 12px;
+            }
+
+            ul.pinboards li div {
+                text-decoration: none;
+                color: #000;
+                background: #ffc;
+                display: block;
+                height: 160px;
+                width: 160px;
+                padding: 1em;
+                /* Firefox */
+                -moz-box-shadow: 5px 5px 2px #212121;
+                /* Safari+Chrome */
+                -webkit-box-shadow: 5px 5px 2px rgba(33, 33, 33, 0.7);
+                /* Opera */
+                box-shadow: 5px 5px 2px rgba(33, 33, 33, 0.7);
+            }
+
+            ul.pinboards li div {
+                -webkit-transform: rotate(-6deg);
+                -o-transform: rotate(-6deg);
+                -moz-transform: rotate(-6deg);
+                -ms-transform: rotate(-6deg);
+            }
+
+            ul.pinboards li:nth-child(even) div {
+                -o-transform: rotate(4deg);
+                -webkit-transform: rotate(4deg);
+                -moz-transform: rotate(4deg);
+                -ms-transform: rotate(4deg);
+                position: relative;
+                top: 5px;
+            }
+
+            ul.pinboards li:nth-child(3n) div {
+                -o-transform: rotate(-3deg);
+                -webkit-transform: rotate(-3deg);
+                -moz-transform: rotate(-3deg);
+                -ms-transform: rotate(-3deg);
+                position: relative;
+                top: -5px;
+            }
+
+            ul.pinboards li:nth-child(5n) div {
+                -o-transform: rotate(5deg);
+                -webkit-transform: rotate(5deg);
+                -moz-transform: rotate(5deg);
+                -ms-transform: rotate(5deg);
+                position: relative;
+                top: -10px;
+            }
+
+            ul.pinboards li div:hover,
+            ul.pinboards li div:focus {
+                -webkit-transform: scale(1.1);
+                -moz-transform: scale(1.1);
+                -o-transform: scale(1.1);
+                -ms-transform: scale(1.1);
+                position: relative;
+                z-index: 5;
+            }
+
+            ul.pinboards li div {
+                text-decoration: none;
+                color: #000;
+                background: #ffc;
+                display: block;
+                height: 230px;
+                width: 230px;
+                padding: 1em;
+                -moz-box-shadow: 5px 5px 7px #212121;
+                -webkit-box-shadow: 5px 5px 7px rgba(33, 33, 33, 0.7);
+                box-shadow: 5px 5px 7px rgba(33, 33, 33, 0.7);
+                -moz-transition: -moz-transform 0.15s linear;
+                -o-transition: -o-transform 0.15s linear;
+                -webkit-transition: -webkit-transform 0.15s linear;
+            }
+
+        .gradient_heading {
+            background: rgb(34,193,195);
+            background: linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(253,187,45,1) 100%);
+            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text;
+        }
+
+        .gradient_heading1 {
+            background: rgb(2,0,36);
+            background: radial-gradient(circle, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);
+            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text;
+        }
+    </style>
+</head>
+<body>
+    <!-- ======= Top Bar ======= -->
+    <div id="topbar" class="d-none d-lg-flex align-items-center fixed-top">
+        <div class="container d-flex">
+            <div class="contact-info mr-auto">
+                <span style="font-size:large" class="font-weight-bolder">NAVITASYS <small style="font-size:60%"> (A TDK Group Company)</small></span>
+            </div>
+            <div class="social-links">
+                @if (isUserLogin == "1")
+                {
+                    <a href="#">
+                        <span id="profilefavicon">
+                        </span> Hi, @winUserName
+                    </a>
+                    @*@if (ViewBag.HOD == empcode)
+                        {
+                            <a href="#" data-toggle="modal" data-target="#myTeam" onclick="GetMyTeam()"><i class="icofont-users"></i>My Team</a>
+                        }*@
+                    <a href="#" data-toggle="modal" data-target="#myTeam" onclick="GetMyTeam()"><i class="icofont-users pr-1"></i>My Team</a>
+                    <a id="btnLogout" href="@Url.Action("Logout","Account")"> Logout <i class="icofont-logout"></i></a>
+                    <input id="empcode" name="empcode" type="hidden" value="@empcode" />
+                }
+                else
+                {
+                    <a id="btnLogin" href="#" class="font-weight-bolder"> Login <i class="icofont-login"></i></a>
+                }
+            </div>
+        </div>
+    </div>
+    <!-- ======= Header ======= -->
+    <header id="header" class="fixed-top">
+        <div class="container d-flex align-items-center">
+            <h1 class="logo mr-auto"><a style="color:#106eea;" href="@Url.Action("Index","Account")">eConnect</a></h1>
+            @*<marquee class="news-content mb-0">
+                <a href="https://forms.gle/g4TTdNFJ7sv4QTwr8" target="_blank" class="mb-0">
+                    <p class="mb-0" style="font-weight:bold;">
+                        Dear Users, IT Internal Customer Survey is open now, kindly fill it up on or before 15th of May 2022. Those who have filled up, please ignore it. <i style="color: green; text-decoration: underline "> Click Here</i>
+                    </p>
+                </a>
+            </marquee>*@
+            <nav class="nav-menu d-none d-lg-block">
+                <ul>
+                    <li class="active"><a href="#">Home</a></li>
+                    @if (isUserLogin == "1")
+                    {
+                        <li><a href="@Url.Action("Dashboard","Home")">My Dashboard</a></li>
+                    }
+                    <li><a href="#services">Applications</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <!-- ======= Hero Section ======= -->
+    <section id="hero" class="d-flex align-items-center">
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+            <h1>
+                Welcome to <span>eConnect</span>
+            </h1>
+            <h2>It reduces paperwork tremendously and is capable of handling administration and infrastructure.</h2>
+            <div class="d-flex">
+                <a href="#" class="btn-watch-video" data-toggle="modal" data-target="#myModal1"> Watch Video <i class="icofont-play-alt-2"></i></a>
+            </div>
+        </div>
+    </section>
+    <div id="footer">
+        <div class="footer-newsletter">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <table width="100%">
+                        <tr>
+                            <td width="80%">
+                                <table align="center">
+                                    <tr>
+                                        <td valign="middle"><span class="font-weight-bolder h4 text-primary">Phone Book</span></td>
+                                        <td valign="middle"><span>&nbsp;&nbsp;Search by Employee Name, Extension Number... </span></td>
+                                    </tr>
+                                </table>
+                                <form action="" method="post" class="w-100">
+                                    <input type="search" id="txtSearch" name="txtSearch" class="col-md-12 form-control" autocomplete="off" placeholder="Type to search..">
+                                </form>
+                            </td>
+                            <td width="20%">
+                                @if (ViewBag.TodayFoodMenu != "")
+                                {
+                                    strlist = ViewBag.TodayFoodMenu.Split(",");
+                                    <ul class="pinboards">
+                                        <li>
+                                            <div>
+                                                <span class="text-primary gradient_heading1" style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">Today's Food Menu</span>
+                                                <br>
+                                                @foreach (String val in strlist)
+                                                {
+                                                    <span class="text-warning" style="font-size:small">@val</span><br />
+                                                }
+                                                <span class="text-primary gradient_heading" style="font-size:small;font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">Snacks - @ViewBag.TodaySnacksMenu</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <main id="main">
+        <section id="featured-services" class="featured-services">
+            <div class="container" data-aos="fade-up">
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="icon-box" data-aos="fade-up" data-aos-delay="200">
+                            <div class="icon"><a target="_blank" class="" title="Ascent" href="http://svba0002/ess_bw/Default.htm"><img src="~/assets/img/ascent.png" class="img-fluid img-thumbnail img-thumbnail1"></a></div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="icon-box" data-aos="fade-up" data-aos-delay="100">
+                            <div class="icon"><a target="_blank" class="" title="Success factor" href="https://hcm44.sapsf.com/sf/home?bplte_company=navitasysi#/login"><img src="~/assets/img/sf.png" class="img-fluid img-thumbnail img-thumbnail1"></a></div>
+                            <p class="description"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="icon-box" data-aos="fade-up" data-aos-delay="300">
+                            <div class="icon"><a target="_blank" class="" title="OA" href="http://nvti.nvtinfo.com:85/NVTWebPortal/MyWorkFlow.aspx"><img src="~/assets/img/NVTOA.png" class="img-fluid img-thumbnail img-thumbnail1"></a></div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="icon-box" data-aos="fade-up" data-aos-delay="300">
+                            <div class="icon"><a target="_blank" class="" title="EMS" href="https://ems.nvtpower.com/en-US/home/login/"><img src="~/assets/img/NVTI_EMS.png" class="img-fluid img-thumbnail img-thumbnail1"></a></div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="icon-box" data-aos="fade-up" data-aos-delay="300">
+                            <div class="icon">
+                                <a target="_blank" class="" title="Customer Feedback" href="https://nvticrm.nvtpower.com:8091/">
+                                    <img src="~/assets/img/CustomerFeedbackMeter.jpg" class="img-fluid img-thumbnail img-thumbnail1">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        @*<section id="clients" class="clients section-bg testimonials">
+                <div class="container" data-aos="fade-up">
+                    <div class="section-title">
+                        <h1 style="color:goldenrod">Star Golden Awards</h1>
+                    </div>
+                    <div class="container" data-aos="zoom-in">
+                        <div class="row">
+                            <marquee behavior="alternate" direction="left">
+                                <img src="~/assets/img/testimonials/0401.png" class="p-4" alt="">
+                                <img src="~/assets/img/testimonials/0402.png" class="p-4" alt="">
+                                <img src="~/assets/img/testimonials/0403.png" class="p-4" alt="">
+                                <img src="~/assets/img/testimonials/0404.png" class="p-4" alt="">
+                                <img src="~/assets/img/testimonials/0405.png" class="p-4" alt="">
+                            </marquee>
+                        </div>
+                    </div>
+                </div>
+            </section>*@
+        <section id="services" class="services">
+            <div class="container" data-aos="fade-up">
+                <div class="section-title">
+                    <h2>Applications</h2>
+                    <h3>Check our <span>Applications</span></h3>
+                    <p>It reduces paperwork tremendously and is capable of handling administration and infrastructure.</p>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 pb-3" title="EIS Dashboard: Comprehensive, Accurate and live data for effective visualisation">
+                        <a href="#">
+                            <div class="icon-box icon-box21">
+                                <div class="icon"><i class="bx bxs-dashboard"></i></div>
+                                <h6 class="m-0 text-white">
+                                    EIS Dashboard
+                                </h6>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 pb-3" title="WO Dashboard: Show all WO Status">
+                        <a href="@Url.Action("WODashboard","Dashboard")" target="_blank">
+                            <div class="icon-box icon-box21">
+                                <div class="icon"><i class="bx bx-cog"></i></div>
+                                <h6 class="m-0 text-white">
+                                    WO Dashboard
+                                </h6>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 pb-3" title="IT Dashboard: Show available IT Staff with Contact No">
+                        <a href="@Url.Action("ITDashboard","Attendance")" target="_blank">
+                            <div class="icon-box icon-box21">
+                                <div class="icon"><i class="bx bx-laptop"></i></div>
+                                <h6 class="m-0 text-white">
+                                    IT Dashboard
+                                </h6>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 pb-3" title="Fire Marshal Dashboard: Show available Fire Marshal in Company">
+                        <a href="@Url.Action("FireMarshal","Attendance")" target="_blank">
+                            <div class="icon-box icon-box21">
+                                <div class="icon"><i class="bx bxl-firebase"></i></div>
+                                <h6 class="m-0 text-white">
+                                    Fire Marshal
+                                </h6>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 pb-3" title="UPPH System: Tracking of line production on an hourly basis">
+                        <a href="@Url.Action("UPPHManual","BIS")" target="_blank">
+                            <div class="icon-box icon-box21">
+                                <div class="icon"><i class="bx bx-tachometer"></i></div>
+                                <h6 class="m-0 text-white">
+                                    UPPH System
+                                </h6>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 pb-3" title="SMT FPY: Dashboard to calculate auto FPY on hourly basis">
+                        <a href="@Url.Action("SMTFPYManual","BIS")" target="_blank">
+                            <div class="icon-box icon-box21">
+                                <div class="icon"><i class="bx bx-git-merge"></i></div>
+                                <h6 class="m-0 text-white">
+                                    SMT FPY
+                                </h6>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 pb-3" title="IT Helpdesk: Create and Approve IT Requests Online">
+                        <a href="@Url.Action("HDIndex","IT")" target="_blank">
+                            <div class="icon-box icon-box21">
+                                <div class="icon"><i class="bx bx-laptop"></i></div>
+                                <h6 class="m-0 text-white">
+                                    IT Helpdesk
+                                </h6>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 pb-3" title="Kaizen System: Create and Approve Kaizens Online">
+                        <a href="@Url.Action("KaizenView","Kaizen")" target="_blank">
+                            <div class="icon-box icon-box21">
+                                <div class="icon"><i class="bx bx-task"></i></div>
+                                <h6 class="m-0 text-white">
+                                    Kaizen
+                                </h6>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 pb-3" title="KPI System: Manage KPIs at the department and organization level">
+                        <a href="@Url.Action("Computation","KPI")" target="_blank">
+                            <div class="icon-box icon-box21">
+                                <div class="icon"><i class="bx bx-line-chart"></i></div>
+                                <h6 class="m-0 text-white">
+                                    KPI System
+                                </h6>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 pb-3" title="Deviation System:">
+                        <a href="@Url.Action("DeviationView","Quality")" target="_blank">
+                            <div class="icon-box icon-box21">
+                                <div class="icon"><i class="bx bx-add-to-queue"></i></div>
+                                <h6 class="m-0 text-white">
+                                    Deviation System
+                                </h6>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 pb-3" title="DCN System: System for Online approval of Documnet Change Note">
+                        <a href="@Url.Action("DCNView","Quality")" target="_blank">
+                            <div class="icon-box icon-box21">
+                                <div class="icon"><i class="bx bx-add-to-queue"></i></div>
+                                <h6 class="m-0 text-white">
+                                    DCN System
+                                </h6>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 pb-3" title="Calibration System:">
+                        <a href="#">
+                            <div class="icon-box icon-box21">
+                                <div class="icon"><i class="bx bx-add-to-queue"></i></div>
+                                <h6 class="m-0 text-white">
+                                    Calibration System
+                                </h6>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="row">
+                    @if (User.Identity.IsLoggedIn())
+                    {
+                        <div class="col-md-2 pb-3">
+                            <a href="#" onclick="OpenBIS()">
+                                <div class="icon-box icon-box21">
+                                    <div class="icon"><i class="bx bx-battery"></i></div>
+                                    <h6 class="m-0 text-white">
+                                        BIS
+                                    </h6>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-2 pb-3">
+                            <a href="#" onclick="OpenMES()">
+                                <div class="icon-box icon-box21">
+                                    <div class="icon"><i class="bx bx-building"></i></div>
+                                    <h6 class="m-0 text-white">
+                                        MES
+                                    </h6>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                    <div class="col-md-2 pb-3" title="Legal: Manage legal contracts and keep them at one place">
+                        <a href="#">
+                            <div class="icon-box icon-box21">
+                                <div class="icon"><i class="bx bxs-file"></i></div>
+                                <h6 class="m-0 text-white">
+                                    Legal
+                                </h6>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 pb-3">
+                        <a href="http://nvti.nvtinfo.com:85/portal/Sheets/Report/Rpt_NVTI_PO.aspx" target="_blank">
+                            <div class="icon-box icon-box21">
+                                <div class="icon"><i class="bx bxs-search"></i></div>
+                                <h6 class="m-0 text-white">
+                                    PR-PO Status
+                                </h6>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <section id="faq" class="faq section-bg">
+        <div class="container" data-aos="fade-up">
+            <div class="section-title">
+                <h2>F.A.Q</h2>
+                <h3>Frequently Asked <span>Questions</span></h3>
+            </div>
+            <ul class="faq-list" data-aos="fade-up" data-aos-delay="100">
+                <li>
+                    <a data-toggle="collapse" href="#faq2" class="">What is GTL? <i class="icofont-simple-up"></i></a>
+                    <div id="faq2" class="collapse show" data-parent=".faq-list">
+                        <p>
+                            GTL means “Group Term Life Insurance”. Navitasys provides GTL facility to all employees for which only 40% of premium amount should be paid by employee and it is deducted from salary once a year.
+                        </p>
+                    </div>
+                </li>
+                <li>
+                    <a data-toggle="collapse" href="#faq3" class="collapsed">What are the Shift timings?<i class="icofont-simple-up"></i></a>
+                    <div id="faq3" class="collapse" data-parent=".faq-list">
+                        <p>
+                            Following are the shift timings:
+                        </p>
+                        <table class="table table-bordered table-sm text-center w-50">
+                            <tr class="bg-success text-white">
+                                <td>Shift</td>
+                                <td>In Time</td>
+                                <td>Out Time</td>
+                                <td>Working Hours</td>
+                            </tr>
+                            <tr>
+                                <td>A</td>
+                                <td>06:00</td>
+                                <td>14:00</td>
+                                <td>08:00</td>
+                            </tr>
+                            <tr>
+                                <td>A1</td>
+                                <td>07:00</td>
+                                <td>15:00</td>
+                                <td>08:00</td>
+                            </tr>
+                            <tr>
+                                <td>G</td>
+                                <td>08:30</td>
+                                <td>17:00</td>
+                                <td>08:00</td>
+                            </tr>
+                            <tr>
+                                <td>B</td>
+                                <td>14:00</td>
+                                <td>22:00</td>
+                                <td>08:00</td>
+                            </tr>
+                            <tr>
+                                <td>C</td>
+                                <td>22:00</td>
+                                <td>06:00</td>
+                                <td>08:00</td>
+                            </tr>
+                            <tr>
+                                <td>C1</td>
+                                <td>23:00</td>
+                                <td>07:00</td>
+                                <td>08:00</td>
+                            </tr>
+                        </table>
+                    </div>
+                </li>
+                <li>
+                    <a data-toggle="collapse" href="#faq4" class="collapsed">What is the Covid helpline?<i class="icofont-simple-up"></i></a>
+                    <div id="faq4" class="collapse" data-parent=".faq-list">
+                        <p>Covid Helpline: <span class="text-danger"> 01284-263888</span></p>
+                    </div>
+                </li>
+                <li>
+                    <a data-toggle="collapse" class="collapsed" href="#faq1">What are the dates based on which salary is processed for a month? <i class="icofont-simple-up"></i></a>
+                    <div id="faq1" class="collapse" data-parent=".faq-list">
+                        <p>
+                            The salary cycle is from 26 of previous month to 25 of current month.
+                        </p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </section>
+    <footer id="footer">
+        <div class="container py-4">
+            <div class="copyright">
+                Copyright © 2021 <a href="http://www.nvtpower.com/" class="font-weight-bold" title="nvtpower.com" target="_blank">Navitasys India Private Limited</a>  All Rights Reserved.
+            </div>
+            <div class="credits">
+                Developed by <a class="font-weight-bold" href="#">NVTI-IT Team</a>
+            </div>
+        </div>
+    </footer>
+    @if (isUserLogin == "1" && ViewBag.EnableChatBot == "1")
+    {
+        <div class="chat-screen" style="width: 460px;height: 494px;border-radius: 15px; margin: 0px !important; padding: 0px !important;">
+            <iframe id="myframe" src="http://pytestsrv:3000/@empcode" allowtransparency="true" style="width: 460px;height: 494px;margin: 0px !important;padding: 0px !important;"></iframe>
+            <a class="btn btn-danger float-right mb-6 mr-4 mt-2" onclick="CloseChatbot()" title="Close Chatbot" style="border-radius: 50%;">x</a>
+        </div>
+        <div class="chat-bot-icon">
+            <img src="~/assets/img/chatbot.png" />
+        </div>
+    }
+    <div id="preloader"></div>
+    <a href="#" class="back-to-top" style="margin-right:100px;"><i class="icofont-simple-up"></i></a>
+    <!-- The Modal -->
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background-image: url('/assets/img/glass.jpg') ">
+                <div class="modal-body">
+                    <div class="">
+                        <div class="col-sm-12">
+                            <div class="p-4 rounded-plus">
+                                <div class="form-group">
+                                    <label class="form-label text-white">User Id</label>
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="icofont-user-alt-3"></i>
+                                            </span>
+                                        </div>
+                                        <input type="text" id="txtUserId" class="form-control form-control-sm" placeholder="Enter your Emp Code / ADID" />
+                                    </div>
+                                    <span id="se1" class="text-warning"><small></small></span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label text-white">Password</label>
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="icofont-key"></i>
+                                            </span>
+                                        </div>
+                                        <input type="password" id="txtPassword" class="form-control form-control-sm" placeholder="Enter your password" />
+                                    </div>
+                                    <span id="se2" class="text-warning"><small></small></span>
+                                </div>
+                                <div class="form-group">
+                                    <table class="w-100">
+                                        <tr>
+                                            <td width="30%">
+                                                <button id="js-login-btn" type="button" class="btn btn-danger btn-block btn-lg btn-sm">Login</button>
+                                                <button id="js-login-btn-loading" type="button" class="btn btn-danger btn-block btn-lg btn-sm">
+                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                    Loading...
+                                                </button>
+                                            </td>
+                                            <td width="70%">
+                                                <span id="serror" class="text-white float-right"></span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="myModal1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-body bg-transparent p-0 m-0">
+                    <video id="my-video" class="video-js popuptext" controls preload="auto" data-setup="{}" width="800" height="400">
+                        <source src="~/assets/video/TDK.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--My Team-->
+    <div class="modal" id="myTeam" role="dialog">
+        <div class="team modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content" role="dialog">
+                <div class="modal-header">
+                    <h4 class="mt-2 mb-0" style="color: #0B2C76;">My Team Dashboard</h4>
+                    <button type="button" class="close mb-0" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row pl-4 pr-4">
+                        <div class="row" id="myteam"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="float-left">
+                        <span class="badge badge-light text-white" style="background-color: #086B08;">
+                            In Premises
+                        </span>
+                        &emsp;
+                        <span class="badge badge-light text-white" style="background-color: #F18A0E;">
+                            Out Premises
+                        </span>
+                        &emsp;
+                        <span class="badge badge-light text-white" style="background-color: #B41034;">
+                            Absent
+                        </span>
+                        &emsp;
+                    </div>
+                    <span id="time" class="time float-right"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--My Team Loader-->
+    <div id="popUp" class="modal load" tabindex="-1" role="dialog" style="display:none">
+        <div class="modal-dialog justify-content-center" role="document">
+            <div class="modal-content p-3 gra" style="background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(102,107,108,1) 100%, rgba(0,212,255,1) 100%); ">
+                <div class="modal-body">
+                    <div class="spinner-border text-primary">
+                    </div>
+                    <h2 class="text-info">Loading...</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Vendor JS Files -->
+    <script src="~/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="~/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/vendor/jquery.easing/jquery.easing.min.js"></script>
+    <script src="~/assets/vendor/waypoints/jquery.waypoints.min.js"></script>
+    <script src="~/assets/vendor/counterup/counterup.min.js"></script>
+    <script src="~/assets/vendor/owl.carousel/owl.carousel.min.js"></script>
+    <script src="~/assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+    <script src="~/assets/vendor/aos/aos.js"></script>
+    <script src="~/assets/js/bootstrap3-typeahead.min.js"></script>
+    <!-- Template Main JS File -->
+    <script src="~/assets/js/main.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(".chat-bot-icon").click(function (e) {
+                $('.chat-screen').toggleClass('show-chat');
+                $('.chat-bot-icon').hide();
+            });
+            //$('.chat-screen').toggleClass('show-chat');
+            //$('.chat-bot-icon').hide();
+            if (@ViewBag.IsUserLoggedIn == "1") {
+                ProfilePic();
+            }
+        });
+    </script>
+    <!--Video js-->
+    <script src="~/assets/js/video.min.js"></script>
+    <script type="text/javascript">
+        $("#btnLogin").click(function (event) {
+            $("#myModal").modal('show');
+            $("#js-login-btn-loading").hide();
+        });
+
+        function CloseChatbot() {
+            $('.chat-screen').toggleClass('show-chat');
+            $('.chat-bot-icon').show();
+        };
+
+        function ProfilePic() {
+            $.ajax({
+                url: '/Admin/GetProfileImage',
+                type: "POST",
+                success: function (data) {
+                    $('#profilefavicon').empty();
+                    var data1 = '';
+                    $.each(data, function (index, item) {
+                        if (item.imageName == '') {
+                            data1 += '<img src="/img/avatar-m.png" class="rounded-circle profile-image" width="30" height="30">';
+                        }
+                        else {
+                            data1 += '<img src="' + item.imageName + '" class="rounded-circle profile-image" width="30" height="30">';
+                        }
+                    });
+                    $("#profilefavicon").html(data1);
+                },
+                error: function () {
+                }
+            });
+        }
+
+        $("#js-login-btn").click(function (event) {
+            $('#serror').text('');
+            var userId = $('#txtUserId').val();
+            var password = $('#txtPassword').val();
+            if (userId == '') {
+                $('#se1').html('<small>This field is required.</small>');
+            }
+            else {
+                $('#se1').html('');
+                if (password == '') {
+                    $('#se2').html('<small>This field is required.</small>');
+                }
+                else {
+                    $('#se2').html('');
+                    var urlParams = new URLSearchParams(window.location.search);
+                    var returnUrl = urlParams.getAll('ReturnUrl');
+                    var requestUrl = '@Url.Action("Login", "Account")';
+                    $('#js-login-btn').hide();
+                    $('#js-login-btn-loading').show();
+                    $.ajax({
+                        url: requestUrl,
+                        data: { userId: userId, password: password },
+                        type: "POST",
+                        success: function (response) {
+                            if (response.result == '1') {
+                                if (returnUrl == '') {
+                                    window.location.reload();
+                                }
+                                else {
+                                    window.location = returnUrl
+                                }
+                            }
+                            else {
+                                $('#js-login-btn').show();
+                                $('#js-login-btn-loading').hide();
+                                $('#serror').text(response.msg);
+                            }
+                        },
+                        error: function () {
+                            $('#js-login-btn').show();
+                            $('#js-login-btn-loading').hide();
+                            $('#serror').text(response.msg);
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+    <script type="text/javascript">
+        var inputId = document.getElementById("txtUserId");
+        var inputPwd = document.getElementById("txtPassword");
+        inputId.addEventListener("keyup", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                document.getElementById("js-login-btn").click();
+            }
+        });
+        inputPwd.addEventListener("keyup", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                document.getElementById("js-login-btn").click();
+            }
+        });
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            $('#txtSearch').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1,
+                source: function (request, response) {
+                    var requestUrl = 'Account/Phonebook';
+                    $.ajax({
+                        url: requestUrl,
+                        data: { request: request },
+                        type: "POST",
+                        success: function (data) {
+                            items = [];
+                            map = {};
+                            var dtext = '';
+                            $.each(data, function (i, item) {
+                                dtext = '';
+                                var empname = item.split('-')[0];
+                                var deptname = item.split('-')[1];
+                                var emailid = item.split('-')[2];
+                                var contactno = item.split('-')[3];
+                                var landline = item.split('-')[4];
+                                var empcode = item.split('-')[5];
+                                var adid = item.split('-')[6];
+                                map[name] = { empname: empname, deptname: deptname, emailid: emailid, contactno: contactno, landline: landline, empcode: empcode, adid: adid };
+                                if (empname != '') {
+                                    dtext = empname + ' (';
+
+                                    if (empcode != '') {
+                                        dtext = dtext + empcode;
+                                    }
+                                    if (adid != '') {
+                                        dtext = dtext + ' | ' + adid;
+                                    }
+                                    dtext = dtext + ') ';
+                                }
+                                if (emailid != '') {
+                                    dtext = dtext + ' | ' + emailid;
+                                }
+                                if (deptname != '') {
+                                    dtext = dtext + ' | ' + deptname;
+                                }
+                                if (contactno != '') {
+                                    dtext = dtext + ' | ' + contactno;
+                                }
+                                if (landline != '') {
+                                    dtext = dtext + ' | ' + landline;
+                                }
+                                items.push(dtext);
+                            });
+                            response(items);
+                            $(".dropdown-menu").css("height", "auto");
+                        },
+                        error: function (response) {
+                        },
+                        failure: function (response) {
+                        }
+                    });
+                },
+                updater: function (item) {
+                    return item;
+                }
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        function GetMyTeam() {
+            $("#popUp").show();
+            $("#myTeam").hide();
+            $.ajax({
+                url: '/Attendance/MyTeam',
+                type: "POST",
+                success: function (data) {
+                    $('#myteam').empty();
+                    var data1 = '';
+                    var data11 = '';
+                    $.each(data, function (index, item) {
+                        data1 += '<div class="col-md-2 p-1">';
+                        data11 = item.empName;
+                        if (item.empName.length > 12) {
+                            data11 = limit(item.empName, 12);
+                            data11 = data11 + '...';
+                        }
+
+                        if (item.inPunch != "" && item.outPunch == "") {
+                            data1 += '<div class="card greenbd mb-3" style="border-color: #086B08;"><div class="card-body p-2 shadow" style="background-color:#e5f9f8">';
+                        }
+                        else if (item.inPunch == "" && item.outPunch == "") {
+                            data1 += '<div class="card redbd mb-3" style="border-color: #B41034;"><div class="card-body p-2 shadow" style="background-color:#ffe5f1">';
+                        }
+                        else {
+                            data1 += '<div class="card yellowbd mb-3" style="border-color: #57606e;"><div class="card-body p-2 shadow" style="background-color:#c2cddf">';
+                        }
+                        data1 += '<div class="col-md-4 p-0 mr-0" style="float:left;">';
+                        if (item.docName == '') {
+                            data1 += '<img src="/img/DefaultProfile.jpg" class="img-rounded image border-dark" alt="img">';
+                        }
+                        else {
+                            data1 += '<img src="' + item.docName + '" class="img-rounded image border-dark" alt="' + item.empName + '">';
+                        }
+                        data1 += '</div><div class="col-md-8 p-0" style="float:right"><div class="card-title mb-0">';
+                        data1 += '<span title="' + item.empName + '" class="font-weight-bolder float-left" style="font-size:13px;">' + data11 + '</span >';
+                        data1 += '<br />';
+                        data1 += '</div>';
+
+                        data1 += '<table cellpadding="2" cellspacing="2" width="100%" style="font-size:10px;">';
+                        data1 += '<tbody><tr><td>';
+                        data1 += '<span class = "float-left">In: <b>' + item.inPunch + '</b></span>';
+                        data1 += '<span class="float-right">Out: <b>' + item.outPunch + '</b></span>';
+                        data1 += '</td></tr>';
+                        data1 += '<tr><td style="float:left"><i class="bx bxs-phone"></i></td>';
+                        data1 += '<td style="float:right">' + item.contactNo + ' | ' + item.landLineNo + '</td>';
+                        data1 += '</tr></tbody></table>';
+                        data1 += '</div></div></div></div>';
+                        $("#popUp").hide();
+                        $("#myTeam").show();
+                    });
+                    $("#myteam").html(data1);
+                    var x = "Last Updated on" + " " + document.lastModified;
+                    document.getElementById("time").innerHTML = x;
+                },
+                error: function () {
+                    $("#popUp").hide();
+                    Swal.fire("Error!", "Encountered Error", "error");
+                }
+            });
+        };
+        function limit(string = '', limit = 0) {
+            return string.substring(0, limit)
+        }
+    </script>
+    <script type="text/javascript">
+        function OpenBIS() {
+            $.ajax({
+                url: '/Account/OpenBIS',
+                type: "POST",
+                success: function (data) {
+                    if (data != "OK") {
+                        alert(data);
+                    }
+                },
+                error: function () {
+                    alert(data);
+                }
+            });
+        }
+        function OpenMES() {
+            $.ajax({
+                url: '/Account/OpenMES',
+                type: "POST",
+                success: function (data) {
+                    if (data != "OK") {
+                        alert(data);
+                    }
+                },
+                error: function () {
+                    alert(data);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,250 @@
+﻿@model eConnectV2.ViewModels.AdminViewModel
+@{
+    ViewData["Title"] = "NVTI-Menu";
+    ViewData["PageHeading"] = "Menu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "Admin";
+    ViewBag.Category1 = "Menu";
+    int defaultOrderNo = 1;
+}
+<div class="panel">
+    <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+        <h2 class="justify-content-center">
+            <span class="fw-300 pr-1">Manage </span> Menu
+        </h2>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content">
+            @using (Html.BeginForm("Menu", "Admin", FormMethod.Post, new { id = "myform", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+            {
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold" for="MenuId">MenuId<span class="text-danger ml-1">*</span> : </label>
+                            <div class="col-sm-6">
+                                <input asp-for="MenuId" class="form-control" placeholder="Please enter menu Id" required pattern=".*\S+.*" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold" for="MenuName">Menu<span class="text-danger ml-1">*</span> : </label>
+                            <div class="col-sm-6">
+                                <input asp-for="MenuName" class="form-control" placeholder="Please enter menu name" required pattern=".*\S+.*" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold" for="MenuIcon">Menu Icon<span class="text-danger ml-1">*</span> : </label>
+                            <div class="col-sm-6">
+                                <input asp-for="MenuIcon" class="form-control" placeholder="Please enter menu icon" required pattern=".*\S+.*" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold" for="Status">Status<span class="text-danger ml-1">*</span> :</label>
+                            <div class="col-sm-6 mt-2">
+                                <div class="frame-wrap">
+                                    <div class="d-inline">
+                                        <input type="radio" id="r11" asp-for="Status" checked value="1">
+                                        <label for="r11">Active</label>
+                                    </div>
+                                    <div class="d-inline ml-2">
+                                        <input type="radio" id="r12" asp-for="Status" value="0">
+                                        <label for="r12">Inactive</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold" for="Url">Url<span class="text-danger ml-1">*</span> : </label>
+                            <div class="col-sm-6">
+                                <input asp-for="Url" class="form-control" placeholder="Please enter url" required pattern=".*\S+.*" value="#" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold" for="Url">Order #<span class="text-danger ml-1">*</span> : </label>
+                            <div class="col-sm-6">
+                                <input asp-for="MenuOrder" class="form-control" type="number" min="1" required value="1" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label font-weight-bold" for="HasChild">Has Child<span class="text-danger ml-1">*</span> : </label>
+                            <div class="col-sm-6 mt-2">
+                                <div class="frame-wrap">
+                                    <div class="d-inline">
+                                        <input type="radio" id="r21" asp-for="HasChild" checked value="1">
+                                        <label for="r21">Yes</label>
+                                    </div>
+                                    <div class="d-inline ml-2">
+                                        <input type="radio" id="r22" asp-for="HasChild" value="0">
+                                        <label for="r22">No</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center pt-2">
+                    <button id="btn_save" class="btn btn-sm btn-primary" type="submit">Save</button>
+                    <button id="btn_update" class="btn btn-sm btn-primary hide" onclick="UpdateRecord()" type="button">Update</button>&nbsp;&nbsp;
+                    <button id="btn_cancel" class="btn btn-sm btn-secondary hide" onclick="UpdateCancel()" type="button">Cancel</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div id="MenuList">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <div class="table-responsive">
+                            <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                                <thead class="bg-primary-800">
+                                    <tr>
+                                        <th class='notexport'>Action</th>
+                                        <th>Menu Id</th>
+                                        <th>Icon</th>
+                                        <th>Menu</th>
+                                        <th>URL</th>
+                                        <th>Has Child</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white">
+                                    @foreach (var item in Model.MenuList)
+                                    {
+                                        <tr>
+                                            <td class="bg-primary-gradient">
+                                                <a title="Edit" href="javascript:void(0);" onclick="RowEdit(@item.MenuId)"><i class="fas fa-edit ml-3"></i></a>
+                                                <a title="Delete" class="text-danger ml-2 mr-3" href="javascript:void(0);" onclick="RowDeleteWithIsInUsed(@item.MenuId,'Admin/IsMenuInUsed','Admin/DeleteMenu')"><i class="fas fa-trash-alt"></i></a>
+                                            </td>
+                                            <td>
+                                                @item.MenuId
+                                            </td>
+                                            <td>
+                                                <i class="@item.MenuIcon mr-3"></i> <code>@item.MenuIcon</code>
+                                            </td>
+                                            <td>
+                                                @item.MenuName
+                                            </td>
+                                            <td>
+                                                @item.Url
+                                            </td>
+                                            <td>
+                                                @if (item.HasChild == 1)
+                                                {
+                                                    <span class="btn btn-xs btn-outline-default font-weight-bold">
+                                                        <a s-text="Goto SubMenu" s-actionName="SubMenu" s-controllerName="Admin" s-rK1="id" s-rV1="@item.MenuId">Goto SubMenu</a>
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <strong>No</strong>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (item.Status == 1)
+                                                {
+                                                    <span class="badge badge-primary badge-pill">Active</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-secondary badge-pill">Inactive</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                        defaultOrderNo++;
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="eid" name="eid" value="0" />
+@section ScriptsBlock {
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script src="~/js/rowdelete.js"></script>
+    <script src="~/js/datagrid/datatables/dths_excel.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#MenuOrder').val('@defaultOrderNo');
+        });
+        function RowEdit(id) {
+            //----set valid/invalid event class in controls
+            $('#MenuName,#MenuIcon,#Url,#MenuOrder').val('')
+            $('#btn_save').click();
+            $('#MenuId').attr('readonly', true);
+            //----set valid/invalid event class in controls
+            $('#eid').val(id);
+            $.ajax({
+                url: "/Admin/BindMenuDetail",
+                type: "POST",
+                data: { id: id },
+                success: function (response) {
+                    if (response.result === null) {
+                        Swal.fire("Oops...", "Something went wrong!", "error");
+                    } else {
+                        $('#MenuId').val(response.result[0].menuId);
+                        $('#MenuName').val(response.result[0].menuName);
+                        $('#MenuIcon').val(response.result[0].menuIcon);
+                        $('#Url').val(response.result[0].url);
+                        $('#MenuOrder').val(response.result[0].menuOrder);
+                        if (response.result[0].status == '1') { $('#r11').prop('checked', true); } else { $('#r12').prop('checked', true); }
+                        if (response.result[0].hasChild == '1') { $('#r21').prop('checked', true); } else { $('#r22').prop('checked', true); }
+                        $('#btn_save,#MenuList').hide();
+                        $('#btn_update,#btn_cancel').show();
+                    }
+                },
+                error: function () {
+                    Swal.fire("Oops...", "Something went wrong!", "error");
+                }
+            });
+        }
+        function UpdateCancel() {
+            $('#MenuId,#MenuName,#MenuIcon,#Url,#MenuOrder').val('');
+            $('#MenuId').attr('readonly', false);
+            $('#r11,#r21').prop('checked', true);
+            $('#btn_save,#MenuList').show();
+            $('#btn_update,#btn_cancel').hide();
+        }
+        function UpdateRecord() {
+            var menuId = $('#eid').val();
+            var menuName = $('#MenuName').val();
+            var menuIcon = $('#MenuIcon').val();
+            var url = $('#Url').val();
+            var menuOrder = $('#MenuOrder').val();
+            var hasChild = $("input[name='HasChild']:checked").val();
+            var status = $("input[name='Status']:checked").val();
+            if (menuId == '' || menuName == '' || menuIcon == '' || url == '' || status == '' || hasChild == '' || menuOrder == '') {
+
+            } else {
+                $.ajax({
+                    url: "/Admin/MenuUpdate",
+                    type: "POST",
+                    data: { menuId: menuId, menuName: menuName, menuIcon: menuIcon, status: status, url: url, hasChild: hasChild, menuOrder: menuOrder },
+                    success: function (response) {
+                        if (response.result === _errorStatus) {
+                            Swal.fire("Oops...", response.msg, "error");
+                            $('#btn_save,#MenuList').hide();
+                            $('#btn_update,#btn_cancel').show();
+                        } else {
+                            Swal.fire("Updated!", response.msg, "success").then(function () {
+                                window.location.reload();
+                            })
+                        }
+                    },
+                    error: function () {
+                        Swal.fire("Oops...", "Something went wrong!", "error");
+                    }
+                });
+            }
+        }
+    </script>
+}

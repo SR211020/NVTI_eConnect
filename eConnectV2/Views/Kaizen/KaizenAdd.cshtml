@@ -1,0 +1,343 @@
+﻿@model eConnectV2.ViewModels.KaizenViewModel
+@{
+    ViewData["Title"] = "Add Kaizen";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Module = "Kaizen";
+    ViewBag.Category1 = "Add Kaizen";
+    var Mode = ViewBag.TagAttribute;
+    string crntYear = DateTime.Now.Year.ToString();
+    string prvYear = DateTime.Now.AddYears(-1).Year.ToString();
+}
+
+<div class="panel">
+    <div class="panel-hdr bg-primary-800 min-height-reset height-3">
+        <div class="col-sm-2 panel-toolbar">
+            <a id="btn_backtoList" style="color:#fff" href="@Url.Action("KaizenView","Kaizen")" title="Back">
+                <i class="fa fa-angle-double-left"></i> Back
+            </a>
+        </div>
+        <div class="col-sm-8" style="text-align:center">
+            <span class="fw-300 font-weight-bold">Kaizen </span> Details
+        </div>
+        <div class="col-sm-2" style="text-align:center">
+            <a href="~/doc/Help/Kaizen App PPT.pptx" style="color:#fff"><i class="fas fa-download"></i> Kaizen Manual</a>
+        </div>
+    </div>
+    <div class="panel-container show">
+        @using (Html.BeginForm("KaizenAdd", "Kaizen", FormMethod.Post, new { id = "form", @class = "needs-validation", enctype = "multipart/form-data", novalidate = "novalidate" }))
+        {
+        <div class="panel-content">
+            <div class="row pt-3">
+                <div class="col-md-4">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Kaizen No</label>
+                        <div class="col-sm-8 align-self-center">
+                            <span class="col-sm-8 col-form-label text-info">@Model.DocNo</span>
+                            <input asp-for="DocNo" value="@Model.DocNo" hidden />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Registration No</label>
+                        <div class="col-sm-8 align-self-center">
+                            <span class="text-info">@Model.RegNo</span>
+                            <input type="hidden" value="@Model.RegNo" id="hdnRegNo" />
+                        </div>
+                    </div>
+                    <div class="form-group row pb-2">
+                        <label class="col-sm-4 col-form-label">Kaizen Name<span class="text-danger ml-1 view">*</span></label>
+                        <div class="col-sm-8">
+                            <textarea asp-for="KaizenName" autocomplete="off" type="text" class="form-control" required placeholder="Enter Kaizen Name" rows="3" cols="30"> </textarea>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Kaizen Type<span class="text-danger ml-1 view">*</span></label>
+                        <div class="col-sm-8">
+                            <select asp-for="KaizenType" asp-items="@(new SelectList(Model.DDLKaizenTypeList, "Text", "Text"))" class="select2 custom-select select form-control w-100" required>
+                                <option value="">-- Select --</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Respective Pillar<span class="text-danger ml-1 view">*</span></label>
+                        <div class="col-sm-8">
+                            <select asp-for="RespPillar" asp-items="@(new SelectList(Model.DDLPillarList, "Text", "Text"))" class="select2 custom-select select form-control w-100" required>
+                                <option value="">-- Select --</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="txtImpact">
+                        <label class="col-sm-4 col-form-label">Kaizen Impact<span class="text-danger ml-1 view">*</span></label>
+                        <div class="col-sm-8">
+                            <select asp-for="Impact" name="impact" class="select2 custom-select form-control w-100" multiple="multiple" asp-items="@(new MultiSelectList(Model.DDLImpactList, "Value", "Text"))" required>
+                            </select>
+                            <input asp-for="SelectedImpact" type="hidden" value="" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Plant<span class="text-danger ml-1 view">*</span></label>
+                        <div class="col-sm-8">
+                            <select class="select2 custom-select form-control w-100" asp-for="Plant" required>
+                                <option value="">-- Select --</option>
+                                <option selected value="Battery">Battery Bawal</option>
+                                <option value="SMT">SMT</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Fin. Year<span class="text-danger ml-1 view">*</span></label>
+                        <div class="col-sm-8">
+                            <select asp-for="FinYearCode" class="select2 custom-select form-control w-100" asp-items="@(new SelectList(Model.DDLFinYearList, "Value", "Text"))" required>
+                                <option value="">-- Select --</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Year<span class="text-danger ml-1 view">*</span></label>
+                        <div class="col-sm-8">
+                            <select asp-for="Year" class="select2 custom-select select form-control w-100" required>
+                                <option value="">-- Select --</option>
+                                <option value="@crntYear" selected>@crntYear</option>
+                                <option value="@prvYear">@prvYear</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Month<span class="text-danger ml-1 view">*</span></label>
+                        <div class="col-sm-8">
+                            <select asp-for="Month" asp-items="@(new SelectList(Model.DDLMonthList, "Text", "Text"))" class="select2 custom-select select form-control w-100" required>
+                                <option value="">-- Select --</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Machine/Area<span class="text-danger ml-1 view">*</span></label>
+                        <div class="col-sm-8">
+                            <input asp-for="MacArea" type="text" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Cost Savings</label>
+                        <div class="col-sm-8">
+                            <input asp-for="CostSaving" autocomplete="off" type="number" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">MP Worthy<span class="text-danger ml-1 view">*</span></label>
+                        <div class="col-sm-8 pt-2">
+                            <div class="form-check form-check-inline row pt-1">
+                                <input asp-for="MPWorthy" class="form-check-input rdbutton" type="radio" value="N" checked>
+                                <label class="form-check-label mr-2">No</label>
+                                <input asp-for="MPWorthy" class="form-check-input rdbutton" type="radio" value="Y">
+                                <label class="form-check-label mr-2">Yes</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Employee Name<span class="text-danger ml-1 view">*</span></label>
+                        <div class="col-sm-8">
+                            <input asp-for="EmpName" type="text" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Employee Code<span class="text-danger ml-1 view">*</span></label>
+                        <div class="col-sm-8">
+                            <input asp-for="EmpCode" type="text" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Department<span class="text-danger ml-1 view">*</span></label>
+                        <div class="col-sm-8">
+                            <select class="select2 custom-select form-control w-100" asp-for="DeptCode" required asp-items="@(new SelectList(Model.DDLDeptList, "Value", "Text"))">
+                                <option value="">Select</option>
+                            </select>
+                            <input asp-for="DeptName" type="hidden" value="@Model.DeptName" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Approver Name<span class="text-danger ml-1 view">*</span></label>
+                        <div class="col-sm-8">
+                            <select class="select2 custom-select form-control w-100" asp-for="ApprId" required asp-items="@(new SelectList(Model.DDLApproverList, "Value", "Text"))">
+                                <option value="">-- Select --</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Circle No</label>
+                        <div class="col-sm-8">
+                            <input asp-for="CircleNo" autocomplete="off" type="number" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">No of HD Done<span class="text-danger ml-1 view">*</span></label>
+                        <div class="col-sm-8">
+                            <input asp-for="HDDone" autocomplete="off" type="number" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Upload File<span class="text-danger ml-1 view">*</span></label>
+                        <div class="custom-file col-sm-7 ml-2">
+                            @if (Mode == "E")
+                            {
+                                <input id="customFile" asp-for="DocName" type="file" class="custom-file-input" onchange="UploadFile()" />
+                                <label class="custom-file-label">Choose file</label>
+                                <span id="FileErrorMsg" class="text-danger"></span>
+                            }
+                            @if (Model.DocNo > 0)
+                            {
+                                @if (Model.DocName != "")
+                                {
+                                    <div class="col-sm-7 pt-2">
+                                        <a title='Preview' target="_blank" href='@Url.Action("DownloadKaizenFile", "Kaizen", new { fileName = @Model.DocName })'>@Model.DocName</a>
+                                        <input asp-for="Param1" value="@Model.DocName" hidden />
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-sm-8 pt-2">
+                                        <label class="font-weight-bold">NA</label>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="divButton" class="row pt-2">
+                <div class="col-md-8">
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label font-weight-bold"></label>
+                        <div class="col-sm-10">
+                            <button id="Post" type="submit" name="submit" value="Post" class="btn btn-primary btn-sm ml-3">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+</div>
+
+@if (Model.HistoryList != null && Model.HistoryList.Count > 0)
+{
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="row col-md-8">
+            <div class="table-responsive">
+                <h3 class="text-info font-weight-bold text-center">Kaizen History</h3>
+                <br />
+                <table id="dt-hs" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                    <thead class="bg-primary-800">
+                        <tr>
+                            <th width="5%" class="text-center">#</th>
+                            <th width="12%">User Type</th>
+                            <th width="20%">User Id</th>
+                            <th>Remarks</th>
+                            <th width="15%">Status</th>
+                            <th width="20%">TDate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.HistoryList)
+                        {
+                            <tr>
+                                <td class="text-center">@item.SrNo</td>
+                                <td>@item.UserType</td>
+                                <td>@item.UserId</td>
+                                <td>@item.Remarks</td>
+                                <td>@item.StatusDescr</td>
+                                <td>@item.TDate</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+}
+
+@section ScriptsBlock {
+    <script src="~/js/defaultformvalidate.js"></script>
+    <script>
+        var selectedImpact = '@Model.SelectedImpact';
+
+        $(document).ready(function () {
+            FillForm();
+            $(function () {
+                $('.select2').select2();
+                var array = selectedImpact.split(',');
+                $('#Impact').val(array).trigger('change');
+                $('#Impact').on('select2:select', function (e) {
+                    selectedImpact = $("#Impact").val();
+                });
+            });
+        });
+
+        var $hidden = $('input[name=SelectedImpact]');
+        var $impact = $('[name=impact]');
+
+        $impact.bind('keyup change', function (e) {
+            $hidden.val($.trim($impact.val()));
+        });
+   
+        $("#EmpName").change(function () {
+            $("#EmpCode").val("");
+        });
+
+        $('#Post').click(function () {
+            if ($('#customFile').val() == '' && ($('#Param1').val() == '' || $('#Param1').val() == undefined)) {
+                $('#customFile').attr('required', true);
+            }
+            else {
+                $('#customFile').attr('required', false);
+            }
+        });
+
+        function UploadFile() {
+            var doc = document.getElementById("DocName");
+            var fileMsg = document.getElementById('FileErrorMsg');
+            fileMsg.textContent = '';
+            if (doc.files[0].size > 200000) {
+                fileMsg.textContent = 'File Size must be under 200 KB';
+                doc.value = "";
+                return;
+            }
+            var ext = $('#DocName').val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['pdf', 'pptx', 'xls', 'xlsx']) == -1) {
+                fileMsg.textContent = 'Invalid Extension - Only .pdf, .pptx, .xls, .xlsx format allowed';
+                $('#DocName').val('');
+            }
+        }
+
+        function FillForm() {
+            if ("@Mode" == "V") {
+                $("#KaizenName").prop("disabled", true);
+                $("#KaizenType").prop("disabled", true);
+                $("#RespPillar").prop("disabled", true);
+                $("#Impact").prop("disabled", true);
+                $("#Plant").prop("disabled", true);
+                $("#FinYearCode").prop("disabled", true);
+                $("#Year").prop("disabled", true);
+                $("#Month").prop("disabled", true);
+                $("#MacArea").prop("disabled", true);
+                $("#CostSaving").prop("disabled", true);
+                $(".rdbutton").prop("disabled", true);
+                $("#EmpName").prop("disabled", true);
+                $("#EmpCode").prop("disabled", true);
+                $("#DeptCode").prop("disabled", true);
+                $("#CircleNo").prop("disabled", true);
+                $("#ApprId").prop("disabled", true);
+                $("#HDDone").prop("disabled", true);
+                $("#DocName").prop("disabled", true);
+                $("#divButton").hide();
+                $(".view").hide();
+            }
+        };
+
+        
+    </script>
+}

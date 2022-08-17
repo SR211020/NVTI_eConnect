@@ -1,0 +1,64 @@
+﻿
+<div class="row pt-6 p-2">
+    <div class="col-md-12">
+        <div class="row mb-2">
+            <div class="col-md-6">
+                <div class="form-group-sm">
+                    <div class="progress-group text-info">
+                        <span id="progressWeightage" class="progress-text"></span>
+                        <span class="float-right"><b id="weightageNo">0</b>/100</span>
+                        <div class="progress progress-sm">
+                            <div id="progress-bar" class="progress-bar progress-bar-striped bg-info progress-bar-animated" style="width: 0"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group-sm">
+                    <span class="text-success float-right pr-3 mb-0"> <i class="fas fa-info-circle"></i> - Challenge target </span>
+                    <span class="text-warning float-right pr-3 mb-0"> <i class="fas fa-info-circle"></i> - Basic target </span>
+                    <span class="text-danger float-right pr-3 mb-0"> <i class="fas fa-info-circle"></i> - Bottom target </span>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table id="dt-kpi" class="table w-100 table-bordered table-sm table-hover table-striped nowrap">
+                <thead class="bg-info-700">
+                    <tr class='text-nowrap text-center'>
+                        <th>#</th>
+                        <th>Action</th>
+                        <th class="text-left">Fin. Year</th>
+                        <th class="text-left">KPI</th>
+                        <th class="text-left">Category</th>
+                        <th class="text-left">Responsible Dept.</th>
+                        <th>Weightage %</th>
+                        <th>APR</th>
+                        <th>MAY</th>
+                        <th>JUN</th>
+                        <th>JUL</th>
+                        <th>AUG</th>
+                        <th>SEP</th>
+                        <th>OCT</th>
+                        <th>NOV</th>
+                        <th>DEC</th>
+                        <th>JAN</th>
+                        <th>FEB</th>
+                        <th>MAR</th>
+                    </tr>
+                </thead>
+                <tbody class='text-nowrap'>
+                </tbody>
+            </table>
+        </div>
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <button type="button" id="btnSubmit" name="btnSubmit" class="btn btn-success btn-sm mt-3">Submit</button>
+            </div>
+            <div class="col-sm-6">
+                <div id="WeightageMessage" class="col-sm-12 float-right text-right pt-3">
+                    <span class="text-info"><i class="fas fa-info-circle"></i> Weightage must be 100% Complete </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
